@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confidence Snake Challenge</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #fff8e1, #f3e5f5);
+      color: #243b53;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .screen { display: none; min-height: 100vh; padding: 16px; }
+    .screen.active { display: flex; }
+    #splashScreen {
+      position: fixed; inset: 0; z-index: 9999; background: #ffffff;
+      align-items: center; justify-content: center;
+    }
+    #splashScreen img {
+      width: min(78vw, 420px);
+      animation: bob 1.6s ease-in-out infinite;
+    }
+    @keyframes bob { 50% { transform: translateY(-10px); } }
+    #startScreen, #endScreen {
+      align-items: center; justify-content: center;
+    }
+    .card {
+      width: min(1100px, 100%);
+      background: rgba(255,255,255,0.95);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 0 14px 30px rgba(36, 59, 83, 0.16);
+    }
+    h1 {
+      margin: 0 0 12px;
+      text-align: center;
+      font-size: clamp(32px, 5vw, 54px);
+      color: #7b2cbf;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: clamp(18px, 2.5vw, 24px);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .pill-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px; }
+    .pill {
+      background: #fff3cd;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; align-items: center; }
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 14px 22px;
+      font-size: 18px;
+      font-weight: 700;
+      background: #ffca28;
+      color: #4a3500;
+      box-shadow: 0 5px 0 #d39e00;
+      transition: transform 0.12s ease;
+    }
+    button:active { transform: translateY(3px); box-shadow: 0 2px 0 #d39e00; }
+    #gameScreen.active { display: block; }
+    .hud {
+      max-width: 1180px;
+      margin: 0 auto 12px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    .hud-box {
+      background: rgba(255,255,255,0.94);
+      border-radius: 18px;
+      padding: 12px;
+      text-align: center;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(36, 59, 83, 0.1);
+      font-size: 18px;
+    }
+    .main-grid {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .panel {
+      background: rgba(255,255,255,0.95);
+      border-radius: 28px;
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(36, 59, 83, 0.12);
+    }
+    canvas {
+      width: 100%;
+      max-width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 24px;
+      background: linear-gradient(180deg, #f1f8e9, #e1f5fe);
+      border: 6px solid #90caf9;
+      display: block;
+      margin: 0 auto;
+    }
+    .panel h2 { margin: 0 0 12px; color: #ef476f; font-size: 30px; }
+    .panel p { font-size: 18px; line-height: 1.45; }
+    .tips {
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
+    }
+    .tip {
+      background: #fdf3ff;
+      border-left: 8px solid #ba68c8;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 17px;
+      line-height: 1.4;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 64px);
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    .ctrl {
+      width: 64px; height: 64px;
+      border-radius: 18px;
+      font-size: 26px;
+      padding: 0;
+    }
+    .ctrl.blank { visibility: hidden; }
+    .question-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(35, 35, 55, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 16px;
+    }
+    .question-overlay.active { display: flex; }
+    .question-card {
+      width: min(760px, 100%);
+      background: #fffef8;
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 0 16px 34px rgba(0,0,0,0.25);
+    }
+    .question-card h3 { margin: 0 0 10px; font-size: 30px; color: #7b2cbf; }
+    .question-card p { font-size: 22px; line-height: 1.45; margin-bottom: 14px; }
+    .options { display: grid; gap: 10px; }
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      background: #eef7ff;
+      color: #17324d;
+      box-shadow: 0 4px 0 #9ec5f8;
+      border-radius: 16px;
+      font-size: 18px;
+    }
+    .feedback {
+      min-height: 42px;
+      margin-top: 12px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .final-title {
+      text-align: center;
+      font-size: clamp(30px, 5vw, 56px);
+      color: #2e7d32;
+      margin-bottom: 10px;
+    }
+    .final-text, .score-text {
+      text-align: center;
+      font-size: 21px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .stars { text-align: center; font-size: 50px; margin: 10px 0 18px; }
+    .confetti {
+      position: fixed;
+      top: -20px;
+      width: 12px;
+      height: 18px;
+      z-index: 1100;
+      animation: fall 3s linear forwards;
+    }
+    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+    @media (max-width: 960px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .hud { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .screen { padding: 10px; }
+      .card, .panel, .question-card { padding: 14px; border-radius: 22px; }
+      .hud-box, .panel p, .tip, .option-btn, .feedback { font-size: 16px; }
+      .controls { grid-template-columns: repeat(3, 58px); }
+      .ctrl { width: 58px; height: 58px; }
+      .question-card p { font-size: 18px; }
+      .question-card h3 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="splashScreen" class="screen active">
+    <img src="./assets/innovine-logo.png" alt="Innovine Solutions logo" />
+  </div>
+
+  <div id="startScreen" class="screen">
+    <div class="card">
+      <h1>Confidence Snake Challenge</h1>
+      <p class="subtitle">Guide the confidence snake, collect shining stars, clear levels, and unlock self-confidence reward questions every 3 levels.</p>
+      <div class="pill-row">
+        <div class="pill">✨ Grade 4 Chapter 2</div>
+        <div class="pill">🐍 Easy-medium gameplay</div>
+        <div class="pill">🎯 Quiz reward after Levels 3, 6, and 9</div>
+      </div>
+      <div class="btn-row">
+        <button onclick="startGame()">▶ Start Game</button>
+        <button onclick="toggleSound()" id="soundBtn">🔊 Sound</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="gameScreen" class="screen">
+    <div class="hud">
+      <div class="hud-box">Level: <span id="levelNum">1</span>/9</div>
+      <div class="hud-box">Stars: <span id="starCount">0</span></div>
+      <div class="hud-box">Length: <span id="snakeLength">1</span></div>
+      <div class="hud-box">Lives: <span id="lives">3</span></div>
+      <div class="hud-box">Quiz Stars: <span id="quizStars">0</span></div>
+    </div>
+
+    <div class="main-grid">
+      <div class="panel">
+        <canvas id="gameCanvas" width="420" height="420"></canvas>
+        <div class="controls">
+          <div class="ctrl blank"></div>
+          <button class="ctrl" onclick="changeDirection('up')">⬆️</button>
+          <div class="ctrl blank"></div>
+          <button class="ctrl" onclick="changeDirection('left')">⬅️</button>
+          <button class="ctrl" onclick="changeDirection('down')">⬇️</button>
+          <button class="ctrl" onclick="changeDirection('right')">➡️</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>How to play</h2>
+        <p id="levelGoalText">Collect 4 stars to clear Level 1. Avoid hitting the wall or your own trail.</p>
+        <div class="tips">
+          <div class="tip">🌟 Every level gets a little faster.</div>
+          <div class="tip">💪 Self-confidence means believing in your abilities and facing challenges with a positive mindset.</div>
+          <div class="tip">🧠 Reward questions appear after every 3 levels.</div>
+          <div class="tip">📱 Use arrow keys on desktop or the on-screen buttons on mobile.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="questionOverlay" class="question-overlay">
+    <div class="question-card">
+      <h3>Confidence Reward Question</h3>
+      <p id="questionText"></p>
+      <div id="optionBox" class="options"></div>
+      <div id="questionFeedback" class="feedback"></div>
+    </div>
+  </div>
+
+  <div id="endScreen" class="screen">
+    <div class="card">
+      <div class="final-title" id="finalTitle">Great effort!</div>
+      <div class="stars" id="finalStars">🌟🌟</div>
+      <div class="score-text">Levels Cleared: <span id="finalLevels">0</span>/9</div>
+      <div class="score-text">Quiz Stars Earned: <span id="finalQuizStars">0</span>/3</div>
+      <div class="final-text" id="finalMessage">You kept going with confidence.</div>
+      <div class="btn-row">
+        <button onclick="startGame()">🔄 Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="correctSound" preload="auto" src="./assets/correct.mp3"></audio>
+  <audio id="wrongSound" preload="auto" src="./assets/wrong.mp3"></audio>
+  <audio id="clapSound" preload="auto" src="./assets/clapping.mp3"></audio>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const gridSize = 21;
+    const tileCount = 20;
+
+    const levelTargets = [4, 5, 5, 6, 6, 7, 7, 8, 8];
+    const levelSpeeds = [170, 160, 150, 140, 132, 124, 116, 108, 100];
+
+    const questionBank = [
+      {
+        q: 'You feel nervous before answering in class. What is the most confident thing to do?',
+        options: ['Stay silent forever', 'Try answering and do your best', 'Laugh at others first'],
+        answer: 'Try answering and do your best',
+        tip: 'Self-confidence grows when you try, even if you feel nervous.'
+      },
+      {
+        q: 'Your teacher gives you feedback on your work. What should you do?',
+        options: ['Treat it as help to improve', 'Get upset and stop trying', 'Ignore everything'],
+        answer: 'Treat it as help to improve',
+        tip: 'The chapter says feedback can be an opportunity to improve.'
+      },
+      {
+        q: 'What can help build self-confidence every day?',
+        options: ['Self-care and practice', 'Giving up quickly', 'Comparing yourself with everyone'],
+        answer: 'Self-care and practice',
+        tip: 'Self-care, effort, and practice support confidence.'
+      },
+      {
+        q: 'If a task feels difficult, a self-confident student will...',
+        options: ['Keep trying with determination', 'Refuse to begin', 'Say “I can never do this”'],
+        answer: 'Keep trying with determination',
+        tip: 'Confidence means not giving up when challenges appear.'
+      },
+      {
+        q: 'Asking for help from a teacher or friend is...',
+        options: ['A sign of weakness', 'A sign of strength', 'Something to avoid always'],
+        answer: 'A sign of strength',
+        tip: 'The chapter clearly says asking for help is a sign of strength.'
+      },
+      {
+        q: 'Which thought sounds most self-confident?',
+        options: ['I am unique and capable', 'I must be perfect', 'I should never try new things'],
+        answer: 'I am unique and capable',
+        tip: 'Confidence is about faith in your abilities, not perfection.'
+      }
+    ];
+
+    let snake = [];
+    let direction = { x: 1, y: 0 };
+    let nextDirection = { x: 1, y: 0 };
+    let food = { x: 5, y: 5 };
+    let gameLoop = null;
+    let level = 1;
+    let starsCollected = 0;
+    let levelProgress = 0;
+    let lives = 3;
+    let quizStars = 0;
+    let soundOn = true;
+    let pausedForQuestion = false;
+    let usedQuestions = [];
+
+    const correctSound = document.getElementById('correctSound');
+    const wrongSound = document.getElementById('wrongSound');
+    const clapSound = document.getElementById('clapSound');
+
+    function playSound(audio) {
+      if (!soundOn) return;
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
+    }
+
+    function toggleSound() {
+      soundOn = !soundOn;
+      document.getElementById('soundBtn').textContent = soundOn ? '🔊 Sound' : '🔇 Sound';
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function startGame() {
+      level = 1;
+      starsCollected = 0;
+      levelProgress = 0;
+      lives = 3;
+      quizStars = 0;
+      pausedForQuestion = false;
+      usedQuestions = [];
+      resetSnake();
+      spawnFood();
+      showScreen('gameScreen');
+      updateHud();
+      startLoop();
+    }
+
+    function resetSnake() {
+      snake = [{ x: 10, y: 10 }];
+      direction = { x: 1, y: 0 };
+      nextDirection = { x: 1, y: 0 };
+    }
+
+    function startLoop() {
+      clearInterval(gameLoop);
+      gameLoop = setInterval(gameStep, levelSpeeds[level - 1]);
+    }
+
+    function gameStep() {
+      if (pausedForQuestion) return;
+
+      direction = nextDirection;
+      const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+
+      if (head.x < 0 || head.y < 0 || head.x >= tileCount || head.y >= tileCount || snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+        lives -= 1;
+        playSound(wrongSound);
+        if (lives <= 0) {
+          endGame();
+          return;
+        }
+        resetSnake();
+        updateHud();
+        drawGame();
+        return;
+      }
+
+      snake.unshift(head);
+
+      if (head.x === food.x && head.y === food.y) {
+        starsCollected += 1;
+        levelProgress += 1;
+        playSound(correctSound);
+        spawnFood();
+        if (levelProgress >= levelTargets[level - 1]) {
+          clearLevel();
+          return;
+        }
+      } else {
+        snake.pop();
+      }
+
+      updateHud();
+      drawGame();
+    }
+
+    function clearLevel() {
+      levelProgress = 0;
+      if (level % 3 === 0) {
+        pausedForQuestion = true;
+        clearInterval(gameLoop);
+        showQuestion();
+        return;
+      }
+
+      if (level >= 9) {
+        endGame(true);
+        return;
+      }
+
+      level += 1;
+      resetSnake();
+      spawnFood();
+      updateHud();
+      startLoop();
+    }
+
+    function spawnFood() {
+      do {
+        food = {
+          x: Math.floor(Math.random() * tileCount),
+          y: Math.floor(Math.random() * tileCount)
+        };
+      } while (snake.some(seg => seg.x === food.x && seg.y === food.y));
+    }
+
+    function drawGame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let y = 0; y < tileCount; y++) {
+        for (let x = 0; x < tileCount; x++) {
+          ctx.fillStyle = (x + y) % 2 === 0 ? '#f1f8e9' : '#e3f2fd';
+          ctx.fillRect(x * gridSize, y * gridSize, gridSize, gridSize);
+        }
+      }
+
+      ctx.fillStyle = '#ffca28';
+      ctx.beginPath();
+      const fx = food.x * gridSize + gridSize / 2;
+      const fy = food.y * gridSize + gridSize / 2;
+      ctx.arc(fx, fy, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff59d';
+      ctx.beginPath();
+      ctx.arc(fx - 2, fy - 2, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      snake.forEach((seg, index) => {
+        ctx.fillStyle = index === 0 ? '#7b2cbf' : '#42a5f5';
+        ctx.fillRect(seg.x * gridSize + 2, seg.y * gridSize + 2, gridSize - 4, gridSize - 4);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(seg.x * gridSize + 2, seg.y * gridSize + 2, gridSize - 4, gridSize - 4);
+      });
+
+      const head = snake[0];
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(head.x * gridSize + 7, head.y * gridSize + 8, 2, 0, Math.PI * 2);
+      ctx.arc(head.x * gridSize + 14, head.y * gridSize + 8, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function changeDirection(dir) {
+      if (dir === 'up' && direction.y !== 1) nextDirection = { x: 0, y: -1 };
+      if (dir === 'down' && direction.y !== -1) nextDirection = { x: 0, y: 1 };
+      if (dir === 'left' && direction.x !== 1) nextDirection = { x: -1, y: 0 };
+      if (dir === 'right' && direction.x !== -1) nextDirection = { x: 1, y: 0 };
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowUp') changeDirection('up');
+      if (e.key === 'ArrowDown') changeDirection('down');
+      if (e.key === 'ArrowLeft') changeDirection('left');
+      if (e.key === 'ArrowRight') changeDirection('right');
+    });
+
+    function updateHud() {
+      document.getElementById('levelNum').textContent = level;
+      document.getElementById('starCount').textContent = starsCollected;
+      document.getElementById('snakeLength').textContent = snake.length;
+      document.getElementById('lives').textContent = lives;
+      document.getElementById('quizStars').textContent = quizStars;
+      document.getElementById('levelGoalText').textContent = 'Collect ' + levelTargets[level - 1] + ' stars to clear Level ' + level + '. Avoid the wall and your own trail.';
+    }
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function showQuestion() {
+      const pool = questionBank.filter((_, i) => !usedQuestions.includes(i));
+      const chosenIndex = questionBank.indexOf(pool[Math.floor(Math.random() * pool.length)]);
+      usedQuestions.push(chosenIndex);
+      const qObj = questionBank[chosenIndex];
+      const options = shuffle(qObj.options);
+
+      document.getElementById('questionText').textContent = qObj.q;
+      document.getElementById('questionFeedback').textContent = '';
+      const optionBox = document.getElementById('optionBox');
+      optionBox.innerHTML = '';
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt;
+        btn.onclick = () => handleQuestionAnswer(opt, qObj);
+        optionBox.appendChild(btn);
+      });
+      document.getElementById('questionOverlay').classList.add('active');
+    }
+
+    function handleQuestionAnswer(selected, qObj) {
+      const feedback = document.getElementById('questionFeedback');
+      if (selected === qObj.answer) {
+        quizStars += 1;
+        playSound(correctSound);
+        feedback.textContent = 'Correct! ' + qObj.tip;
+        updateHud();
+        setTimeout(() => {
+          document.getElementById('questionOverlay').classList.remove('active');
+          pausedForQuestion = false;
+          if (level >= 9) {
+            endGame(true);
+            return;
+          }
+          level += 1;
+          resetSnake();
+          spawnFood();
+          updateHud();
+          startLoop();
+        }, 1300);
+      } else {
+        playSound(wrongSound);
+        feedback.textContent = 'Try again. Think about the most confident choice.';
+      }
+    }
+
+    function burstConfetti() {
+      const colors = ['#ff595e', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93'];
+      for (let i = 0; i < 42; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random() * 100 + 'vw';
+        c.style.background = colors[Math.floor(Math.random() * colors.length)];
+        c.style.animationDelay = Math.random() * 0.5 + 's';
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 3200);
+      }
+    }
+
+    function endGame(won = false) {
+      clearInterval(gameLoop);
+      showScreen('endScreen');
+      document.getElementById('finalLevels').textContent = won ? 9 : Math.max(1, level - (pausedForQuestion ? 0 : 0));
+      document.getElementById('finalQuizStars').textContent = quizStars;
+      const title = document.getElementById('finalTitle');
+      const message = document.getElementById('finalMessage');
+      const stars = document.getElementById('finalStars');
+
+      if (won || quizStars === 3) {
+        title.textContent = 'Amazing confidence!';
+        message.textContent = 'You stayed focused, kept trying, and showed the spirit of self-confidence.';
+        stars.textContent = '🌟🌟🌟';
+        burstConfetti();
+        playSound(clapSound);
+      } else if (level >= 5 || quizStars >= 1) {
+        title.textContent = 'Great going!';
+        message.textContent = 'You are building confidence step by step. Try again to reach all 9 levels.';
+        stars.textContent = '🌟🌟';
+      } else {
+        title.textContent = 'Keep trying!';
+        message.textContent = 'Self-confidence grows when you practise, learn, and do not give up.';
+        stars.textContent = '🌟';
+      }
+    }
+
+    window.addEventListener('load', () => {
+      drawGame();
+      setTimeout(() => showScreen('startScreen'), 3000);
+    });
+  </script>
+</body>
+</html>
