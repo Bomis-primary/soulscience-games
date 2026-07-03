@@ -112,11 +112,7 @@
     }
     .panel h2 { margin: 0 0 12px; color: #ef476f; font-size: 30px; }
     .panel p { font-size: 18px; line-height: 1.45; }
-    .tips {
-      margin-top: 14px;
-      display: grid;
-      gap: 10px;
-    }
+    .tips { margin-top: 14px; display: grid; gap: 10px; }
     .tip {
       background: #fdf3ff;
       border-left: 8px solid #ba68c8;
@@ -132,22 +128,11 @@
       justify-content: center;
       margin-top: 16px;
     }
-    .ctrl {
-      width: 64px; height: 64px;
-      border-radius: 18px;
-      font-size: 26px;
-      padding: 0;
-    }
+    .ctrl { width: 64px; height: 64px; border-radius: 18px; font-size: 26px; padding: 0; }
     .ctrl.blank { visibility: hidden; }
     .question-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(35, 35, 55, 0.7);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-      padding: 16px;
+      position: fixed; inset: 0; background: rgba(35, 35, 55, 0.7);
+      display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;
     }
     .question-overlay.active { display: flex; }
     .question-card {
@@ -161,46 +146,18 @@
     .question-card p { font-size: 22px; line-height: 1.45; margin-bottom: 14px; }
     .options { display: grid; gap: 10px; }
     .option-btn {
-      width: 100%;
-      text-align: left;
-      background: #eef7ff;
-      color: #17324d;
-      box-shadow: 0 4px 0 #9ec5f8;
-      border-radius: 16px;
-      font-size: 18px;
+      width: 100%; text-align: left; background: #eef7ff; color: #17324d;
+      box-shadow: 0 4px 0 #9ec5f8; border-radius: 16px; font-size: 18px;
     }
-    .feedback {
-      min-height: 42px;
-      margin-top: 12px;
-      font-size: 18px;
-      font-weight: 700;
-    }
+    .feedback { min-height: 42px; margin-top: 12px; font-size: 18px; font-weight: 700; }
     .final-title {
-      text-align: center;
-      font-size: clamp(30px, 5vw, 56px);
-      color: #2e7d32;
-      margin-bottom: 10px;
+      text-align: center; font-size: clamp(30px, 5vw, 56px); color: #2e7d32; margin-bottom: 10px;
     }
-    .final-text, .score-text {
-      text-align: center;
-      font-size: 21px;
-      line-height: 1.5;
-      margin-bottom: 14px;
-    }
+    .final-text, .score-text { text-align: center; font-size: 21px; line-height: 1.5; margin-bottom: 14px; }
     .stars { text-align: center; font-size: 50px; margin: 10px 0 18px; }
-    .confetti {
-      position: fixed;
-      top: -20px;
-      width: 12px;
-      height: 18px;
-      z-index: 1100;
-      animation: fall 3s linear forwards;
-    }
+    .confetti { position: fixed; top: -20px; width: 12px; height: 18px; z-index: 1100; animation: fall 3s linear forwards; }
     @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
-    @media (max-width: 960px) {
-      .main-grid { grid-template-columns: 1fr; }
-      .hud { grid-template-columns: repeat(2, 1fr); }
-    }
+    @media (max-width: 960px) { .main-grid { grid-template-columns: 1fr; } .hud { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 560px) {
       .screen { padding: 10px; }
       .card, .panel, .question-card { padding: 14px; border-radius: 22px; }
@@ -299,47 +256,16 @@
     const ctx = canvas.getContext('2d');
     const gridSize = 21;
     const tileCount = 20;
-
     const levelTargets = [4, 5, 5, 6, 6, 7, 7, 8, 8];
     const levelSpeeds = [170, 160, 150, 140, 132, 124, 116, 108, 100];
 
     const questionBank = [
-      {
-        q: 'You feel nervous before answering in class. What is the most confident thing to do?',
-        options: ['Stay silent forever', 'Try answering and do your best', 'Laugh at others first'],
-        answer: 'Try answering and do your best',
-        tip: 'Self-confidence grows when you try, even if you feel nervous.'
-      },
-      {
-        q: 'Your teacher gives you feedback on your work. What should you do?',
-        options: ['Treat it as help to improve', 'Get upset and stop trying', 'Ignore everything'],
-        answer: 'Treat it as help to improve',
-        tip: 'The chapter says feedback can be an opportunity to improve.'
-      },
-      {
-        q: 'What can help build self-confidence every day?',
-        options: ['Self-care and practice', 'Giving up quickly', 'Comparing yourself with everyone'],
-        answer: 'Self-care and practice',
-        tip: 'Self-care, effort, and practice support confidence.'
-      },
-      {
-        q: 'If a task feels difficult, a self-confident student will...',
-        options: ['Keep trying with determination', 'Refuse to begin', 'Say “I can never do this”'],
-        answer: 'Keep trying with determination',
-        tip: 'Confidence means not giving up when challenges appear.'
-      },
-      {
-        q: 'Asking for help from a teacher or friend is...',
-        options: ['A sign of weakness', 'A sign of strength', 'Something to avoid always'],
-        answer: 'A sign of strength',
-        tip: 'The chapter clearly says asking for help is a sign of strength.'
-      },
-      {
-        q: 'Which thought sounds most self-confident?',
-        options: ['I am unique and capable', 'I must be perfect', 'I should never try new things'],
-        answer: 'I am unique and capable',
-        tip: 'Confidence is about faith in your abilities, not perfection.'
-      }
+      { q: 'You feel nervous before answering in class. What is the most confident thing to do?', options: ['Stay silent forever', 'Try answering and do your best', 'Laugh at others first'], answer: 'Try answering and do your best', tip: 'Self-confidence grows when you try, even if you feel nervous.' },
+      { q: 'Your teacher gives you feedback on your work. What should you do?', options: ['Treat it as help to improve', 'Get upset and stop trying', 'Ignore everything'], answer: 'Treat it as help to improve', tip: 'The chapter says feedback can be an opportunity to improve.' },
+      { q: 'What can help build self-confidence every day?', options: ['Self-care and practice', 'Giving up quickly', 'Comparing yourself with everyone'], answer: 'Self-care and practice', tip: 'Self-care, effort, and practice support confidence.' },
+      { q: 'If a task feels difficult, a self-confident student will...', options: ['Keep trying with determination', 'Refuse to begin', 'Say “I can never do this”'], answer: 'Keep trying with determination', tip: 'Confidence means not giving up when challenges appear.' },
+      { q: 'Asking for help from a teacher or friend is...', options: ['A sign of weakness', 'A sign of strength', 'Something to avoid always'], answer: 'A sign of strength', tip: 'The chapter clearly says asking for help is a sign of strength.' },
+      { q: 'Which thought sounds most self-confident?', options: ['I am unique and capable', 'I must be perfect', 'I should never try new things'], answer: 'I am unique and capable', tip: 'Confidence is about faith in your abilities, not perfection.' }
     ];
 
     let snake = [];
@@ -404,7 +330,6 @@
 
     function gameStep() {
       if (pausedForQuestion) return;
-
       direction = nextDirection;
       const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
@@ -540,8 +465,8 @@
     }
 
     function showQuestion() {
-      const pool = questionBank.filter((_, i) => !usedQuestions.includes(i));
-      const chosenIndex = questionBank.indexOf(pool[Math.floor(Math.random() * pool.length)]);
+      const available = questionBank.map((_, i) => i).filter(i => !usedQuestions.includes(i));
+      const chosenIndex = available[Math.floor(Math.random() * available.length)];
       usedQuestions.push(chosenIndex);
       const qObj = questionBank[chosenIndex];
       const options = shuffle(qObj.options);
@@ -602,7 +527,7 @@
     function endGame(won = false) {
       clearInterval(gameLoop);
       showScreen('endScreen');
-      document.getElementById('finalLevels').textContent = won ? 9 : Math.max(1, level - (pausedForQuestion ? 0 : 0));
+      document.getElementById('finalLevels').textContent = won ? 9 : level;
       document.getElementById('finalQuizStars').textContent = quizStars;
       const title = document.getElementById('finalTitle');
       const message = document.getElementById('finalMessage');
