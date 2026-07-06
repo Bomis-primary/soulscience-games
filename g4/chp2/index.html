@@ -182,18 +182,18 @@
 </head>
 <body>
   <div id="splashScreen" class="screen active">
-    <img id="innovineLogo" src="./assets/innovine-logo.jpg" alt="Innovine Solutions logo" />
+    <img id="innovineLogo" src="./assets/innovine-logo.png" alt="Innovine Solutions logo" />
     <div class="splash-text">Loading Confidence Snake Challenge...</div>
   </div>
 
   <div id="startScreen" class="screen">
     <div class="card">
       <h1>Confidence Snake Challenge</h1>
-      <p class="subtitle">Guide the confidence snake, collect shining stars, clear levels, and unlock self-confidence reward questions every 3 levels.</p>
+      <p class="subtitle">Guide the confidence snake, collect shining stars, clear levels, and unlock self-confidence reward questions every 3 stars eaten.</p>
       <div class="pill-row">
         <div class="pill">✨ Grade 4 Chapter 2</div>
         <div class="pill">🐍 Easy-medium gameplay</div>
-        <div class="pill">🎯 Quiz reward after Levels 3, 6, and 9</div>
+        <div class="pill">🎯 Quiz reward after every 3 stars</div>
       </div>
       <div class="btn-row">
         <button onclick="startGame()">▶ Start Game</button>
@@ -230,7 +230,7 @@
         <div class="tips">
           <div class="tip">🌟 Every level gets a little faster.</div>
           <div class="tip">💪 Self-confidence means believing in your abilities and facing challenges with a positive mindset.</div>
-          <div class="tip">🧠 Reward questions appear after every 3 levels.</div>
+          <div class="tip">🧠 Reward questions appear after every 3 stars you collect.</div>
           <div class="tip">📱 Use arrow keys on desktop or the on-screen buttons on mobile.</div>
         </div>
       </div>
@@ -376,6 +376,16 @@
         levelProgress += 1;
         playSound(correctSound);
         spawnFood();
+        updateHud();
+        drawGame();
+
+        if (starsCollected % 3 === 0) {
+          pausedForQuestion = true;
+          clearInterval(gameLoop);
+          showQuestion();
+          return;
+        }
+
         if (levelProgress >= levelTargets[level - 1]) {
           clearLevel();
           return;
@@ -390,12 +400,6 @@
 
     function clearLevel() {
       levelProgress = 0;
-      if (level % 3 === 0) {
-        pausedForQuestion = true;
-        clearInterval(gameLoop);
-        showQuestion();
-        return;
-      }
 
       if (level >= 9) {
         endGame(true);
@@ -521,15 +525,12 @@
         setTimeout(() => {
           document.getElementById('questionOverlay').classList.remove('active');
           pausedForQuestion = false;
-          if (level >= 9) {
-            endGame(true);
+
+          if (levelProgress >= levelTargets[level - 1]) {
+            clearLevel();
             return;
           }
-          level += 1;
-          resetSnake();
-          spawnFood();
-          updateHud();
-          drawGame();
+
           startLoop();
         }, 1300);
       } else {
@@ -560,7 +561,7 @@
       const message = document.getElementById('finalMessage');
       const stars = document.getElementById('finalStars');
 
-      if (won || quizStars === 3) {
+      if (won || quizStars >= 3) {
         title.textContent = 'Amazing confidence!';
         message.textContent = 'You stayed focused, kept trying, and showed the spirit of self-confidence.';
         stars.textContent = '🌟🌟🌟';
