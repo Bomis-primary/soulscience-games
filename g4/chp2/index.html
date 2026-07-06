@@ -14,15 +14,24 @@
       min-height: 100vh;
       overflow-x: hidden;
     }
+    button, input, textarea, select { font: inherit; }
     .screen { display: none; min-height: 100vh; padding: 16px; }
     .screen.active { display: flex; }
     #splashScreen {
       position: fixed; inset: 0; z-index: 9999; background: #ffffff;
-      align-items: center; justify-content: center;
+      align-items: center; justify-content: center; flex-direction: column; gap: 16px;
     }
     #splashScreen img {
       width: min(78vw, 420px);
+      max-width: 100%;
+      height: auto;
       animation: bob 1.6s ease-in-out infinite;
+    }
+    .splash-text {
+      font-size: clamp(18px, 2.6vw, 26px);
+      font-weight: 700;
+      color: #243b53;
+      text-align: center;
     }
     @keyframes bob { 50% { transform: translateY(-10px); } }
     #startScreen, #endScreen {
@@ -67,6 +76,7 @@
       color: #4a3500;
       box-shadow: 0 5px 0 #d39e00;
       transition: transform 0.12s ease;
+      min-height: 44px;
     }
     button:active { transform: translateY(3px); box-shadow: 0 2px 0 #d39e00; }
     #gameScreen.active { display: block; }
@@ -109,6 +119,7 @@
       border: 6px solid #90caf9;
       display: block;
       margin: 0 auto;
+      touch-action: manipulation;
     }
     .panel h2 { margin: 0 0 12px; color: #ef476f; font-size: 30px; }
     .panel p { font-size: 18px; line-height: 1.45; }
@@ -171,7 +182,8 @@
 </head>
 <body>
   <div id="splashScreen" class="screen active">
-    <img src="./assets/innovine-logo.png" alt="Innovine Solutions logo" />
+    <img id="innovineLogo" src="./assets/innovine-logo.jpg" alt="Innovine Solutions logo" />
+    <div class="splash-text">Loading Confidence Snake Challenge...</div>
   </div>
 
   <div id="startScreen" class="screen">
@@ -281,10 +293,12 @@
     let soundOn = true;
     let pausedForQuestion = false;
     let usedQuestions = [];
+    let splashDone = false;
 
     const correctSound = document.getElementById('correctSound');
     const wrongSound = document.getElementById('wrongSound');
     const clapSound = document.getElementById('clapSound');
+    const innovineLogo = document.getElementById('innovineLogo');
 
     function playSound(audio) {
       if (!soundOn) return;
@@ -302,6 +316,14 @@
       document.getElementById(id).classList.add('active');
     }
 
+    function hideSplashAndShowStart() {
+      if (splashDone) return;
+      splashDone = true;
+      showScreen('startScreen');
+    }
+
+    innovineLogo.addEventListener('error', hideSplashAndShowStart);
+
     function startGame() {
       level = 1;
       starsCollected = 0;
@@ -314,6 +336,7 @@
       spawnFood();
       showScreen('gameScreen');
       updateHud();
+      drawGame();
       startLoop();
     }
 
@@ -383,6 +406,7 @@
       resetSnake();
       spawnFood();
       updateHud();
+      drawGame();
       startLoop();
     }
 
@@ -425,11 +449,13 @@
       });
 
       const head = snake[0];
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(head.x * gridSize + 7, head.y * gridSize + 8, 2, 0, Math.PI * 2);
-      ctx.arc(head.x * gridSize + 14, head.y * gridSize + 8, 2, 0, Math.PI * 2);
-      ctx.fill();
+      if (head) {
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(head.x * gridSize + 7, head.y * gridSize + 8, 2, 0, Math.PI * 2);
+        ctx.arc(head.x * gridSize + 14, head.y * gridSize + 8, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
     function changeDirection(dir) {
@@ -503,6 +529,7 @@
           resetSnake();
           spawnFood();
           updateHud();
+          drawGame();
           startLoop();
         }, 1300);
       } else {
@@ -527,7 +554,7 @@
     function endGame(won = false) {
       clearInterval(gameLoop);
       showScreen('endScreen');
-      document.getElementById('finalLevels').textContent = won ? 9 : level;
+      document.getElementById('finalLevels').textContent = won ? 9 : Math.min(level, 9);
       document.getElementById('finalQuizStars').textContent = quizStars;
       const title = document.getElementById('finalTitle');
       const message = document.getElementById('finalMessage');
@@ -551,8 +578,11 @@
     }
 
     window.addEventListener('load', () => {
+      resetSnake();
+      spawnFood();
+      updateHud();
       drawGame();
-      setTimeout(() => showScreen('startScreen'), 3000);
+      setTimeout(hideSplashAndShowStart, 2500);
     });
   </script>
 </body>
