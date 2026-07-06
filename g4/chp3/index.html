@@ -488,11 +488,11 @@
           <div>
             <div class="eyebrow">Compassion chapter game</div>
             <h1>Catch kind choices and grow a compassionate heart.</h1>
-            <p class="lead">Move the basket, collect helpful actions, avoid unkind choices, and answer reward questions after Levels 3, 6, and 9.</p>
+            <p class="lead">Move the basket, collect helpful actions, avoid unkind choices, and answer reward questions after every 3 good things caught in the basket.</p>
             <div class="pill-row">
               <div class="pill">9 short levels</div>
               <div class="pill">Arrow keys + touch buttons</div>
-              <div class="pill">Chapter 3 compassion quiz rewards</div>
+              <div class="pill">Quiz rewards every 3 good catches</div>
             </div>
             <div class="hero-actions">
               <button class="action-btn primary" type="button" onclick="startGame()">Start kindness catcher</button>
@@ -516,7 +516,7 @@
           <div class="points">
             <div class="point"><div class="mini-badge">💗</div><div><strong>Catch kindness</strong><span>Collect hearts, helping hands, kind words, and empathy tokens to score points.</span></div></div>
             <div class="point"><div class="mini-badge">⚠️</div><div><strong>Avoid hurtful actions</strong><span>Do not catch teasing, ignoring, pushing, or unfair choices, or you lose a life.</span></div></div>
-            <div class="point"><div class="mini-badge">🧠</div><div><strong>Quiz rewards</strong><span>After every 3 levels, answer a compassion question from the chapter.</span></div></div>
+            <div class="point"><div class="mini-badge">🧠</div><div><strong>Quiz rewards</strong><span>After every 3 good things caught, answer a compassion question from the chapter.</span></div></div>
           </div>
         </section>
         <aside class="panel">
@@ -557,7 +557,7 @@
             <div class="tip-card">Use left and right arrow keys on desktop.</div>
             <div class="tip-card">Tap the move buttons on mobile.</div>
             <div class="tip-card">The basket moves faster as levels rise.</div>
-            <div class="tip-card">Quiz questions appear after Levels 3, 6, and 9.</div>
+            <div class="tip-card">Quiz questions appear after every 3 good things caught.</div>
           </div>
         </aside>
       </div>
@@ -672,9 +672,22 @@
     let usedQuestions = [];
     let spawnGap = levelSpeeds[0];
     let gameActive = false;
+    let goodCatchCount = 0;
 
     const feedbackBox = document.getElementById('feedbackBox');
+    const splashScreen = document.getElementById('splashScreen');
+    const innovineLogo = document.getElementById('innovineLogo');
 
+    function hideSplash() {
+      splashScreen.classList.remove('active');
+    }
+
+    innovineLogo.addEventListener('error', hideSplash);
+    window.addEventListener('load', () => {
+      setTimeout(hideSplash, 2200);
+    });
+
+    let audioContext = null;
     function tone(audioCtx, freq, duration, type, volume) {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
@@ -688,7 +701,6 @@
       osc.stop(audioCtx.currentTime + duration);
     }
 
-    let audioContext = null;
     function playToneSequence(kind) {
       if (!soundOn) return;
       if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -731,6 +743,7 @@
 
     function startGame() {
       level = 1;
+      goodCatchCount = 0;
       score = 0;
       levelScore = 0;
       lives = 3;
@@ -921,7 +934,14 @@
         if (item.good) {
           score += 1;
           levelScore += 1;
+          goodCatchCount += 1;
           playToneSequence('good');
+          if (goodCatchCount % 3 === 0) {
+            updateHud();
+            paused = true;
+            showQuestion();
+            return;
+          }
           if (levelScore >= levelTargets[level - 1]) {
             clearLevel();
             return;
@@ -942,11 +962,6 @@
       levelScore = 0;
       fallingItems = [];
       updateHud();
-      if (level % 3 === 0) {
-        paused = true;
-        showQuestion();
-        return;
-      }
       if (level >= 9) {
         endGame(true);
         return;
@@ -1007,13 +1022,10 @@
           document.getElementById('questionOverlay').setAttribute('aria-hidden', 'true');
           paused = false;
           document.getElementById('pauseBtn').textContent = 'Pause';
-          if (level >= 9) {
-            endGame(true);
+          if (levelScore >= levelTargets[level - 1]) {
+            clearLevel();
             return;
           }
-          level += 1;
-          spawnGap = levelSpeeds[level - 1];
-          updateHud();
           startLevelSystems();
         }, 1400);
       } else {
@@ -1056,25 +1068,41 @@
         finalStars.textContent = '⭐ ⭐';
         finalMessage.textContent = 'You made many caring choices. Play again and collect even more kindness.';
       } else {
-        finalTitle.textContent = 'Keep practising kindness';
+        finalTitle.textContent = 'Keep practicing kindness';
         finalStars.textContent = '⭐';
-        finalMessage.textContent = 'Compassion gets stronger each time we listen, help, and choose kind actions.';
+        finalMessage.textContent = 'Every kind action matters. Try again and see how many kind choices you can catch.';
       }
     }
 
-    document.addEventListener('keydown', event => {
-      if (!document.getElementById('gameScreen').classList.contains('active')) return;
-      if (event.key === 'ArrowLeft') moveBasket(-1);
-      if (event.key === 'ArrowRight') moveBasket(1);
-      if (event.key.toLowerCase() === 'p') pauseResume();
+    function resetGameState() {
+      basket.x = canvas.width / 2 - basket.w / 2;
+      fallingItems = [];
+      level = 1;
+      score = 0;
+      levelScore = 0;
+      lives = 3;
+      quizStars = 0;
+      goodCatchCount = 0;
+      usedQuestions = [];
+      paused = false;
+      gameActive = false;
+      updateHud();
+      draw();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft') moveBasket(-1);
+      if (e.key === 'ArrowRight') moveBasket(1);
+      if (e.key === ' ' && gameActive) pauseResume();
     });
 
-    draw();
-    window.startGame = startGame;
-    window.toggleSound = toggleSound;
-    window.pauseResume = pauseResume;
-    window.moveBasket = moveBasket;
-    window.showStart = showStart;
+    window.addEventListener('load', () => {
+      resetGameState();
+      setTimeout(() => {
+        hideSplash();
+        document.getElementById('startScreen').classList.add('active');
+      }, 2200);
+    });
   </script>
 </body>
 </html>
