@@ -1,49 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Donation Mission</title>
-  <style>
-    :root{--bg1:#eef8ff;--bg2:#fff8ef;--card:#fff;--text:#20303b;--muted:#5b6975;--primary:#2f8f83;--primary2:#246b63;--good:#2e7d32;--bad:#bf4b63;--gold:#f2b705;--border:rgba(32,48,59,.12);--shadow:0 12px 30px rgba(32,48,59,.12)}
-    *{box-sizing:border-box} html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text);overflow-x:hidden}
-    button{font:inherit;cursor:pointer} .screen{display:none;min-height:100vh}.screen.active{display:grid}.center{place-items:center;padding:16px}
-    .wrap{width:min(1120px,calc(100% - 20px));margin:0 auto} .card{background:var(--card);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow)}
-    #splashScreen{position:fixed;inset:0;z-index:1000;background:#fff;place-items:center;padding:16px} #splashScreen .box{display:grid;gap:14px;justify-items:center;text-align:center}
-    #splashScreen img{width:min(340px,72vw);height:auto;filter:drop-shadow(0 10px 20px rgba(0,0,0,.12))} .splash-text{font-size:clamp(18px,2.6vw,28px);font-weight:800;color:var(--primary2)}
-    .hero{padding:22px 0 18px}.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:center;padding:18px}
-    h1,h2{margin:0;line-height:1.05} h1{font-size:clamp(34px,5vw,60px);color:var(--primary2)} h2{font-size:clamp(24px,3vw,36px)}
-    .lead{font-size:clamp(18px,2.3vw,23px);color:var(--muted);line-height:1.5;margin:14px 0 18px;max-width:56ch}
-    .pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.pill{padding:10px 14px;border-radius:999px;background:#edf8f6;border:1px solid var(--border);font-weight:700}
-    .actions{display:flex;flex-wrap:wrap;gap:10px}.btn{border:none;border-radius:16px;padding:14px 20px;font-weight:800;min-height:46px}.primary{background:var(--primary);color:#fff}.ghost{background:#f2f5f8;color:var(--text);border:1px solid var(--border)}
-    .art{min-height:320px;position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(180deg,#dbf0ff,#fff4d9)}
-    .cloud{position:absolute;background:rgba(255,255,255,.92);border-radius:999px}.cloud:before,.cloud:after{content:'';position:absolute;background:inherit;border-radius:999px}
-    .cloud.one{width:110px;height:42px;top:34px;left:30px}.cloud.one:before{width:42px;height:42px;left:12px;top:-18px}.cloud.one:after{width:54px;height:54px;right:12px;top:-26px}
-    .cloud.two{width:130px;height:48px;top:92px;right:24px}.cloud.two:before{width:46px;height:46px;left:18px;top:-18px}.cloud.two:after{width:58px;height:58px;right:18px;top:-28px}
-    .truck{position:absolute;left:50%;top:50%;transform:translate(-50%,-48%);font-size:92px;filter:drop-shadow(0 10px 14px rgba(0,0,0,.12))}
-    .note{position:absolute;left:22px;bottom:20px;right:22px;background:rgba(255,255,255,.88);border:1px solid var(--border);border-radius:18px;padding:12px 14px;font-size:16px;line-height:1.45;color:var(--muted)}
-    .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;padding:0 0 22px}.panel{padding:18px}
-    .hud{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px}.hud-box{padding:12px;border-radius:18px;background:#fff;border:1px solid var(--border);text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.06)}
-    .hud-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.hud-val{display:block;font-size:22px;font-weight:800;margin-top:2px}
-    .mission{display:grid;grid-template-columns:1fr;gap:12px}
-    .bin-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
-    .bin{border:1px solid var(--border);border-radius:18px;padding:12px;text-align:center;background:#f8fbfe;min-height:112px;display:grid;place-items:center;gap:8px;font-weight:800}
-    .bin .emoji{font-size:34px}.bin small{display:block;color:var(--muted);font-weight:700;line-height:1.2}
-    .tray{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.item{border:1px solid var(--border);border-radius:18px;padding:12px;background:#fff;display:flex;align-items:center;gap:12px;min-height:72px}
-    .item .emoji{font-size:30px;min-width:36px;text-align:center}.item .txt{font-weight:700;line-height:1.2}.item.dragging{opacity:.45;transform:scale(.98)}
-    canvas{width:100%;aspect-ratio:4/3;border-radius:24px;background:linear-gradient(180deg,#f7fbff,#fffef5);border:1px solid var(--border);display:block;touch-action:manipulation}
-    .controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}.ctrl{border:none;border-radius:999px;padding:12px 16px;min-width:120px;background:#eef7f5;font-weight:800;border:1px solid var(--border)}
-    .tips{display:grid;gap:10px;margin-top:14px}.tip{background:#f7fafc;border:1px solid var(--border);border-radius:16px;padding:12px 14px;color:var(--muted);line-height:1.45}
-    .overlay{position:fixed;inset:0;z-index:900;background:rgba(20,30,40,.58);display:none;place-items:center;padding:16px;backdrop-filter:blur(8px)} .overlay.active{display:grid}
-    .dialog{width:min(760px,100%);padding:20px;border-radius:26px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow)}
-    .dialog p{color:var(--muted);line-height:1.5}.options{display:grid;gap:10px;margin-top:14px}.option{border:none;text-align:left;background:#f4f8fb;border:1px solid var(--border);border-radius:16px;padding:12px 14px;font-weight:700;min-height:46px}
-    .feedback{min-height:28px;margin-top:12px;font-weight:800}.good{color:var(--good)}.bad{color:var(--bad)}
-    .result-stars{font-size:44px;margin:10px 0 12px;text-align:center}.result{text-align:center;color:var(--muted);font-size:19px;line-height:1.5}
-    #endScreen .card{padding:22px;width:min(760px,100%)} .maze-hint{font-size:14px;color:var(--muted);text-align:center;margin-top:8px}
-    .banner{background:#edf8f6;border:1px solid var(--border);border-radius:18px;padding:12px 14px;line-height:1.45;color:var(--muted);margin-top:12px}
-    @media (max-width:980px){.hero-grid,.layout{grid-template-columns:1fr}.hud{grid-template-columns:repeat(2,1fr)}.bin-row{grid-template-columns:repeat(2,1fr)}.tray{grid-template-columns:1fr}}
-    @media (max-width:640px){.panel,.card{border-radius:22px;padding:14px}.ctrl{width:100%}.controls{flex-direction:column}}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Donation Mission</title>
+<style>
+:root{--bg1:#eef8ff;--bg2:#fff8ef;--card:#fff;--text:#20303b;--muted:#5b6975;--primary:#2f8f83;--primary2:#246b63;--good:#2e7d32;--bad:#bf4b63;--gold:#f2b705;--border:rgba(32,48,59,.12);--shadow:0 12px 30px rgba(32,48,59,.12)}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text);overflow-x:hidden}
+button{font:inherit;cursor:pointer} .screen{display:none;min-height:100vh}.screen.active{display:grid}.center{place-items:center;padding:16px}
+.wrap{width:min(1120px,calc(100% - 20px));margin:0 auto} .card{background:var(--card);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow)}
+#splashScreen{position:fixed;inset:0;z-index:1000;background:#fff;display:grid;place-items:center;padding:16px} #splashScreen .box{display:grid;gap:14px;justify-items:center;text-align:center}
+#splashScreen img{width:min(340px,72vw);height:auto;filter:drop-shadow(0 10px 20px rgba(0,0,0,.12))} .splash-text{font-size:clamp(18px,2.6vw,28px);font-weight:800;color:var(--primary2)}
+.hero{padding:22px 0 18px}.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:center;padding:18px}
+.layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;padding:0 0 22px}.panel{padding:18px}
+h1,h2{margin:0;line-height:1.05} h1{font-size:clamp(34px,5vw,60px);color:var(--primary2)} h2{font-size:clamp(24px,3vw,36px)}
+.lead{font-size:clamp(18px,2.3vw,23px);color:var(--muted);line-height:1.5;margin:14px 0 18px;max-width:56ch}
+.pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.pill{padding:10px 14px;border-radius:999px;background:#edf8f6;border:1px solid var(--border);font-weight:700}
+.actions{display:flex;flex-wrap:wrap;gap:10px}.btn{border:none;border-radius:16px;padding:14px 20px;font-weight:800;min-height:46px}.primary{background:var(--primary);color:#fff}.ghost{background:#f2f5f8;color:var(--text);border:1px solid var(--border)}
+.art{min-height:320px;position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(180deg,#dbf0ff,#fff4d9)}
+.cloud{position:absolute;background:rgba(255,255,255,.92);border-radius:999px}.cloud:before,.cloud:after{content:'';position:absolute;background:inherit;border-radius:999px}
+.cloud.one{width:110px;height:42px;top:34px;left:30px}.cloud.one:before{width:42px;height:42px;left:12px;top:-18px}.cloud.one:after{width:54px;height:54px;right:12px;top:-26px}
+.cloud.two{width:130px;height:48px;top:92px;right:24px}.cloud.two:before{width:46px;height:46px;left:18px;top:-18px}.cloud.two:after{width:58px;height:58px;right:18px;top:-28px}
+.truck{position:absolute;left:50%;top:50%;transform:translate(-50%,-48%);font-size:92px;filter:drop-shadow(0 10px 14px rgba(0,0,0,.12))}
+.note{position:absolute;left:22px;bottom:20px;right:22px;background:rgba(255,255,255,.88);border:1px solid var(--border);border-radius:18px;padding:12px 14px;font-size:16px;line-height:1.45;color:var(--muted)}
+.hud{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px}.hud-box{padding:12px;border-radius:18px;background:#fff;border:1px solid var(--border);text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.06)}
+.hud-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.hud-val{display:block;font-size:22px;font-weight:800;margin-top:2px}
+.bin-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.bin{border:1px solid var(--border);border-radius:18px;padding:12px;text-align:center;background:#f8fbfe;min-height:112px;display:grid;place-items:center;gap:8px;font-weight:800}
+.bin .emoji{font-size:34px}.bin small{display:block;color:var(--muted);font-weight:700;line-height:1.2}
+.tray{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.item{border:1px solid var(--border);border-radius:18px;padding:12px;background:#fff;display:flex;align-items:center;gap:12px;min-height:72px}
+.item .emoji{font-size:30px;min-width:36px;text-align:center}.item .txt{font-weight:700;line-height:1.2}.item.selected{outline:3px solid var(--primary)}
+canvas{width:100%;aspect-ratio:4/3;border-radius:24px;background:linear-gradient(180deg,#f7fbff,#fffef5);border:1px solid var(--border);display:block;touch-action:manipulation}
+.controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}.ctrl{border:none;border-radius:999px;padding:12px 16px;min-width:120px;background:#eef7f5;font-weight:800;border:1px solid var(--border)}
+.tips{display:grid;gap:10px;margin-top:14px}.tip{background:#f7fafc;border:1px solid var(--border);border-radius:16px;padding:12px 14px;color:var(--muted);line-height:1.45}
+.overlay{position:fixed;inset:0;z-index:900;background:rgba(20,30,40,.58);display:none;place-items:center;padding:16px;backdrop-filter:blur(8px)} .overlay.active{display:grid}
+.dialog{width:min(760px,100%);padding:20px;border-radius:26px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow)}
+.dialog p{color:var(--muted);line-height:1.5}.options{display:grid;gap:10px;margin-top:14px}.option{border:none;text-align:left;background:#f4f8fb;border:1px solid var(--border);border-radius:16px;padding:12px 14px;font-weight:700;min-height:46px}
+.feedback{min-height:28px;margin-top:12px;font-weight:800}.good{color:var(--good)}.bad{color:var(--bad)}
+.result-stars{font-size:44px;margin:10px 0 12px;text-align:center}.result{text-align:center;color:var(--muted);font-size:19px;line-height:1.5}
+#endScreen .card{padding:22px;width:min(760px,100%)} .maze-hint{font-size:14px;color:var(--muted);text-align:center;margin-top:8px}
+.banner{background:#edf8f6;border:1px solid var(--border);border-radius:18px;padding:12px 14px;line-height:1.45;color:var(--muted);margin-top:12px}
+@media (max-width:980px){.hero-grid,.layout{grid-template-columns:1fr}.hud{grid-template-columns:repeat(2,1fr)}.bin-row{grid-template-columns:repeat(2,1fr)}.tray{grid-template-columns:1fr}}
+@media (max-width:640px){.panel,.card{border-radius:22px;padding:14px}.ctrl{width:100%}.controls{flex-direction:column}}
+</style>
 </head>
 <body>
   <section id="splashScreen" class="screen active">
@@ -70,7 +68,8 @@
           </div>
         </div>
         <div class="art" aria-hidden="true">
-          <div class="cloud one"></div><div class="cloud two"></div>
+          <div class="cloud one"></div>
+          <div class="cloud two"></div>
           <div class="truck">🚚</div>
           <div class="note">The game teaches students that generosity means sharing, helping, listening, and donating without expecting anything in return.</div>
         </div>
@@ -79,8 +78,8 @@
         <div class="card panel">
           <h2>How it works</h2>
           <div class="tips">
-            <div class="tip">1. Drag each item into the correct donation bin.</div>
-            <div class="tip">2. Answer short generosity questions after every few correct sorts.</div>
+            <div class="tip">1. Select an item and choose the correct donation bin.</div>
+            <div class="tip">2. Answer short generosity questions after every 3 correct sorts.</div>
             <div class="tip">3. Earn stars and help the community mission succeed.</div>
           </div>
         </div>
@@ -110,15 +109,15 @@
           <canvas id="gameCanvas" width="640" height="480"></canvas>
           <div class="controls">
             <button class="ctrl" onclick="pauseResume()" id="pauseBtn">Pause</button>
-            <button class="ctrl" onclick="nextBag()">Next Bag</button>
-            <button class="ctrl" onclick="dropBag()">Drop Bag</button>
+            <button class="ctrl" onclick="selectNextItem()">Next Item</button>
+            <button class="ctrl" onclick="dropSelected()">Drop Item</button>
           </div>
-          <div class="maze-hint">Use the buttons or drag and drop the items below into the correct bins. After every 3 correct sorts, a reward question appears.</div>
+          <div class="maze-hint">Use the buttons or click an item, then choose a bin. After every 3 correct sorts, a reward question appears.</div>
         </div>
       </div>
       <div class="card panel">
         <h2>Donation bins</h2>
-        <div class="banner" id="missionText">Sort the items into the right place and help the mission truck get ready.</div>
+        <div class="banner" id="missionText">Donation Mission: sort helpful items to complete this level.</div>
         <div class="bin-row" id="binRow"></div>
         <h2 style="margin-top:14px;">Donation items</h2>
         <div class="tray" id="tray"></div>
@@ -154,79 +153,37 @@
     </div>
   </div>
 
-  <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const bins = [
-      {name:'Clothes', emoji:'👕', accepts:'clothes'},
-      {name:'Books', emoji:'📚', accepts:'books'},
-      {name:'Toys', emoji:'🧸', accepts:'toys'},
-      {name:'Food', emoji:'🍎', accepts:'food'}
-    ];
-    const itemPool = [
-      {type:'clothes', label:'Old shirt', emoji:'👕'},
-      {type:'books', label:'Story book', emoji:'📚'},
-      {type:'toys', label:'Toy car', emoji:'🧸'},
-      {type:'food', label:'Rice packet', emoji:'🍚'},
-      {type:'clothes', label:'Warm scarf', emoji:'🧣'},
-      {type:'books', label:'Notebook', emoji:'📓'},
-      {type:'toys', label:'Soft ball', emoji:'⚽'},
-      {type:'food', label:'Fruit box', emoji:'🍌'},
-      {type:'clothes', label:'Jacket', emoji:'🧥'},
-      {type:'books', label:'Picture book', emoji:'📘'},
-      {type:'toys', label:'Puzzle', emoji:'🧩'},
-      {type:'food', label:'Biscuits', emoji:'🍪'}
-    ];
-    const questions = [
-      {q:'What does generosity mean?', options:['Giving and helping without expecting anything back','Keeping everything for yourself','Being rude to others'], answer:'Giving and helping without expecting anything back', tip:'Generosity is selfless giving.'},
-      {q:'Which action shows generosity?', options:['Sharing a snack with a friend','Hiding extra food','Ignoring someone who needs help'], answer:'Sharing a snack with a friend', tip:'Sharing is a generous action.'},
-      {q:'Why is donation helpful?', options:['It can support people in need','It wastes useful things','It makes no difference'], answer:'It can support people in need', tip:'Donations help others live better.'},
-      {q:'What should you do if a classmate forgot lunch?', options:['Offer to share food','Laugh at them','Take their lunch'], answer:'Offer to share food', tip:'Helping someone in need shows kindness.'},
-      {q:'Which is a generous habit?', options:['Listening to a sad friend','Walking away and saying nothing','Keeping all supplies hidden'], answer:'Listening to a sad friend', tip:'Listening kindly can help a lot.'},
-      {q:'Who can be generous?', options:['Only rich people','Anyone','Only adults'], answer:'Anyone', tip:'The chapter says anyone can practise generosity.'}
-    ];
-
-    const splash = document.getElementById('splashScreen');
-    const logo = document.getElementById('innovineLogo');
-    const overlay = document.getElementById('questionOverlay');
-    let audioCtx = null, soundOn = true, splashHidden = false;
-    let gameActive = false, paused = false, usedQuestions = [];
-    let level = 1, score = 0, lives = 3, quizStars = 0, correctInRow = 0, goal = 6;
-    let bagIndex = 0, selectedBin = 0, draggedItem = null;
-    let activeItems = [], collected = [], spawnTimer = null, loopId = null;
-
-    function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
-    function toggleSound(){soundOn=!soundOn;document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off'}
-    function play(kind){if(!soundOn)return;if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const tone=(f,d,t='triangle')=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=t;o.frequency.value=f;o.connect(g);g.connect(audioCtx.destination);g.gain.value=.05;o.start();g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+d);o.stop(audioCtx.currentTime+d)};if(kind==='good'){tone(660,.14);setTimeout(()=>tone(830,.16),70)}else if(kind==='bad'){tone(220,.2,'sawtooth')}else if(kind==='win'){tone(523,.14);setTimeout(()=>tone(659,.14),80);setTimeout(()=>tone(784,.22),160)}}
-    function hideSplash(){if(splashHidden)return;splashHidden=true;splash.classList.remove('active');show('startScreen')}
-    logo.addEventListener('error', hideSplash); window.addEventListener('load', ()=>setTimeout(hideSplash,2200));
-
-    function startGame(){level=1;score=0;lives=3;quizStars=0;correctInRow=0;usedQuestions=[];bagIndex=0;selectedBin=0;paused=false;gameActive=true;document.getElementById('pauseBtn').textContent='Pause';show('gameScreen');setupLevel()}
-    function showStart(){stopLoops();gameActive=false;show('startScreen')}
-    function stopLoops(){if(loopId)cancelAnimationFrame(loopId);if(spawnTimer)clearInterval(spawnTimer);loopId=spawnTimer=null}
-    function setupLevel(){stopLoops();activeItems=[];collected=[];goal=6+Math.min(3,level-1);renderBins();spawnItems();updateHud();renderTray();loopId=requestAnimationFrame(gameLoop);spawnTimer=setInterval(()=>{if(gameActive&&!paused&&Math.random()<.35) addDecoy()},1600)}
-    function updateHud(){document.getElementById('levelNum').textContent=level;document.getElementById('scoreNum').textContent=score;document.getElementById('livesNum').textContent=lives;document.getElementById('goalNum').textContent=goal;document.getElementById('quizStarsNum').textContent=quizStars;document.getElementById('missionText').textContent='Donation Mission: sort ' + goal + ' helpful items to complete this level.'}
-    function renderBins(){const row=document.getElementById('binRow');row.innerHTML='';bins.forEach((b,i)=>{const d=document.createElement('div');d.className='bin';d.dataset.bin=i;d.innerHTML=`<div class="emoji">${b.emoji}</div><div>${b.name}</div><small>Drop here</small>`;d.ondragover=e=>e.preventDefault();d.ondrop=e=>handleDrop(i);row.appendChild(d)})}
-    function spawnItems(){const used=new Set(); while(activeItems.length<4){const item=itemPool[Math.floor(Math.random()*itemPool.length)]; if(used.has(item.label)) continue; used.add(item.label); activeItems.push({...item,id:crypto.randomUUID()})}}
-    function addDecoy(){const decoys=[{type:'wrong',label:'Plastic cup',emoji:'🥤'},{type:'wrong',label:'Broken toy',emoji:'🪀'},{type:'wrong',label:'Old shoes',emoji:'👟'}]; const item=decoys[Math.floor(Math.random()*decoys.length)]; activeItems.push({...item,id:crypto.randomUUID(),decoy:true}) ; renderTray()}
-    function renderTray(){const tray=document.getElementById('tray'); tray.innerHTML=''; activeItems.forEach((it,idx)=>{const div=document.createElement('div');div.className='item';div.draggable=true;div.dataset.idx=idx;div.innerHTML=`<div class="emoji">${it.emoji}</div><div class="txt">${it.label}</div>`;div.ondragstart=e=>{draggedItem=idx;div.classList.add('dragging')};div.ondragend=()=>div.classList.remove('dragging');div.onclick=()=>{bagIndex=idx;selectedBin=(selectedBin+1)%bins.length;};tray.appendChild(div)})}
-    function nextBag(){if(!gameActive)return; bagIndex=(bagIndex+1)%activeItems.length; play('good');}
-    function dropBag(){if(!gameActive||activeItems.length===0)return; handleDrop(selectedBin)}
-    function handleDrop(binIndex){const item=activeItems[bagIndex]; if(!item)return; const ok=bins[binIndex].accepts===item.type; if(ok){score++;correctInRow++;play('good');activeItems.splice(bagIndex,1); if(activeItems.length===0){spawnItems()} renderTray(); if(correctInRow%3===0){paused=true;showQuestion();updateHud();return} if(score>=goal){clearLevel();return}} else {lives--;correctInRow=0;play('bad'); if(lives<=0)return endGame(false)} updateHud();}
-    function clearLevel(){if(level>=6)return endGame(true); level++; correctInRow=0; setupLevel()}
-    function pauseResume(){if(!gameActive)return;paused=!paused;document.getElementById('pauseBtn').textContent=paused?'Resume':'Pause'}
-    function gameLoop(){if(!gameActive)return; draw(); loopId=requestAnimationFrame(gameLoop)}
-    function draw(){ctx.clearRect(0,0,canvas.width,canvas.height); drawBackground(); drawTruck(); drawLabels(); if(paused){ctx.fillStyle='rgba(20,25,35,.36)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#fff';ctx.font='700 34px Arial';ctx.textAlign='center';ctx.fillText('Paused',canvas.width/2,canvas.height/2)}}
-    function drawBackground(){const g=ctx.createLinearGradient(0,0,0,canvas.height);g.addColorStop(0,'#dff2ff');g.addColorStop(1,'#fff8e8');ctx.fillStyle=g;ctx.fillRect(0,0,canvas.width,canvas.height); for(let i=0;i<8;i++){ctx.fillStyle='rgba(255,255,255,.8)';ctx.beginPath();ctx.arc(80+i*75,50+Math.sin(i)*8,18,0,Math.PI*2);ctx.arc(96+i*75,50+Math.sin(i)*8,24,0,Math.PI*2);ctx.arc(115+i*75,52+Math.sin(i)*8,16,0,Math.PI*2);ctx.fill()}}
-    function drawTruck(){ctx.save();ctx.fillStyle='#2f8f83';ctx.fillRect(140,250,360,120);ctx.fillStyle='#246b63';ctx.fillRect(430,280,90,90);ctx.fillStyle='#1d4f49';ctx.beginPath();ctx.arc(220,385,34,0,Math.PI*2);ctx.arc(420,385,34,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.fillRect(170,270,80,45);ctx.fillRect(260,270,80,45);ctx.fillRect(350,270,80,45);ctx.fillStyle='#f2b705';ctx.font='700 20px Arial';ctx.textAlign='center';ctx.fillText('DONATION',320,340);ctx.fillText('MISSION',320,365);ctx.restore()}
-    function drawLabels(){ctx.save();ctx.fillStyle='#20303b';ctx.font='700 18px Arial';ctx.textAlign='left';ctx.fillText('Truck ready for donations',20,30);ctx.font='600 14px Arial';ctx.fillStyle='#5b6975';ctx.fillText('Correct sorts fill the mission meter',20,52);ctx.restore()}
-    function showQuestion(){const idxs=questions.map((_,i)=>i).filter(i=>!usedQuestions.includes(i));const idx=idxs.length?idxs[Math.floor(Math.random()*idxs.length)]:Math.floor(Math.random()*questions.length); if(!usedQuestions.includes(idx))usedQuestions.push(idx); const q=questions[idx]; document.getElementById('questionText').textContent=q.q; const box=document.getElementById('optionBox'); box.innerHTML=''; document.getElementById('questionFeedback').textContent=''; document.getElementById('questionFeedback').className='feedback'; q.options.slice().sort(()=>Math.random()-.5).forEach(opt=>{const b=document.createElement('button');b.className='option';b.textContent=opt;b.onclick=()=>answerQuestion(opt,q);box.appendChild(b)}); overlay.classList.add('active'); overlay.setAttribute('aria-hidden','false')}
-    function answerQuestion(selected,q){const fb=document.getElementById('questionFeedback'); if(selected===q.answer){quizStars++;fb.textContent='Correct! '+q.tip;fb.className='feedback good';play('good');updateHud();setTimeout(()=>{overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');paused=false;document.getElementById('pauseBtn').textContent='Pause'},1000)} else {fb.textContent='Try again. Think about helping others.';fb.className='feedback bad';play('bad')}}
-    function endGame(won){gameActive=false;stopLoops();show('endScreen');document.getElementById('finalScore').textContent=score;document.getElementById('finalQuizStars').textContent=quizStars; if(won||quizStars>=3){document.getElementById('finalTitle').textContent='Donation champion!';document.getElementById('finalStars').textContent='🌟🌟🌟';document.getElementById('finalMessage').textContent='You showed generosity by sorting helpful donations and answering kindly.';play('win')} else {document.getElementById('finalTitle').textContent='Keep helping';document.getElementById('finalStars').textContent='🌟🌟';document.getElementById('finalMessage').textContent='Try again and look for the best donation choices.'}}
-    function resetPlayerLike(){selectedBin=0;bagIndex=0}
-    window.addEventListener('load',()=>{draw();setTimeout(hideSplash,2200)})
-    document.getElementById('tray').addEventListener('click',e=>{const item=e.target.closest('.item'); if(item){bagIndex=parseInt(item.dataset.idx,10)}})
-    canvas.addEventListener('click',()=>{selectedBin=(selectedBin+1)%bins.length})
-  </script>
+<script>
+const canvas=document.getElementById('gameCanvas'),ctx=canvas.getContext('2d');
+const bins=[{name:'Clothes',emoji:'👕',accepts:'clothes'},{name:'Books',emoji:'📚',accepts:'books'},{name:'Toys',emoji:'🧸',accepts:'toys'},{name:'Food',emoji:'🍎',accepts:'food'}];
+const itemPool=[{type:'clothes',label:'Old shirt',emoji:'👕'},{type:'books',label:'Story book',emoji:'📚'},{type:'toys',label:'Toy car',emoji:'🧸'},{type:'food',label:'Rice packet',emoji:'🍚'},{type:'clothes',label:'Warm scarf',emoji:'🧣'},{type:'books',label:'Notebook',emoji:'📓'},{type:'toys',label:'Soft ball',emoji:'⚽'},{type:'food',label:'Fruit box',emoji:'🍌'},{type:'clothes',label:'Jacket',emoji:'🧥'},{type:'books',label:'Picture book',emoji:'📘'},{type:'toys',label:'Puzzle',emoji:'🧩'},{type:'food',label:'Biscuits',emoji:'🍪'}];
+const questions=[{q:'What does generosity mean?',options:['Giving and helping without expecting anything back','Keeping everything for yourself','Being rude to others'],answer:'Giving and helping without expecting anything back',tip:'Generosity is selfless giving.'},{q:'Which action shows generosity?',options:['Sharing a snack with a friend','Hiding extra food','Ignoring someone who needs help'],answer:'Sharing a snack with a friend',tip:'Sharing is a generous action.'},{q:'Why is donation helpful?',options:['It can support people in need','It wastes useful things','It makes no difference'],answer:'It can support people in need',tip:'Donations help others live better.'},{q:'What should you do if a classmate forgot lunch?',options:['Offer to share food','Laugh at them','Take their lunch'],answer:'Offer to share food',tip:'Helping someone in need shows kindness.'},{q:'Which is a generous habit?',options:['Listening to a sad friend','Walking away and saying nothing','Keeping all supplies hidden'],answer:'Listening to a sad friend',tip:'Listening kindly can help a lot.'},{q:'Who can be generous?',options:['Only rich people','Anyone','Only adults'],answer:'Anyone',tip:'The chapter says anyone can practise generosity.'}];
+let audioCtx=null,soundOn=true,splashHidden=false,gameActive=false,paused=false,usedQuestions=[];let level=1,score=0,lives=3,quizStars=0,correctInRow=0,goal=6,selectedItemIndex=0,selectedBinIndex=0,activeItems=[],loopId=null,spawnTimer=null;
+const splash=document.getElementById('splashScreen'),logo=document.getElementById('innovineLogo'),overlay=document.getElementById('questionOverlay');
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function toggleSound(){soundOn=!soundOn;document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off'}
+function play(kind){if(!soundOn)return;if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const tone=(f,d,t='triangle')=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=t;o.frequency.value=f;o.connect(g);g.connect(audioCtx.destination);g.gain.value=.05;o.start();g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+d);o.stop(audioCtx.currentTime+d)};if(kind==='good'){tone(660,.14);setTimeout(()=>tone(830,.16),70)}else if(kind==='bad'){tone(220,.2,'sawtooth')}else if(kind==='win'){tone(523,.14);setTimeout(()=>tone(659,.14),80);setTimeout(()=>tone(784,.22),160)}}
+function hideSplash(){if(splashHidden)return;splashHidden=true;splash.classList.remove('active');show('startScreen')} logo.addEventListener('error',hideSplash); window.addEventListener('load',()=>setTimeout(hideSplash,2200));
+function stopLoops(){if(loopId)cancelAnimationFrame(loopId);if(spawnTimer)clearInterval(spawnTimer);loopId=spawnTimer=null}
+function startGame(){level=1;score=0;lives=3;quizStars=0;correctInRow=0;usedQuestions=[];selectedItemIndex=0;selectedBinIndex=0;paused=false;gameActive=true;document.getElementById('pauseBtn').textContent='Pause';show('gameScreen');setupLevel()}
+function showStart(){stopLoops();gameActive=false;show('startScreen')}
+function setupLevel(){stopLoops();activeItems=[];goal=6+Math.min(3,level-1);renderBins();spawnItems();updateHud();renderTray();draw();loopId=requestAnimationFrame(gameLoop);spawnTimer=setInterval(()=>{if(gameActive&&!paused&&Math.random()<.35)addDecoy()},1600)}
+function updateHud(){document.getElementById('levelNum').textContent=level;document.getElementById('scoreNum').textContent=score;document.getElementById('livesNum').textContent=lives;document.getElementById('goalNum').textContent=goal;document.getElementById('quizStarsNum').textContent=quizStars;document.getElementById('missionText').textContent='Donation Mission: sort ' + goal + ' helpful items to complete this level.'}
+function renderBins(){const row=document.getElementById('binRow');row.innerHTML='';bins.forEach((b,i)=>{const d=document.createElement('div');d.className='bin';d.dataset.bin=i;d.innerHTML=`<div class="emoji">${b.emoji}</div><div>${b.name}</div><small>Drop here</small>`;d.onclick=()=>dropOnBin(i);row.appendChild(d)})}
+function spawnItems(){const used=new Set(); while(activeItems.length<4){const item=itemPool[Math.floor(Math.random()*itemPool.length)]; if(used.has(item.label)) continue; used.add(item.label); activeItems.push({...item,id:crypto.randomUUID()})}}
+function addDecoy(){const decoys=[{type:'wrong',label:'Plastic cup',emoji:'🥤'},{type:'wrong',label:'Broken toy',emoji:'🪀'},{type:'wrong',label:'Old shoes',emoji:'👟'}]; const item=decoys[Math.floor(Math.random()*decoys.length)]; activeItems.push({...item,id:crypto.randomUUID(),decoy:true}); renderTray()}
+function renderTray(){const tray=document.getElementById('tray');tray.innerHTML='';activeItems.forEach((it,idx)=>{const div=document.createElement('div');div.className='item'+(idx===selectedItemIndex?' selected':'');div.innerHTML=`<div class="emoji">${it.emoji}</div><div class="txt">${it.label}</div>`;div.onclick=()=>{selectedItemIndex=idx;renderTray()};tray.appendChild(div)})}
+function selectNextItem(){if(!gameActive||activeItems.length===0)return;selectedItemIndex=(selectedItemIndex+1)%activeItems.length;renderTray();play('good')}
+function dropSelected(){if(!gameActive||activeItems.length===0)return;dropOnBin(selectedBinIndex)}
+function dropOnBin(binIndex){const item=activeItems[selectedItemIndex]; if(!item)return; const ok=bins[binIndex].accepts===item.type; if(ok){score++;correctInRow++;play('good');activeItems.splice(selectedItemIndex,1); if(selectedItemIndex>=activeItems.length) selectedItemIndex=0; if(activeItems.length<4) addBalancedItem(); if(correctInRow%3===0){paused=true;showQuestion();updateHud();return} if(score>=goal){updateHud();clearLevel();return}} else {lives--;correctInRow=0;play('bad'); if(lives<=0){updateHud();return endGame(false)}} updateHud(); renderTray()}
+function addBalancedItem(){const helpful=['clothes','books','toys','food']; const missing=helpful.filter(t=>!activeItems.some(i=>i.type===t)); const type=missing.length?missing[Math.floor(Math.random()*missing.length)]:helpful[Math.floor(Math.random()*helpful.length)]; const pool=itemPool.filter(i=>i.type===type); const item=pool[Math.floor(Math.random()*pool.length)]; activeItems.push({...item,id:crypto.randomUUID()}); renderTray()}
+function clearLevel(){if(level>=6)return endGame(true); level++; correctInRow=0; setupLevel()}
+function pauseResume(){if(!gameActive)return;paused=!paused;document.getElementById('pauseBtn').textContent=paused?'Resume':'Pause'}
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);const g=ctx.createLinearGradient(0,0,0,canvas.height);g.addColorStop(0,'#dff2ff');g.addColorStop(1,'#fff8e8');ctx.fillStyle=g;ctx.fillRect(0,0,canvas.width,canvas.height);for(let i=0;i<8;i++){ctx.fillStyle='rgba(255,255,255,.8)';ctx.beginPath();ctx.arc(80+i*75,50+Math.sin(i)*8,18,0,Math.PI*2);ctx.arc(96+i*75,50+Math.sin(i)*8,24,0,Math.PI*2);ctx.arc(115+i*75,52+Math.sin(i)*8,16,0,Math.PI*2);ctx.fill()}ctx.fillStyle='#2f8f83';ctx.fillRect(140,250,360,120);ctx.fillStyle='#246b63';ctx.fillRect(430,280,90,90);ctx.fillStyle='#1d4f49';ctx.beginPath();ctx.arc(220,385,34,0,Math.PI*2);ctx.arc(420,385,34,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.fillRect(170,270,80,45);ctx.fillRect(260,270,80,45);ctx.fillRect(350,270,80,45);ctx.fillStyle='#f2b705';ctx.font='700 20px Arial';ctx.textAlign='center';ctx.fillText('DONATION',320,340);ctx.fillText('MISSION',320,365)}
+function gameLoop(){if(!gameActive)return; if(!paused) draw(); loopId=requestAnimationFrame(gameLoop)}
+function showQuestion(){const idxs=questions.map((_,i)=>i).filter(i=>!usedQuestions.includes(i));const idx=idxs.length?idxs[Math.floor(Math.random()*idxs.length)]:Math.floor(Math.random()*questions.length);if(!usedQuestions.includes(idx))usedQuestions.push(idx);const q=questions[idx];document.getElementById('questionText').textContent=q.q;const box=document.getElementById('optionBox');box.innerHTML='';document.getElementById('questionFeedback').textContent='';document.getElementById('questionFeedback').className='feedback';q.options.slice().sort(()=>Math.random()-.5).forEach(opt=>{const b=document.createElement('button');b.className='option';b.textContent=opt;b.onclick=()=>answerQuestion(opt,q);box.appendChild(b)});overlay.classList.add('active');overlay.setAttribute('aria-hidden','false')}
+function answerQuestion(selected,q){const fb=document.getElementById('questionFeedback');if(selected===q.answer){quizStars++;fb.textContent='Correct! '+q.tip;fb.className='feedback good';play('good');updateHud();setTimeout(()=>{overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');paused=false;document.getElementById('pauseBtn').textContent='Pause'},1000)}else{fb.textContent='Try again. Think about helping others.';fb.className='feedback bad';play('bad')}}
+function endGame(won){gameActive=false;stopLoops();show('endScreen');document.getElementById('finalScore').textContent=score;document.getElementById('finalQuizStars').textContent=quizStars;if(won||quizStars>=3){document.getElementById('finalTitle').textContent='Donation champion!';document.getElementById('finalStars').textContent='🌟🌟🌟';document.getElementById('finalMessage').textContent='You showed generosity by sorting helpful donations and answering kindly.';play('win')}else{document.getElementById('finalTitle').textContent='Keep helping';document.getElementById('finalStars').textContent='🌟🌟';document.getElementById('finalMessage').textContent='Try again and look for the best donation choices.'}}
+</script>
 </body>
 </html>
