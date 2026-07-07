@@ -6,14 +6,13 @@
 <title>Timmy's Mountain Climb</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg1:#fef7e8;--bg2:#e3f2fd;--card:#fff;--text:#24324a;--good:#2e7d32;--bad:#c62828;--accent:#ffb300;--primary:#ef6c00;--secondary:#0288d1;--border:rgba(36,50,74,.12);--shadow:0 14px 30px rgba(36,50,74,.14)}
+:root{--bg1:#fef7e8;--bg2:#e3f2fd;--text:#24324a;--good:#2e7d32;--bad:#c62828;--accent:#ffb300;--primary:#ef6c00;--secondary:#0288d1;--border:rgba(36,50,74,.12);--shadow:0 14px 30px rgba(36,50,74,.14)}
 body{font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--text);min-height:100vh;overflow-x:hidden}
 .screen{display:none;min-height:100vh;padding:16px}.screen.active{display:flex;align-items:center;justify-content:center}
-#splashScreen{position:fixed;inset:0;background:#fff;z-index:9999}.splash-box{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px}
-#splashScreen img{width:min(76vw,420px);height:auto;animation:float 1.8s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-.wrap{width:min(1180px,100%)} .card{background:rgba(255,255,255,.96);border-radius:28px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow)}
-.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:center}.title{font-size:clamp(34px,5vw,60px);color:var(--primary);line-height:1.03;margin-bottom:12px}.lead{font-size:clamp(18px,2.4vw,24px);line-height:1.45;color:#355070;margin-bottom:16px;max-width:54ch}
+.wrap{width:min(1180px,100%)}
+.card{background:rgba(255,255,255,.96);border-radius:28px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.hero,.layout{display:grid;gap:16px}.hero{grid-template-columns:1.05fr .95fr;align-items:center}.layout{grid-template-columns:1.08fr .92fr;margin-top:16px}
+.title{font-size:clamp(34px,5vw,60px);color:var(--primary);line-height:1.03;margin-bottom:12px}.lead{font-size:clamp(18px,2.4vw,24px);line-height:1.45;color:#355070;margin-bottom:16px;max-width:54ch}
 .pills{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.pill{background:#fff8e1;border:1px solid var(--border);border-radius:999px;padding:10px 14px;font-weight:800}
 .btn-row{display:flex;flex-wrap:wrap;gap:10px}.btn{border:none;border-radius:16px;padding:14px 20px;font-size:18px;font-weight:800;cursor:pointer;min-height:46px}.primary{background:var(--accent);box-shadow:0 5px 0 #d28f00;color:#3d2f00}.ghost{background:#eef2f7;color:var(--text);box-shadow:0 5px 0 #cbd5e1}
 .mountain{position:relative;min-height:330px;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#d7f0ff,#fff8d6)}
@@ -26,7 +25,7 @@ body{font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,va
 .step.s1{bottom:34px}.step.s2{bottom:86px}.step.s3{bottom:142px}.step.s4{bottom:198px}.step.s5{bottom:256px}
 .tortoise{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);font-size:70px;filter:drop-shadow(0 10px 12px rgba(0,0,0,.14));transition:bottom .55s ease,left .55s ease}
 .note{position:absolute;left:18px;right:18px;bottom:16px;background:rgba(255,255,255,.88);border:1px solid var(--border);border-radius:18px;padding:12px 14px;font-size:16px;line-height:1.45;color:#4d5d70}
-.layout{display:grid;grid-template-columns:1.08fr .92fr;gap:16px;margin-top:16px}.box{background:rgba(255,255,255,.96);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow);padding:18px}
+.box{background:rgba(255,255,255,.96);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow);padding:18px}
 .hud{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}.hud-box{background:#fff;border:1px solid var(--border);border-radius:18px;padding:12px;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.06)}
 .hud-label{display:block;font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:.06em}.hud-val{display:block;margin-top:2px;font-size:22px;font-weight:900}
 .scenario{min-height:148px;background:#fff8e1;border-radius:22px;padding:16px 18px;margin-bottom:14px;display:grid;gap:10px}.scenario h2{font-size:clamp(24px,3vw,34px);color:var(--primary)}.scenario p{font-size:clamp(18px,2.2vw,22px);line-height:1.45;color:#355070}
@@ -42,13 +41,7 @@ body{font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,va
 </style>
 </head>
 <body>
-<section id="splashScreen" class="screen active">
-  <div class="splash-box">
-    <img src="./assets/innovine-logo.png" alt="Innovine logo" />
-    <div style="font-size:clamp(18px,2.6vw,28px);font-weight:800;color:#ef6c00">Loading Timmy's Mountain Climb...</div>
-  </div>
-</section>
-<section id="startScreen" class="screen">
+<section id="startScreen" class="screen active">
   <div class="wrap card">
     <div class="hero">
       <div>
@@ -63,7 +56,7 @@ body{font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,va
       <div class="mountain" aria-hidden="true">
         <div class="sun"></div><div class="cloud a"></div><div class="cloud b"></div><div class="trail"></div>
         <div class="step s1"></div><div class="step s2"></div><div class="step s3"></div><div class="step s4"></div><div class="step s5"></div>
-        <div class="tortoise" id="previewTortoise">🐢</div>
+        <div class="tortoise" id="tortoise">🐢</div>
         <div class="note">Determination means trying again, staying focused, and moving forward step by step.</div>
       </div>
     </div>
@@ -104,9 +97,6 @@ body{font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,va
     <div class="btn-row" style="justify-content:center"><button class="btn primary" onclick="startGame()">Play Again</button></div>
   </div>
 </section>
-<audio id="correctSound" preload="auto" src="./assets/correct.mp3"></audio>
-<audio id="wrongSound" preload="auto" src="./assets/wrong.mp3"></audio>
-<audio id="clapSound" preload="auto" src="./assets/clapping.mp3"></audio>
 <script>
 const scenarios=[
 {q:'Timmy slips on the steep path.',options:['Try again and keep climbing.','Sit down forever.','Tell everyone the dream is impossible.'],answer:'Try again and keep climbing.',tip:'Determined people keep going after a slip.'},
@@ -122,34 +112,25 @@ const scenarios=[
 {q:'The mountain trek takes time.',options:['Keep working day by day.','Expect success without effort.','Refuse to continue.'],answer:'Keep working day by day.',tip:'Determination grows with steady effort.'},
 {q:'Timmy wants to inspire others.',options:['Show courage by reaching the top.','Quit to stay safe.','Say dreams do not matter.'],answer:'Show courage by reaching the top.',tip:'A determined person can inspire others.'}
 ];
-
 const rewards=[
 {q:'What does determination mean?',options:['Not giving up.','Never trying.','Complaining a lot.'],answer:'Not giving up.'},
 {q:'What should you do after failure?',options:['Learn and try again.','Stop forever.','Blame everyone.'],answer:'Learn and try again.'},
 {q:'What helps when a goal feels hard?',options:['Small steps.','No effort.','Avoiding the goal.'],answer:'Small steps.'},
 {q:'A determined person has a ________ attitude.',options:['Never-give-up.','Lazy.','Careless.'],answer:'Never-give-up.'}
 ];
-
-const splash=document.getElementById('splashScreen');
 let soundOn=true,current=0,score=0,lives=3,steps=0,lock=false,shuffled=[],usedReward=[];
-const correctSound=document.getElementById('correctSound');
-const wrongSound=document.getElementById('wrongSound');
-const clapSound=document.getElementById('clapSound');
 function show(id){['startScreen','gameScreen','endScreen'].forEach(x=>document.getElementById(x).classList.remove('active'));document.getElementById(id).classList.add('active')}
 function toggleSound(){soundOn=!soundOn;document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off'}
-function play(a){if(!soundOn)return;a.currentTime=0;a.play().catch(()=>{})}
-function hideSplash(){splash.classList.remove('active');show('startScreen')}
-window.addEventListener('load',()=>setTimeout(hideSplash,2200));
 function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function updateHud(){document.getElementById('scoreNum').textContent=score;document.getElementById('roundNum').textContent=current+1;document.getElementById('livesNum').textContent=lives;document.getElementById('stepsNum').textContent=steps;document.getElementById('progressBar').style.width=((current)/scenarios.length*100)+'%';moveTortoise()}
-function moveTortoise(){const gameTort=document.getElementById('previewTortoise');const bottoms=['28px','82px','136px','190px','244px','298px'];gameTort.style.bottom=bottoms[Math.min(steps,5)];}
+function moveTortoise(){const tort=document.getElementById('tortoise');const positions=['28px','82px','136px','190px','244px','298px'];tort.style.bottom=positions[Math.min(steps,5)]}
 function startGame(){current=0;score=0;lives=3;steps=0;lock=false;usedReward=[];shuffled=shuffle(scenarios);show('gameScreen');loadRound()}
 function loadRound(){if(current>=shuffled.length){endGame();return}lock=false;const s=shuffled[current];document.getElementById('scenarioText').textContent=s.q;document.getElementById('statusText').textContent='';const choices=document.getElementById('choices');choices.innerHTML='';shuffle(s.options).forEach(opt=>{const b=document.createElement('button');b.className='choice';b.textContent=opt;b.onclick=()=>pick(b,opt,s);choices.appendChild(b)});updateHud()}
-function pick(button,opt,s){if(lock)return;lock=true;[...document.querySelectorAll('.choice')].forEach(b=>b.disabled=true);if(opt===s.answer){score+=10;steps+=1;button.classList.add('correct');document.getElementById('statusText').textContent='Correct! ' + s.tip;document.getElementById('statusText').className='status good';play(correctSound);updateHud();if(steps%3===0){setTimeout(showReward,600);return}setTimeout(nextRound,1000)}else{lives-=1;button.classList.add('wrong');document.getElementById('statusText').textContent='Keep going. ' + s.tip;document.getElementById('statusText').className='status bad';play(wrongSound);updateHud();if(lives<=0){setTimeout(()=>endGame(false),900);return}setTimeout(nextRound,1100)}}
+function pick(button,opt,s){if(lock)return;lock=true;[...document.querySelectorAll('.choice')].forEach(b=>b.disabled=true);if(opt===s.answer){score+=10;steps+=1;button.classList.add('correct');document.getElementById('statusText').textContent='Correct! ' + s.tip;document.getElementById('statusText').className='status good';if(steps%3===0){setTimeout(showReward,600);return}setTimeout(nextRound,1000)}else{lives-=1;button.classList.add('wrong');document.getElementById('statusText').textContent='Keep going. ' + s.tip;document.getElementById('statusText').className='status bad';updateHud();if(lives<=0){setTimeout(()=>endGame(false),900);return}setTimeout(nextRound,1100)}updateHud()}
 function nextRound(){current+=1;loadRound()}
-function showReward(){const available=rewards.map((_,i)=>i).filter(i=>!usedReward.includes(i));const idx=available.length?available[Math.floor(Math.random()*available.length)]:Math.floor(Math.random()*rewards.length);if(!usedReward.includes(idx))usedReward.push(idx);const q=rewards[idx];document.getElementById('scenarioText').textContent='Reward Question';document.getElementById('statusText').textContent=q.q;document.getElementById('statusText').className='status';const choices=document.getElementById('choices');choices.innerHTML='';shuffle(q.options).forEach(opt=>{const b=document.createElement('button');b.className='choice';b.textContent=opt;b.onclick=()=>{if(lock)return;lock=true;[...document.querySelectorAll('.choice')].forEach(x=>x.disabled=true);if(opt===q.answer){score+=5;steps+=1;document.getElementById('statusText').textContent='Correct! Keep believing in yourself.';document.getElementById('statusText').className='status good';play(correctSound)}else{document.getElementById('statusText').textContent='Good try! Right answer: ' + q.answer;document.getElementById('statusText').className='status bad';play(wrongSound)}updateHud();setTimeout(()=>{current+=1;loadRound()},1200)};choices.appendChild(b)})}
+function showReward(){const available=rewards.map((_,i)=>i).filter(i=>!usedReward.includes(i));const idx=available.length?available[Math.floor(Math.random()*available.length)]:Math.floor(Math.random()*rewards.length);if(!usedReward.includes(idx))usedReward.push(idx);const q=rewards[idx];document.getElementById('scenarioText').textContent='Reward Question';document.getElementById('statusText').textContent=q.q;document.getElementById('statusText').className='status';const choices=document.getElementById('choices');choices.innerHTML='';shuffle(q.options).forEach(opt=>{const b=document.createElement('button');b.className='choice';b.textContent=opt;b.onclick=()=>{if(lock)return;lock=true;[...document.querySelectorAll('.choice')].forEach(x=>x.disabled=true);if(opt===q.answer){score+=5;steps+=1;document.getElementById('statusText').textContent='Correct! Keep believing in yourself.';document.getElementById('statusText').className='status good'}else{document.getElementById('statusText').textContent='Good try! Right answer: ' + q.answer;document.getElementById('statusText').className='status bad'}updateHud();setTimeout(()=>{current+=1;loadRound()},1200)};choices.appendChild(b)})}
 function burst(){const colors=['#ff5252','#ffca28','#66bb6a','#42a5f5','#ab47bc','#ef6c00'];for(let i=0;i<36;i++){const d=document.createElement('div');d.className='confetti';d.style.left=Math.random()*100+'vw';d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.animationDelay=Math.random()*0.4+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3200)}}
-function endGame(win=true){show('endScreen');document.getElementById('finalScore').textContent=score;const title=document.getElementById('finalTitle');const text=document.getElementById('finalText');const stars=document.getElementById('finalStars');if(score>=80){title.textContent='Mountain Champion!';text.textContent='Timmy reached the top because he never gave up.';stars.textContent='🌟🌟🌟';burst();play(clapSound)}else if(score>=50){title.textContent='Strong Climber!';text.textContent='You showed determination and made great progress.';stars.textContent='🌟🌟';burst()}else{title.textContent='Keep Climbing!';text.textContent='Try again and remember that small steps lead to success.';stars.textContent='🌟'}}
+function endGame(){show('endScreen');document.getElementById('finalScore').textContent=score;const title=document.getElementById('finalTitle');const text=document.getElementById('finalText');const stars=document.getElementById('finalStars');if(score>=80){title.textContent='Mountain Champion!';text.textContent='Timmy reached the top because he never gave up.';stars.textContent='🌟🌟🌟';burst()}else if(score>=50){title.textContent='Strong Climber!';textContent='You showed determination and made great progress.';stars.textContent='🌟🌟';burst()}else{title.textContent='Keep Climbing!';textContent='Try again and remember that small steps lead to success.';stars.textContent='🌟'}}
 </script>
 </body>
 </html>
