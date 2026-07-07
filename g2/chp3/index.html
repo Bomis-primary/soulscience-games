@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gem Hunt</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg1:#f7f0ff;--bg2:#e0f7fa;--card:#fff;--text:#24324a;--good:#2e7d32;--bad:#c62828;--accent:#9c27b0;--primary:#6a1b9a;--secondary:#0288d1;--border:rgba(36,50,74,.12);--shadow:0 14px 30px rgba(36,50,74,.14)}
+body{font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--text);min-height:100vh;overflow-x:hidden}
+.screen{display:none;min-height:100vh;padding:16px}.screen.active{display:flex;align-items:center;justify-content:center}
+#splashScreen{position:fixed;inset:0;background:#fff;z-index:9999}.splash-box{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px}
+#splashScreen img{width:min(76vw,420px);height:auto;animation:float 1.8s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.wrap{width:min(1180px,100%)} .card{background:rgba(255,255,255,.96);border-radius:28px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:center}.title{font-size:clamp(34px,5vw,60px);color:var(--primary);line-height:1.03;margin-bottom:12px}.lead{font-size:clamp(18px,2.4vw,24px);line-height:1.45;color:#355070;margin-bottom:16px;max-width:54ch}
+.pills{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.pill{background:#f3e5f5;border:1px solid var(--border);border-radius:999px;padding:10px 14px;font-weight:800}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px}.btn{border:none;border-radius:16px;padding:14px 20px;font-size:18px;font-weight:800;cursor:pointer;min-height:46px}.primary{background:#ffd54f;box-shadow:0 5px 0 #d2a900;color:#3d2f00}.ghost{background:#eef2f7;color:var(--text);box-shadow:0 5px 0 #cbd5e1}
+.chest{position:relative;min-height:330px;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#f3e5f5,#e0f7fa)}
+.sparkle{position:absolute;font-size:28px;animation:twinkle 2s ease-in-out infinite}.s1{top:22px;left:26px}.s2{top:44px;right:34px}.s3{bottom:92px;left:52px}.s4{bottom:132px;right:70px}.s5{top:120px;left:44%}.s6{bottom:48px;left:42%}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0deg);opacity:.7}50%{transform:scale(1.25) rotate(12deg);opacity:1}}
+.chest-box{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(82%,440px);height:220px;border-radius:26px;background:linear-gradient(180deg,#8e24aa,#5e35b1);box-shadow:0 16px 30px rgba(0,0,0,.18);border:8px solid rgba(255,255,255,.35)}
+.chest-box:before{content:'';position:absolute;left:0;right:0;top:80px;height:36px;background:linear-gradient(180deg,#ffd54f,#ffb300)}
+.chest-lock{position:absolute;left:50%;top:90px;transform:translateX(-50%);width:82px;height:82px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff59d,#fbc02d);border:6px solid rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;font-size:34px;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.note{position:absolute;left:18px;right:18px;bottom:16px;background:rgba(255,255,255,.88);border:1px solid var(--border);border-radius:18px;padding:12px 14px;font-size:16px;line-height:1.45;color:#4d5d70}
+.layout{display:grid;grid-template-columns:1.08fr .92fr;gap:16px;margin-top:16px}.box{background:rgba(255,255,255,.96);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow);padding:18px}
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}.hud-box{background:#fff;border:1px solid var(--border);border-radius:18px;padding:12px;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.06)}
+.hud-label{display:block;font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:.06em}.hud-val{display:block;margin-top:2px;font-size:22px;font-weight:900}
+.scenario{min-height:148px;background:#f3e5f5;border-radius:22px;padding:16px 18px;margin-bottom:14px;display:grid;gap:10px}.scenario h2{font-size:clamp(24px,3vw,34px);color:var(--primary)}.scenario p{font-size:clamp(18px,2.2vw,22px);line-height:1.45;color:#355070}
+.choices{display:grid;gap:10px}.choice{border:none;border-radius:18px;padding:14px 16px;text-align:left;background:#f3f7fb;border:1px solid var(--border);font-size:18px;font-weight:700;min-height:52px}
+.choice.correct{background:#e8f5e9;border-color:#81c784}.choice.wrong{background:#ffebee;border-color:#ef9a9a}
+.status{min-height:28px;margin-top:12px;font-size:18px;font-weight:800}.good{color:var(--good)}.bad{color:var(--bad)}
+.progress-wrap{margin-top:14px;background:#eef2ff;border-radius:999px;height:18px;overflow:hidden;border:1px solid var(--border)}.progress{height:100%;width:0;background:linear-gradient(90deg,var(--secondary),#7c4dff);transition:width .3s ease}
+.tips{display:grid;gap:10px}.tip{background:#f8fafc;border:1px solid var(--border);border-radius:16px;padding:12px 14px;line-height:1.45;color:#4d5d70}
+.final-title{text-align:center;font-size:clamp(30px,5vw,54px);color:var(--good);margin-bottom:10px}.stars{text-align:center;font-size:52px;margin:10px 0 16px}.final-text{text-align:center;font-size:20px;line-height:1.45;margin-bottom:18px}
+.confetti{position:fixed;top:-20px;width:14px;height:14px;z-index:999;animation:fall 2.8s linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@media (max-width: 960px){.hero,.layout{grid-template-columns:1fr}.hud{grid-template-columns:repeat(2,1fr)}}
+@media (max-width: 560px){.screen{padding:10px}.card,.box{padding:14px;border-radius:22px}.btn{width:100%}.btn-row{flex-direction:column}.choice{font-size:17px}}
+</style>
+</head>
+<body>
+<section id="splashScreen" class="screen active">
+  <div class="splash-box">
+    <img src="./assets/innovine-logo.jpg" alt="Innovine logo" />
+    <div style="font-size:clamp(18px,2.6vw,28px);font-weight:800;color:#6a1b9a">Loading Gem Hunt...</div>
+  </div>
+</section>
+<section id="startScreen" class="screen">
+  <div class="wrap card">
+    <div class="hero">
+      <div>
+        <div class="pills"><div class="pill">Grade 2</div><div class="pill">Chapter 3: Self-Esteem</div><div class="pill">Gem game</div></div>
+        <h1 class="title">Gem Hunt</h1>
+        <p class="lead">Collect the shining self-esteem gems by choosing brave, kind, and confident answers.</p>
+        <div class="btn-row">
+          <button class="btn primary" onclick="startGame()">Start Game</button>
+          <button class="btn ghost" onclick="toggleSound()" id="soundBtn">Sound: On</button>
+        </div>
+      </div>
+      <div class="chest" aria-hidden="true">
+        <div class="sparkle s1">✨</div><div class="sparkle s2">✨</div><div class="sparkle s3">💫</div><div class="sparkle s4">✨</div><div class="sparkle s5">💫</div><div class="sparkle s6">✨</div>
+        <div class="chest-box"></div>
+        <div class="chest-lock">💎</div>
+        <div class="note">Self-esteem means believing in yourself, valuing your strengths, and trying new things with confidence. [file:165]</div>
+      </div>
+    </div>
+    <div class="layout">
+      <div class="box"><h2 style="margin-bottom:10px;color:#6a1b9a">How to play</h2><div class="tips"><div class="tip">Read the situation.</div><div class="tip">Choose the best self-esteem answer.</div><div class="tip">Every 3 correct answers unlocks a bonus gem question.</div></div></div>
+      <div class="box"><h2 style="margin-bottom:10px;color:#6a1b9a">Chapter focus</h2><div class="tips"><div class="tip">Believe in yourself.</div><div class="tip">Celebrate your unique strengths.</div><div class="tip">Keep trying even if something is hard.</div></div></div>
+    </div>
+  </div>
+</section>
+<section id="gameScreen" class="screen">
+  <div class="wrap">
+    <div class="hud">
+      <div class="hud-box"><span class="hud-label">Score</span><span class="hud-val" id="scoreNum">0</span></div>
+      <div class="hud-box"><span class="hud-label">Level</span><span class="hud-val" id="roundNum">1</span></div>
+      <div class="hud-box"><span class="hud-label">Lives</span><span class="hud-val" id="livesNum">3</span></div>
+      <div class="hud-box"><span class="hud-label">Gems</span><span class="hud-val" id="stepsNum">0</span></div>
+    </div>
+    <div class="layout">
+      <div class="box">
+        <div class="scenario"><h2>Situation</h2><p id="scenarioText"></p></div>
+        <div class="choices" id="choices"></div>
+        <div class="status" id="statusText"></div>
+        <div class="progress-wrap"><div class="progress" id="progressBar"></div></div>
+      </div>
+      <div class="box">
+        <h2 style="margin-bottom:10px;color:#6a1b9a">Gem tips</h2>
+        <div class="tips"><div class="tip">I am smart.</div><div class="tip">I am kind.</div><div class="tip">I am brave.</div><div class="tip">I can try my best.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="endScreen" class="screen">
+  <div class="wrap card">
+    <div class="final-title" id="finalTitle">Amazing!</div>
+    <div class="stars" id="finalStars">💎💎💎</div>
+    <div class="final-text" id="finalText">You found the gems and believed in yourself!</div>
+    <div style="text-align:center;font-size:20px;margin-bottom:14px;">Final Score: <strong id="finalScore">0</strong>/12</div>
+    <div class="btn-row" style="justify-content:center"><button class="btn primary" onclick="startGame()">Play Again</button></div>
+  </div>
+</section>
+<audio id="correctSound" preload="auto" src="./assets/correct.mp3"></audio>
+<audio id="wrongSound" preload="auto" src="./assets/wrong.mp3"></audio>
+<audio id="clapSound" preload="auto" src="./assets/clapping.mp3"></audio>
+<script>
+const scenarios=[
+{q:'A puzzle looks hard.',options:['Try your best and ask for help if needed.','Say I cannot do it and stop.','Throw the puzzle away.'],answer:'Try your best and ask for help if needed.',tip:'Self-esteem helps you keep trying.'},
+{q:'Your drawing is different from others.',options:['Be proud of your own unique work.','Hide your drawing.','Say it is bad before trying.'],answer:'Be proud of your own unique work.',tip:'Being unique is something special.'},
+{q:'Someone laughs at your mistake.',options:['Stay calm and try again.','Give up forever.','Laugh back rudely.'],answer:'Stay calm and try again.',tip:'Mistakes are part of learning.'},
+{q:'You want to learn a new skill.',options:['Say, “I can try.”','Say, “I will fail.”','Do nothing.'],answer:'Say, “I can try.”',tip:'Positive self-talk builds confidence.'},
+{q:'A friend needs cheering up.',options:['Be kind and encouraging.','Ignore them.','Tease them.'],answer:'Be kind and encouraging.',tip:'Kindness makes everyone stronger.'},
+{q:'You finish a tough task.',options:['Feel proud of your effort.','Say it was nothing and feel bad.','Forget the hard work.'],answer:'Feel proud of your effort.',tip:'Celebrating effort boosts self-esteem.'},
+{q:'You are not the tallest in class.',options:['Remember everyone has strengths.','Feel sad and useless.','Try to be someone else.'],answer:'Remember everyone has strengths.',tip:'Everyone shines in their own way.'},
+{q:'Your friend says you are brave.',options:['Say thank you and smile.','Say it is silly.','Argue.'],answer:'Say thank you and smile.',tip:'Accepting praise helps confidence.'},
+{q:'You feel nervous to speak.',options:['Take a breath and try.','Never speak again.','Hide always.'],answer:'Take a breath and try.',tip:'Brave steps grow confidence.'},
+{q:'You need to choose a hobby.',options:['Pick something you enjoy and try it.','Copy everyone else.','Avoid new activities.'],answer:'Pick something you enjoy and try it.',tip:'Trying new things builds self-belief.'},
+{q:'A voice says, “I can’t.”',options:['Change it to “I can try my best.”','Listen and stop.','Say nothing.'],answer:'Change it to “I can try my best.”',tip:'Positive thoughts help you shine.'},
+{q:'You notice your own strength.',options:['Celebrate it proudly.','Pretend it does not matter.','Hide it.'],answer:'Celebrate it proudly.',tip:'Your strengths are important gems.'}
+];
+
+const rewards=[
+{q:'What is self-esteem?',options:['Believing in yourself and your abilities.','Thinking others are better than you.','Never trying new things.'],answer:'Believing in yourself and your abilities.'},
+{q:'What should you say to yourself before a challenge?',options:['I can try my best.','I will surely fail.','I cannot do it.'],answer:'I can try my best.'},
+{q:'Which is a self-esteem gem?',options:['I am brave.','I am lazy.','I cannot learn.'],answer:'I am brave.'},
+{q:'Why is being unique important?',options:['It makes you special.','It makes you less important.','It means you should hide.'],answer:'It makes you special.'}
+];
+
+const splash=document.getElementById('splashScreen');
+let soundOn=true,current=0,score=0,lives=3,steps=0,lock=false,shuffled=[],usedReward=[];
+const correctSound=document.getElementById('correctSound');
+const wrongSound=document.getElementById('wrongSound');
+const clapSound=document.getElementById('clapSound');
+function show(id){['startScreen','gameScreen','endScreen'].forEach(x=>document.getElementById(x).classList.remove('active'));document.getElementById(id).classList.add('active')}
+function toggleSound(){soundOn=!soundOn;document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off'}
+function play(a){if(!soundOn)return;a.currentTime=0;a.play().catch(()=>{})}
+function hideSplash(){splash.classList.remove('active');show('startScreen')}
+window.addEventListener('load',()=>setTimeout(hideSplash,2200));
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function updateHud(){document.getElementById('scoreNum').textContent=score;document.getElementById('roundNum').textContent=current+1;document.getElementById('livesNum').textContent=lives;document.getElementById('stepsNum').textContent=steps;document.getElementById('progressBar').style.width=((current)/scenarios.length*100)+'%'}
+function startGame(){current=0;score=0;lives=3;steps=0;lock=false;usedReward=[];shuffled=shuffle(scenarios);show('gameScreen');loadRound()}
+function loadRound(){if(current>=shuffled.length){endGame();return}lock=false;const s=shuffled[current];document.getElementById('scenarioText').textContent=s.q;document.getElementById('statusText').textContent='';const choices=document.getElementById('choices');choices.innerHTML='';shuffle(s.options).forEach(opt=>{const b=document.createElement('button');b.className='choice';b.textContent=opt;b.onclick=()=>pick(b,opt,s);choices.appendChild(b)});updateHud()}
+function pick(button,opt,s){if(lock)return;lock=true;[...document.querySelectorAll('.choice')].forEach(b=>b.disabled=true);if(opt===s.answer){score+=10;steps+=1;button.classList.add('correct');document.getElementById('statusText').textContent='Correct! ' + s.tip;document.getElementById('statusText').className='status good';play(correctSound);updateHud();if(steps%3===0){setTimeout(showReward,600);return}setTimeout(nextRound,1000)}else{lives-=1;button.classList.add('wrong');document.getElementById('statusText').textContent='Try again. ' + s.tip;document.getElementById('statusText').className='status bad';play(wrongSound);updateHud();if(lives<=0){setTimeout(()=>endGame(false),900);return}setTimeout(nextRound,1100)}}
+function nextRound(){current+=1;loadRound()}
+function showReward(){const available=rewards.map((_,i)=>i).filter(i=>!usedReward.includes(i));const idx=available.length?available[Math.floor(Math.random()*available.length)]:Math.floor(Math.random()*rewards.length);if(!usedReward.includes(idx))usedReward.push(idx);const q=rewards[idx];document.getElementById('scenarioText').textContent='Bonus Question';document.getElementById('statusText').textContent=q.q;document.getElementById('statusText').className='status';const choices=document.getElementById('choices');choices.innerHTML='';shuffle(q.options).forEach(opt=>{const b=document.createElement('button');b.className='choice';b.textContent=opt;b.onclick=()=>{if(lock)return;lock=true;[...document.querySelectorAll('.choice')].forEach(x=>x.disabled=true);if(opt===q.answer){score+=5;steps+=1;document.getElementById('statusText').textContent='Correct! A new gem shines for you.';document.getElementById('statusText').className='status good';play(correctSound)}else{document.getElementById('statusText').textContent='Good try! Right answer: ' + q.answer;document.getElementById('statusText').className='status bad';play(wrongSound)}updateHud();setTimeout(()=>{current+=1;loadRound()},1200)};choices.appendChild(b)})}
+function burst(){const colors=['#ff5252','#ffca28','#66bb6a','#42a5f5','#ab47bc','#6a1b9a'];for(let i=0;i<36;i++){const d=document.createElement('div');d.className='confetti';d.style.left=Math.random()*100+'vw';d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.animationDelay=Math.random()*0.4+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3200)}}
+function endGame(win=true){show('endScreen');document.getElementById('finalScore').textContent=score;const title=document.getElementById('finalTitle');const text=document.getElementById('finalText');const stars=document.getElementById('finalStars');if(score>=80){title.textContent='Gem Master!';text.textContent='You found the gems and showed strong self-esteem!';stars.textContent='💎💎💎';burst();play(clapSound)}else if(score>=50){title.textContent='Shining Bright!';text.textContent='You made many confident choices and found several gems.';stars.textContent='💎💎';burst()}else{title.textContent='Keep Shining!';text.textContent='Try again and remember: you can believe in yourself.';stars.textContent='💎'}}
+</script>
+</body>
+</html>
