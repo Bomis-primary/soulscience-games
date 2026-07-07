@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Focus Arrow Challenge</title>
+  <style>
+    :root{--bg1:#eef7ff;--bg2:#fff8ef;--card:#fff;--text:#20303b;--muted:#5b6975;--primary:#2f8f83;--primary2:#246b63;--good:#2e7d32;--bad:#bf4b63;--gold:#f2b705;--border:rgba(32,48,59,.12);--shadow:0 12px 30px rgba(32,48,59,.12)}
+    *{box-sizing:border-box} html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text);overflow-x:hidden}
+    button{font:inherit;cursor:pointer} .screen{display:none;min-height:100vh}.screen.active{display:grid}.center{place-items:center;padding:16px}
+    .wrap{width:min(1120px,calc(100% - 20px));margin:0 auto} .card{background:var(--card);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow)}
+    #splashScreen{position:fixed;inset:0;z-index:1000;background:#fff;place-items:center;padding:16px} #splashScreen .box{display:grid;gap:14px;justify-items:center;text-align:center}
+    #splashScreen img{width:min(340px,72vw);height:auto;filter:drop-shadow(0 10px 20px rgba(0,0,0,.12))} .splash-text{font-size:clamp(18px,2.6vw,28px);font-weight:800;color:var(--primary2)}
+    .hero{padding:22px 0 18px}.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:center;padding:18px}
+    h1,h2{margin:0;line-height:1.05} h1{font-size:clamp(34px,5vw,60px);color:var(--primary2)} h2{font-size:clamp(24px,3vw,36px)}
+    .lead{font-size:clamp(18px,2.3vw,23px);color:var(--muted);line-height:1.5;margin:14px 0 18px;max-width:56ch}
+    .pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.pill{padding:10px 14px;border-radius:999px;background:#edf8f6;border:1px solid var(--border);font-weight:700}
+    .actions{display:flex;flex-wrap:wrap;gap:10px}.btn{border:none;border-radius:16px;padding:14px 20px;font-weight:800;min-height:46px}.primary{background:var(--primary);color:#fff}.ghost{background:#f2f5f8;color:var(--text);border:1px solid var(--border)}
+    .art{min-height:320px;position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(180deg,#dbf0ff,#fff4d9)}
+    .cloud{position:absolute;background:rgba(255,255,255,.92);border-radius:999px}.cloud:before,.cloud:after{content:'';position:absolute;background:inherit;border-radius:999px}
+    .cloud.one{width:110px;height:42px;top:34px;left:30px}.cloud.one:before{width:42px;height:42px;left:12px;top:-18px}.cloud.one:after{width:54px;height:54px;right:12px;top:-26px}
+    .cloud.two{width:130px;height:48px;top:92px;right:24px}.cloud.two:before{width:46px;height:46px;left:18px;top:-18px}.cloud.two:after{width:58px;height:58px;right:18px;top:-28px}
+    .archer{position:absolute;left:50%;top:50%;transform:translate(-50%,-48%);font-size:92px;filter:drop-shadow(0 10px 14px rgba(0,0,0,.12))}
+    .note{position:absolute;left:22px;bottom:20px;right:22px;background:rgba(255,255,255,.88);border:1px solid var(--border);border-radius:18px;padding:12px 14px;font-size:16px;line-height:1.45;color:var(--muted)}
+    .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;padding:0 0 22px}.panel{padding:18px}
+    .hud{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px}.hud-box{padding:12px;border-radius:18px;background:#fff;border:1px solid var(--border);text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.06)}
+    .hud-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.hud-val{display:block;font-size:22px;font-weight:800;margin-top:2px}
+    canvas{width:100%;aspect-ratio:4/3;border-radius:24px;background:linear-gradient(180deg,#f7fbff,#fffef5);border:1px solid var(--border);display:block;touch-action:manipulation}
+    .controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}.ctrl{border:none;border-radius:999px;padding:12px 16px;min-width:120px;background:#eef7f5;font-weight:800;border:1px solid var(--border)}
+    .tips{display:grid;gap:10px;margin-top:14px}.tip{background:#f7fafc;border:1px solid var(--border);border-radius:16px;padding:12px 14px;color:var(--muted);line-height:1.45}
+    .overlay{position:fixed;inset:0;z-index:900;background:rgba(20,30,40,.58);display:none;place-items:center;padding:16px;backdrop-filter:blur(8px)} .overlay.active{display:grid}
+    .dialog{width:min(760px,100%);padding:20px;border-radius:26px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow)}
+    .dialog p{color:var(--muted);line-height:1.5}.options{display:grid;gap:10px;margin-top:14px}.option{border:none;text-align:left;background:#f4f8fb;border:1px solid var(--border);border-radius:16px;padding:12px 14px;font-weight:700;min-height:46px}
+    .feedback{min-height:28px;margin-top:12px;font-weight:800}.good{color:var(--good)}.bad{color:var(--bad)}
+    .result-stars{font-size:44px;margin:10px 0 12px;text-align:center}.result{text-align:center;color:var(--muted);font-size:19px;line-height:1.5}
+    #endScreen .card{padding:22px;width:min(760px,100%)} .maze-hint{font-size:14px;color:var(--muted);text-align:center;margin-top:8px}
+    .banner{background:#edf8f6;border:1px solid var(--border);border-radius:18px;padding:12px 14px;line-height:1.45;color:var(--muted);margin-top:12px}
+    @media (max-width:980px){.hero-grid,.layout{grid-template-columns:1fr}.hud{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:640px){.panel,.card{border-radius:22px;padding:14px}.ctrl{width:100%}.controls{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <section id="splashScreen" class="screen active">
+    <div class="box">
+      <img id="innovineLogo" src="./assets/innovine-logo.png" alt="Innovine logo" />
+      <div class="splash-text">Loading Focus Arrow Challenge...</div>
+    </div>
+  </section>
+
+  <section id="startScreen" class="screen">
+    <div class="wrap hero">
+      <div class="card hero-grid">
+        <div>
+          <div class="pill-row">
+            <div class="pill">Chapter 7: Goal Setting</div>
+            <div class="pill">Target game</div>
+            <div class="pill">Reward questions</div>
+          </div>
+          <h1>Focus Arrow Challenge</h1>
+          <p class="lead">Aim at the goal, ignore distractions, and learn how focus helps you achieve dreams step by step.</p>
+          <div class="actions">
+            <button class="btn primary" onclick="startGame()">Start Game</button>
+            <button class="btn ghost" onclick="toggleSound()" id="soundBtn">Sound: On</button>
+          </div>
+        </div>
+        <div class="art" aria-hidden="true">
+          <div class="cloud one"></div><div class="cloud two"></div>
+          <div class="archer">🏹</div>
+          <div class="note">The game teaches students to keep attention on one clear goal, just like Arjuna’s bird-eye focus in the story.</div>
+        </div>
+      </div>
+      <div class="layout" style="margin-top:16px;">
+        <div class="card panel">
+          <h2>How it works</h2>
+          <div class="tips">
+            <div class="tip">1. Move the crosshair and hit the goal target.</div>
+            <div class="tip">2. Avoid distraction targets that reduce points or lives.</div>
+            <div class="tip">3. Every few hits, answer a short goal-setting question.</div>
+          </div>
+        </div>
+        <div class="card panel">
+          <h2>Chapter ideas</h2>
+          <div class="tips">
+            <div class="tip">Set a clear goal.</div>
+            <div class="tip">Stay focused.</div>
+            <div class="tip">Break big dreams into smaller steps.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gameScreen" class="screen">
+    <div class="wrap layout" style="padding-top:18px;">
+      <div>
+        <div class="hud">
+          <div class="hud-box"><span class="hud-label">Level</span><span class="hud-val" id="levelNum">1</span></div>
+          <div class="hud-box"><span class="hud-label">Score</span><span class="hud-val" id="scoreNum">0</span></div>
+          <div class="hud-box"><span class="hud-label">Lives</span><span class="hud-val" id="livesNum">3</span></div>
+          <div class="hud-box"><span class="hud-label">Goal</span><span class="hud-val" id="goalNum">8</span></div>
+          <div class="hud-box"><span class="hud-label">Quiz Stars</span><span class="hud-val" id="quizStarsNum">0</span></div>
+        </div>
+        <div class="card panel">
+          <canvas id="gameCanvas" width="640" height="480"></canvas>
+          <div class="controls">
+            <button class="ctrl" onclick="moveCross(-1,0)">Left</button>
+            <button class="ctrl" onclick="pauseResume()" id="pauseBtn">Pause</button>
+            <button class="ctrl" onclick="moveCross(1,0)">Right</button>
+            <button class="ctrl" onclick="shoot()">Shoot</button>
+          </div>
+          <div class="maze-hint">Move the crosshair with the buttons or arrow keys. Shoot only when the target is on focus.</div>
+        </div>
+      </div>
+      <div class="card panel">
+        <h2>Mission notes</h2>
+        <div class="banner" id="missionText">Hit the bird-eye target and avoid distractions.</div>
+        <div class="tips">
+          <div class="tip">Gold targets give points.</div>
+          <div class="tip">Red distractors cost lives.</div>
+          <div class="tip">Every 3 correct hits unlocks a reward question.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="endScreen" class="screen center">
+    <div class="card">
+      <h2 id="finalTitle" style="text-align:center;color:var(--primary2)">Great work!</h2>
+      <div class="result-stars" id="finalStars">🌟🌟</div>
+      <div class="result">Targets hit: <strong id="finalScore">0</strong></div>
+      <div class="result">Quiz stars earned: <strong id="finalQuizStars">0</strong></div>
+      <p class="result" id="finalMessage">You kept your eyes on the goal.</p>
+      <div class="actions" style="justify-content:center;margin-top:16px;">
+        <button class="btn primary" onclick="startGame()">Play Again</button>
+        <button class="btn ghost" onclick="showStart()">Back to Start</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="questionOverlay" class="overlay" aria-hidden="true">
+    <div class="dialog card">
+      <h2>Reward Question</h2>
+      <p id="questionText"></p>
+      <div class="options" id="optionBox"></div>
+      <div class="feedback" id="questionFeedback"></div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const questions = [
+      {q:'What is a goal?', options:['Something you want to achieve','A random distraction','A mistake'], answer:'Something you want to achieve', tip:'A goal is something you want to achieve.'},
+      {q:'What does focus mean?', options:['Keeping attention on one thing','Looking at everything at once','Giving up quickly'], answer:'Keeping attention on one thing', tip:'Focus means paying attention to the task.'},
+      {q:'Which goal is SMART?', options:['I want to do better someday','I want to read one book every month','I want to be perfect immediately'], answer:'I want to read one book every month', tip:'SMART goals are specific and time-bound.'},
+      {q:'Why should we break big goals into small steps?', options:['It makes goals easier to achieve','It makes them impossible','It stops progress'], answer:'It makes goals easier to achieve', tip:'Small steps help you keep going.'},
+      {q:'What should you do when distracted?', options:['Return attention to your goal','Forget the goal','Make the distraction bigger'], answer:'Return attention to your goal', tip:'Good focus means coming back to the goal.'},
+      {q:'Why is goal setting useful?', options:['It gives direction and motivation','It wastes time','It removes all challenges'], answer:'It gives direction and motivation', tip:'Goals help you stay directed and motivated.'}
+    ];
+
+    const splash = document.getElementById('splashScreen');
+    const logo = document.getElementById('innovineLogo');
+    const overlay = document.getElementById('questionOverlay');
+    let audioCtx = null, soundOn = true, splashHidden = false;
+    let gameActive = false, paused = false, usedQuestions = [];
+    let level = 1, score = 0, lives = 3, quizStars = 0, targetHits = 0, goal = 8;
+    let cross = {x: 320, y: 250}, targets = [], loopId = null;
+    let spawnTimer = null;
+
+    function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+    function toggleSound(){soundOn=!soundOn;document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off'}
+    function play(kind){if(!soundOn)return;if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const tone=(f,d,t='triangle')=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=t;o.frequency.value=f;o.connect(g);g.connect(audioCtx.destination);g.gain.value=.05;o.start();g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+d);o.stop(audioCtx.currentTime+d)};if(kind==='good'){tone(660,.14);setTimeout(()=>tone(830,.16),70)}else if(kind==='bad'){tone(220,.2,'sawtooth')}else if(kind==='win'){tone(523,.14);setTimeout(()=>tone(659,.14),80);setTimeout(()=>tone(784,.22),160)}}
+    function hideSplash(){if(splashHidden)return;splashHidden=true;splash.classList.remove('active');show('startScreen')}
+    logo.addEventListener('error', hideSplash); window.addEventListener('load', ()=>setTimeout(hideSplash,2200));
+
+    function startGame(){level=1;score=0;lives=3;quizStars=0;targetHits=0;goal=8;usedQuestions=[];paused=false;gameActive=true;cross={x:320,y:250};document.getElementById('pauseBtn').textContent='Pause';show('gameScreen');setupLevel()}
+    function showStart(){stopLoops();gameActive=false;show('startScreen')}
+    function stopLoops(){if(loopId)cancelAnimationFrame(loopId);if(spawnTimer)clearInterval(spawnTimer);loopId=spawnTimer=null}
+    function setupLevel(){stopLoops();targets=[];goal=8 + Math.min(4,level-1)*2;updateHud();spawnTargets();loopId=requestAnimationFrame(gameLoop);spawnTimer=setInterval(()=>{if(gameActive&&!paused) spawnTargets(1)},1800 - Math.min(900,level*70))}
+    function updateHud(){document.getElementById('levelNum').textContent=level;document.getElementById('scoreNum').textContent=score;document.getElementById('livesNum').textContent=lives;document.getElementById('goalNum').textContent=goal;document.getElementById('quizStarsNum').textContent=quizStars;document.getElementById('missionText').textContent='Focus Arrow Challenge: hit ' + goal + ' targets to complete this level.'}
+    function spawnTargets(n=3){for(let i=0;i<n;i++){const good=Math.random()<.72; targets.push({x:Math.random()*(canvas.width-80)+40, y:Math.random()*(canvas.height-120)+60, r:good?18:16, good, ttl:good?220:180, wobble:Math.random()*Math.PI*2})}}
+    function pauseResume(){if(!gameActive)return;paused=!paused;document.getElementById('pauseBtn').textContent=paused?'Resume':'Pause'}
+    function moveCross(dx,dy){if(!gameActive)return;cross.x=Math.max(20,Math.min(canvas.width-20,cross.x+dx*28)); cross.y=Math.max(20,Math.min(canvas.height-20,cross.y+dy*28))}
+    document.addEventListener('keydown', e=>{if(e.key==='ArrowLeft')moveCross(-1,0); if(e.key==='ArrowRight')moveCross(1,0); if(e.key==='ArrowUp')moveCross(0,-1); if(e.key==='ArrowDown')moveCross(0,1); if(e.key===' ') {e.preventDefault(); shoot()} if(e.key==='p'){pauseResume()}})
+    function shoot(){if(!gameActive||paused)return; let hitIndex=-1; for(let i=0;i<targets.length;i++){const t=targets[i]; const dx=t.x-cross.x, dy=t.y-cross.y; if(Math.hypot(dx,dy) <= t.r+18){hitIndex=i; break}} if(hitIndex<0){play('bad'); lives--; updateHud(); if(lives<=0) return endGame(false); return;} const t=targets.splice(hitIndex,1)[0]; if(t.good){score++; targetHits++; play('good'); if(targetHits%3===0){paused=true;showQuestion();updateHud();return} if(score>=goal){clearLevel();return}} else {lives--; play('bad'); if(lives<=0)return endGame(false)} updateHud();}
+    function clearLevel(){if(level>=7)return endGame(true); level++; setupLevel();}
+    function draw(){ctx.clearRect(0,0,canvas.width,canvas.height); const g=ctx.createLinearGradient(0,0,0,canvas.height); g.addColorStop(0,'#eaf7ff'); g.addColorStop(1,'#fff8e9'); ctx.fillStyle=g; ctx.fillRect(0,0,canvas.width,canvas.height); drawBackground(); drawTargets(); drawCrosshair(); if(paused){ctx.fillStyle='rgba(20,25,35,.36)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#fff';ctx.font='700 34px Arial';ctx.textAlign='center';ctx.fillText('Paused',canvas.width/2,canvas.height/2)}}
+    function drawBackground(){ctx.save(); ctx.strokeStyle='rgba(47,143,131,.12)'; for(let x=40;x<canvas.width;x+=80){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke()} for(let y=60;y<canvas.height;y+=80){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke()} ctx.restore(); ctx.fillStyle='#5b6975'; ctx.font='700 15px Arial'; ctx.fillText('Aim at the target only',16,24)}
+    function drawTargets(){targets.forEach(t=>{t.wobble+=0.04; const pulse=1+Math.sin(t.wobble)*0.08; ctx.save(); ctx.translate(t.x,t.y); ctx.scale(pulse,pulse); ctx.fillStyle=t.good?'#f2b705':'#bf4b63'; ctx.beginPath(); ctx.arc(0,0,t.r,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(0,0,t.r*0.56,0,Math.PI*2); ctx.fill(); ctx.fillStyle=t.good?'#f2b705':'#bf4b63'; ctx.beginPath(); ctx.arc(0,0,t.r*0.2,0,Math.PI*2); ctx.fill(); ctx.restore(); t.ttl--; if(t.ttl<=0 && t.good){t.x=-999}})}
+    function drawCrosshair(){ctx.save(); ctx.strokeStyle='#246b63'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(cross.x,cross.y,18,0,Math.PI*2); ctx.stroke(); ctx.beginPath(); ctx.moveTo(cross.x-26,cross.y); ctx.lineTo(cross.x-8,cross.y); ctx.moveTo(cross.x+8,cross.y); ctx.lineTo(cross.x+26,cross.y); ctx.moveTo(cross.x,cross.y-26); ctx.lineTo(cross.x,cross.y-8); ctx.moveTo(cross.x,cross.y+8); ctx.lineTo(cross.x,cross.y+26); ctx.stroke(); ctx.fillStyle='#246b63'; ctx.beginPath(); ctx.arc(cross.x,cross.y,3,0,Math.PI*2); ctx.fill(); ctx.restore()}
+    function gameLoop(){if(!gameActive)return; if(!paused){draw(); targets=targets.filter(t=>t.ttl>0 && t.x>-100)} else draw(); loopId=requestAnimationFrame(gameLoop)}
+    function shuffle(a){const arr=[...a]; for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]];} return arr;}
+    function showQuestion(){const idxs=questions.map((_,i)=>i).filter(i=>!usedQuestions.includes(i)); const idx=idxs.length?idxs[Math.floor(Math.random()*idxs.length)]:Math.floor(Math.random()*questions.length); if(!usedQuestions.includes(idx)) usedQuestions.push(idx); const q=questions[idx]; document.getElementById('questionText').textContent=q.q; const box=document.getElementById('optionBox'); box.innerHTML=''; document.getElementById('questionFeedback').textContent=''; document.getElementById('questionFeedback').className='feedback'; shuffle(q.options).forEach(opt=>{const b=document.createElement('button'); b.className='option'; b.textContent=opt; b.onclick=()=>answerQuestion(opt,q); box.appendChild(b)}); overlay.classList.add('active'); overlay.setAttribute('aria-hidden','false')}
+    function answerQuestion(selected,q){const fb=document.getElementById('questionFeedback'); if(selected===q.answer){quizStars++; fb.textContent='Correct! '+q.tip; fb.className='feedback good'; play('good'); updateHud(); setTimeout(()=>{overlay.classList.remove('active'); overlay.setAttribute('aria-hidden','true'); paused=false; document.getElementById('pauseBtn').textContent='Pause';},1000)} else {fb.textContent='Try again. Keep your eyes on the goal.'; fb.className='feedback bad'; play('bad')}}
+    function endGame(won){gameActive=false; stopLoops(); show('endScreen'); document.getElementById('finalScore').textContent=score; document.getElementById('finalQuizStars').textContent=quizStars; if(won||quizStars>=3){document.getElementById('finalTitle').textContent='Focus champion!'; document.getElementById('finalStars').textContent='🌟🌟🌟'; document.getElementById('finalMessage').textContent='You kept your attention on the target and reached your goal.'; play('win')} else {document.getElementById('finalTitle').textContent='Try again'; document.getElementById('finalStars').textContent='🌟🌟'; document.getElementById('finalMessage').textContent='Stay focused on the goal and ignore the distractions.'}}
+    window.addEventListener('load',()=>{draw();setTimeout(hideSplash,2200)})
+  </script>
+</body>
+</html>
