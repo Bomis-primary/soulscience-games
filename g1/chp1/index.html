@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soul Sort Challenge</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg1: #fff7d6;
+      --bg2: #d8f3ff;
+      --card: #ffffff;
+      --text: #22314d;
+      --mind: #7c4dff;
+      --body: #26a69a;
+      --soul: #ff7043;
+      --good: #43a047;
+      --bad: #e53935;
+      --accent: #ffd54f;
+    }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .screen { display: none; min-height: 100vh; padding: 16px; }
+    .screen.active { display: flex; }
+    #splashScreen {
+      position: fixed; inset: 0; background: #fff; z-index: 9999;
+      align-items: center; justify-content: center;
+    }
+    #splashScreen img {
+      width: min(78vw, 420px); height: auto; object-fit: contain;
+      animation: floatLogo 1.8s ease-in-out infinite;
+    }
+    @keyframes floatLogo {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    #startScreen, #endScreen {
+      align-items: center; justify-content: center;
+      background: linear-gradient(180deg, #fff9c4, #e1f5fe);
+    }
+    .card {
+      width: min(1100px, 100%);
+      background: rgba(255,255,255,0.96);
+      border-radius: 28px;
+      padding: 20px;
+      box-shadow: 0 14px 30px rgba(34, 49, 77, 0.14);
+    }
+    .hero-title {
+      font-size: clamp(32px, 5vw, 56px);
+      color: #ff7043;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .hero-sub {
+      font-size: clamp(18px, 2.8vw, 24px);
+      text-align: center;
+      margin-bottom: 18px;
+      color: #355070;
+      line-height: 1.4;
+    }
+    .mini-note {
+      background: #fff8e1;
+      border-radius: 18px;
+      padding: 12px 16px;
+      text-align: center;
+      font-size: 18px;
+      line-height: 1.4;
+      margin-bottom: 18px;
+    }
+    .btn-row {
+      display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center;
+    }
+    button {
+      border: none; cursor: pointer; border-radius: 18px;
+      padding: 14px 24px; font-size: 18px; font-weight: 700;
+      background: #ffd54f; color: #3d2f00;
+      box-shadow: 0 5px 0 #d8a900;
+      transition: transform 0.15s ease;
+    }
+    button:active { transform: translateY(3px); box-shadow: 0 2px 0 #d8a900; }
+    input[type="range"] { width: 150px; }
+    #gameScreen { display: none; }
+    #gameScreen.active { display: block; }
+    .topbar {
+      max-width: 1180px; margin: 0 auto 12px;
+      display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr);
+    }
+    .badge {
+      background: rgba(255,255,255,0.92);
+      border-radius: 20px; padding: 12px; text-align: center;
+      font-weight: 700; box-shadow: 0 8px 18px rgba(34, 49, 77, 0.09);
+      font-size: 18px;
+    }
+    .layout {
+      max-width: 1180px; margin: 0 auto;
+      display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px;
+      align-items: start;
+    }
+    .prompt-card, .sort-panel, .tray-panel {
+      background: rgba(255,255,255,0.95);
+      border-radius: 28px; padding: 18px;
+      box-shadow: 0 10px 24px rgba(34, 49, 77, 0.1);
+    }
+    .prompt-card h2 { font-size: clamp(24px, 3vw, 34px); color: #ef476f; margin-bottom: 10px; }
+    .prompt-card p { font-size: clamp(18px, 2.5vw, 24px); line-height: 1.4; }
+    .helper { min-height: 58px; margin-top: 12px; font-size: 18px; font-weight: 700; line-height: 1.35; }
+    .sort-zones {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px;
+    }
+    .zone {
+      min-height: 180px; border-radius: 24px; padding: 14px;
+      border: 4px dashed transparent;
+      display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+      text-align: center;
+    }
+    .zone h3 { font-size: 26px; margin-bottom: 10px; }
+    .zone small { font-size: 16px; line-height: 1.3; }
+    .zone.mind { background: #efe7ff; border-color: #cbb7ff; }
+    .zone.body { background: #dff8f3; border-color: #8ee0d4; }
+    .zone.soul { background: #ffe5dc; border-color: #ffb39a; }
+    .drop-btn {
+      width: 100%; margin-top: 12px; padding: 12px 10px;
+      border-radius: 16px; font-size: 18px; font-weight: 700;
+    }
+    .mind .drop-btn { background: var(--mind); color: #fff; box-shadow: 0 5px 0 #5e35b1; }
+    .body .drop-btn { background: var(--body); color: #fff; box-shadow: 0 5px 0 #1c7f75; }
+    .soul .drop-btn { background: var(--soul); color: #fff; box-shadow: 0 5px 0 #d95528; }
+    .tray-title { font-size: 26px; margin-bottom: 14px; color: #355070; }
+    .tray {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+    }
+    .item-card {
+      min-height: 150px; border-radius: 24px; padding: 14px; background: #f8fbff;
+      border: 3px solid #dbe8ff; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center;
+      cursor: pointer; transition: transform 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: 0 8px 16px rgba(34, 49, 77, 0.08);
+    }
+    .item-card:hover { transform: translateY(-2px) scale(1.01); }
+    .item-card.selected { outline: 5px solid #42a5f5; background: #e8f4ff; }
+    .item-icon { font-size: 54px; margin-bottom: 10px; }
+    .item-label { font-size: 22px; font-weight: 700; line-height: 1.25; }
+    .pulse { animation: pulse 0.5s ease; }
+    @keyframes pulse { 50% { transform: scale(1.04); } }
+    .legend {
+      margin-top: 14px; font-size: 16px; line-height: 1.4; background: #fff8e1;
+      padding: 12px; border-radius: 16px;
+    }
+    .final-title { text-align: center; font-size: clamp(30px, 5vw, 54px); color: #43a047; margin-bottom: 10px; }
+    .final-score { text-align: center; font-size: clamp(22px, 3vw, 32px); margin-bottom: 14px; }
+    .final-text { text-align: center; font-size: 20px; line-height: 1.45; margin-bottom: 18px; }
+    .stars { text-align: center; font-size: 52px; margin: 8px 0 16px; }
+    .confetti {
+      position: fixed; top: -20px; width: 14px; height: 14px; z-index: 999;
+      animation: fall 2.8s linear forwards;
+    }
+    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sort-zones { grid-template-columns: 1fr; }
+      .topbar { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .screen { padding: 10px; }
+      .card, .prompt-card, .sort-panel, .tray-panel { padding: 14px; border-radius: 22px; }
+      .tray { grid-template-columns: 1fr; }
+      .badge { font-size: 16px; }
+      .item-label { font-size: 20px; }
+      .zone h3 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="splashScreen" class="screen active">
+    <img src="./assets/innovine-logo.png" alt="Innovine Solutions logo" />
+  </div>
+
+  <div id="startScreen" class="screen">
+    <div class="card">
+      <h1 class="hero-title">Soul Sort Challenge</h1>
+      <p class="hero-sub">Pick a card and sort it into <strong>Mind</strong>, <strong>Body</strong>, or <strong>Soul</strong>.</p>
+      <div class="mini-note">Bright, quick, and replayable — every new game shuffles both the questions and the choices.</div>
+      <div class="btn-row">
+        <button onclick="startGame()">▶ Start Game</button>
+        <button onclick="toggleMusic()" id="musicBtn">🔊 Sound</button>
+        <label for="volumeSlider"><strong>Volume</strong></label>
+        <input id="volumeSlider" type="range" min="0" max="1" step="0.1" value="0.5" />
+      </div>
+    </div>
+  </div>
+
+  <div id="gameScreen" class="screen">
+    <div class="topbar">
+      <div class="badge">⭐ Score: <span id="score">0</span></div>
+      <div class="badge">🎯 Round: <span id="roundNo">1</span>/12</div>
+      <div class="badge">✅ Correct: <span id="correctCount">0</span></div>
+      <div class="badge">🧠 Sorted: <span id="sortedCount">0</span>/12</div>
+    </div>
+
+    <div class="layout">
+      <div>
+        <div class="prompt-card">
+          <h2>Sort the card</h2>
+          <p id="promptText">Choose a card and sort it into the correct group.</p>
+          <div class="helper" id="helperText"></div>
+        </div>
+
+        <div class="sort-panel" style="margin-top:16px;">
+          <div class="sort-zones">
+            <div class="zone mind pulse">
+              <h3>🧠 Mind</h3>
+              <small>Thoughts, beliefs, actions, ideas</small>
+              <button class="drop-btn" onclick="dropInZone('mind')">Put here</button>
+            </div>
+            <div class="zone body pulse">
+              <h3>💪 Body</h3>
+              <small>Physical self, senses, movement</small>
+              <button class="drop-btn" onclick="dropInZone('body')">Put here</button>
+            </div>
+            <div class="zone soul pulse">
+              <h3>✨ Soul</h3>
+              <small>Inner self, calm, kindness, meaning</small>
+              <button class="drop-btn" onclick="dropInZone('soul')">Put here</button>
+            </div>
+          </div>
+          <div class="legend">Tip: Tap a card first, then tap the matching group. The game uses short ideas from Grade 1 Chapter 1 such as mind, body, soul, kindness, gratitude, the five senses, meditation, and doing what is right.</div>
+        </div>
+      </div>
+
+      <div class="tray-panel">
+        <div class="tray-title">Choose one card</div>
+        <div id="tray" class="tray"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="endScreen" class="screen">
+    <div class="card">
+      <div class="final-title" id="finalTitle">Great job!</div>
+      <div class="stars" id="starLine">🌟🌟🌟</div>
+      <div class="final-score">Your Score: <span id="finalScore">0</span>/12</div>
+      <div class="final-text" id="finalText">You sorted your way through the chapter ideas.</div>
+      <div class="btn-row">
+        <button onclick="startGame()">🔄 Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="correctSound" preload="auto" src="./assets/correct.mp3"></audio>
+  <audio id="wrongSound" preload="auto" src="./assets/wrong.mp3"></audio>
+  <audio id="clapSound" preload="auto" src="./assets/clapping.mp3"></audio>
+
+  <script>
+    const itemBank = [
+      { label: 'Thoughts', icon: '💭', category: 'mind', tip: 'The mind is your thinking place.' },
+      { label: 'Beliefs', icon: '🌈', category: 'mind', tip: 'Beliefs are part of the mind.' },
+      { label: 'Actions', icon: '🏃', category: 'mind', tip: 'The chapter says the mind is connected to thoughts and actions.' },
+      { label: 'Five Senses', icon: '👀', category: 'body', tip: 'The body experiences the world through the five senses.' },
+      { label: 'Movement', icon: '🕺', category: 'body', tip: 'The body carries you through life.' },
+      { label: 'Physical Self', icon: '🧍', category: 'body', tip: 'Your body is your physical self.' },
+      { label: 'Meditation', icon: '🧘', category: 'soul', tip: 'Meditation can help you connect with your soul.' },
+      { label: 'Kindness', icon: '💖', category: 'soul', tip: 'A healthy soul shows kindness and compassion.' },
+      { label: 'Gratitude', icon: '🙏', category: 'soul', tip: 'A healthy soul feels gratitude and appreciation.' },
+      { label: 'Nature Calm', icon: '🌿', category: 'soul', tip: 'Time in nature can help the soul feel calm.' },
+      { label: 'Study Duty', icon: '📚', category: 'mind', tip: 'Doing your duty begins with your choices and thoughts.' },
+      { label: 'Healthy Habits', icon: '🍎', category: 'body', tip: 'Healthy physical habits support the body.' },
+      { label: 'Inner Voice', icon: '🔔', category: 'soul', tip: 'The chapter describes the soul like a little voice inside.' },
+      { label: 'Concentration', icon: '🎯', category: 'mind', tip: 'Clarity and concentration connect with the mind.' },
+      { label: 'Hands and Feet', icon: '🖐️', category: 'body', tip: 'Hands and feet are part of the body.' },
+      { label: 'Compassion', icon: '🤝', category: 'soul', tip: 'Compassion is named as a healthy soul quality.' }
+    ];
+
+    const TOTAL_ROUNDS = 12;
+    let gameItems = [];
+    let currentRound = 0;
+    let score = 0;
+    let correctCount = 0;
+    let selectedIndex = null;
+    let selectedCard = null;
+    let soundOn = true;
+
+    const correctSound = document.getElementById('correctSound');
+    const wrongSound = document.getElementById('wrongSound');
+    const clapSound = document.getElementById('clapSound');
+    const volumeSlider = document.getElementById('volumeSlider');
+
+    function setVolume(v) {
+      [correctSound, wrongSound, clapSound].forEach(a => a.volume = v);
+    }
+    setVolume(Number(volumeSlider.value));
+    volumeSlider.addEventListener('input', e => setVolume(Number(e.target.value)));
+
+    function playAudio(audio) {
+      if (!soundOn) return;
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
+    }
+
+    function toggleMusic() {
+      soundOn = !soundOn;
+      document.getElementById('musicBtn').textContent = soundOn ? '🔊 Sound' : '🔇 Sound';
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function startGame() {
+      currentRound = 0;
+      score = 0;
+      correctCount = 0;
+      selectedIndex = null;
+      selectedCard = null;
+      gameItems = shuffle(itemBank).slice(0, TOTAL_ROUNDS);
+      showScreen('gameScreen');
+      loadRound();
+    }
+
+    function loadRound() {
+      if (currentRound >= TOTAL_ROUNDS) {
+        endGame();
+        return;
+      }
+
+      selectedIndex = null;
+      selectedCard = null;
+      const currentItem = gameItems[currentRound];
+      const decoys = shuffle(itemBank.filter(it => it.label !== currentItem.label)).slice(0, 3);
+      const options = shuffle([currentItem, ...decoys]);
+
+      document.getElementById('roundNo').textContent = currentRound + 1;
+      document.getElementById('score').textContent = score;
+      document.getElementById('correctCount').textContent = correctCount;
+      document.getElementById('sortedCount').textContent = currentRound;
+      document.getElementById('promptText').textContent = 'Where does “' + currentItem.label + '” belong?';
+      document.getElementById('helperText').textContent = 'Tap a card, then choose Mind, Body, or Soul.';
+
+      const tray = document.getElementById('tray');
+      tray.innerHTML = '';
+
+      options.forEach((item, index) => {
+        const card = document.createElement('button');
+        card.className = 'item-card';
+        card.innerHTML = '<div class="item-icon">' + item.icon + '</div><div class="item-label">' + item.label + '</div>';
+        card.addEventListener('click', () => selectCard(index, item));
+        tray.appendChild(card);
+      });
+    }
+
+    function selectCard(index, item) {
+      selectedIndex = index;
+      selectedCard = item;
+      document.querySelectorAll('.item-card').forEach((card, i) => {
+        card.classList.toggle('selected', i === index);
+      });
+      document.getElementById('helperText').textContent = 'Now place “' + item.label + '” in the correct group.';
+    }
+
+    function dropInZone(zone) {
+      if (selectedCard === null) {
+        document.getElementById('helperText').textContent = 'Pick a card first.';
+        return;
+      }
+
+      const cards = [...document.querySelectorAll('.item-card')];
+      cards.forEach(card => card.disabled = true);
+      const currentItem = gameItems[currentRound];
+      const helper = document.getElementById('helperText');
+
+      if (selectedCard.label !== currentItem.label) {
+        cards[selectedIndex].style.borderColor = '#e53935';
+        helper.textContent = 'That is not the target card. Find “' + currentItem.label + '”.';
+        playAudio(wrongSound);
+        setTimeout(() => loadRound(), 1100);
+        return;
+      }
+
+      if (zone === currentItem.category) {
+        score += 10;
+        correctCount += 1;
+        helper.textContent = 'Correct! ' + currentItem.tip;
+        cards[selectedIndex].style.borderColor = '#43a047';
+        cards[selectedIndex].style.background = '#e8f5e9';
+        playAudio(correctSound);
+      } else {
+        helper.textContent = 'Oops! “' + currentItem.label + '” belongs to ' + capitalize(currentItem.category) + '. ' + currentItem.tip;
+        cards[selectedIndex].style.borderColor = '#e53935';
+        cards[selectedIndex].style.background = '#ffebee';
+        playAudio(wrongSound);
+      }
+
+      document.getElementById('score').textContent = score;
+      document.getElementById('correctCount').textContent = correctCount;
+      document.getElementById('sortedCount').textContent = currentRound + 1;
+      setTimeout(() => {
+        currentRound += 1;
+        loadRound();
+      }, 1500);
+    }
+
+    function capitalize(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    function burstConfetti() {
+      const colors = ['#ff5252', '#ffca28', '#66bb6a', '#42a5f5', '#ab47bc', '#ff7043'];
+      for (let i = 0; i < 36; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random() * 100 + 'vw';
+        c.style.background = colors[Math.floor(Math.random() * colors.length)];
+        c.style.animationDelay = Math.random() * 0.4 + 's';
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 3200);
+      }
+    }
+
+    function endGame() {
+      showScreen('endScreen');
+      document.getElementById('finalScore').textContent = correctCount;
+      const title = document.getElementById('finalTitle');
+      const text = document.getElementById('finalText');
+      const stars = document.getElementById('starLine');
+
+      if (correctCount >= 10) {
+        title.textContent = 'Amazing sorting!';
+        text.textContent = 'You really understand the difference between mind, body, and soul.';
+        stars.textContent = '🌟🌟🌟';
+        burstConfetti();
+        playAudio(clapSound);
+      } else if (correctCount >= 7) {
+        title.textContent = 'Great work!';
+        text.textContent = 'You sorted many chapter ideas correctly. Play again to improve even more.';
+        stars.textContent = '🌟🌟';
+        burstConfetti();
+      } else {
+        title.textContent = 'Nice try!';
+        text.textContent = 'Try again and think about what belongs to the mind, the body, and the soul.';
+        stars.textContent = '🌟';
+      }
+    }
+
+    window.addEventListener('load', () => {
+      setTimeout(() => showScreen('startScreen'), 3000);
+    });
+  </script>
+</body>
+</html>
