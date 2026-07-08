@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Thank You Card Builder</title>
+<style>
+:root{--bg1:#fff7e8;--bg2:#e8f4ff;--card:#fff;--text:#24324a;--muted:#5d6b7b;--primary:#ef6c00;--secondary:#0288d1;--accent:#f2b705;--good:#2e7d32;--bad:#c62828;--border:rgba(36,50,74,.12);--shadow:0 14px 30px rgba(36,50,74,.12)}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--text);overflow-x:hidden}
+button{font:inherit;cursor:pointer} .screen{display:none;min-height:100vh}.screen.active{display:grid}.center{place-items:center;padding:16px}
+.wrap{width:min(1180px,calc(100% - 20px));margin:0 auto} .card{background:var(--card);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow)}
+#splashScreen{position:fixed;inset:0;z-index:1000;background:#fff;display:grid;place-items:center;padding:16px} #splashScreen .box{display:grid;gap:14px;justify-items:center;text-align:center}
+#splashScreen img{width:min(340px,72vw);height:auto;filter:drop-shadow(0 10px 20px rgba(0,0,0,.12))} .splash-text{font-size:clamp(18px,2.6vw,28px);font-weight:800;color:var(--primary)}
+.hero{padding:22px 0 18px}.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:center;padding:18px}
+.layout{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;padding:0 0 22px}.panel{padding:18px}
+@media (max-width:980px){.hero-grid,.layout{grid-template-columns:1fr}.hud{grid-template-columns:repeat(2,1fr)}.stamp-row,.bin-row{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.panel,.card{border-radius:22px;padding:14px}.btn{width:100%}.btn-row{flex-direction:column}}
+h1,h2{margin:0;line-height:1.05} h1{font-size:clamp(34px,5vw,60px);color:var(--primary)} h2{font-size:clamp(24px,3vw,36px)}
+.lead{font-size:clamp(18px,2.3vw,23px);color:var(--muted);line-height:1.5;margin:14px 0 18px;max-width:56ch}
+.pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.pill{padding:10px 14px;border-radius:999px;background:#fff2db;border:1px solid var(--border);font-weight:700}
+.actions{display:flex;flex-wrap:wrap;gap:10px}.btn{border:none;border-radius:16px;padding:14px 20px;font-weight:800;min-height:46px}.primary{background:var(--primary);color:#fff}.ghost{background:#f2f5f8;color:var(--text);border:1px solid var(--border)}
+.art{min-height:320px;position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(180deg,#f8f1ff,#e0f7fa)}
+.sparkle{position:absolute;font-size:28px;animation:twinkle 2s ease-in-out infinite}.s1{top:20px;left:24px}.s2{top:38px;right:28px}.s3{bottom:70px;left:45px}.s4{bottom:130px;right:70px}.s5{top:120px;left:46%}.s6{bottom:38px;left:50%}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0deg);opacity:.7}50%{transform:scale(1.25) rotate(12deg);opacity:1}}
+.stationery{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:92px;filter:drop-shadow(0 10px 14px rgba(0,0,0,.14))}
+.note{position:absolute;left:18px;right:18px;bottom:16px;background:rgba(255,255,255,.88);border:1px solid var(--border);border-radius:18px;padding:12px 14px;font-size:16px;line-height:1.45;color:var(--muted)}
+.canvas-box{display:grid;gap:10px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.ctrl{border:none;border-radius:999px;padding:12px 16px;min-width:120px;background:#eef7f5;font-weight:800;border:1px solid var(--border)}
+canvas{width:100%;aspect-ratio:4/3;border-radius:24px;background:linear-gradient(180deg,#fff,#fff8e8);border:1px solid var(--border);display:block;touch-action:manipulation}
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}.hud-box{padding:12px;border-radius:18px;background:#fff;border:1px solid var(--border);text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.06)}
+.hud-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.hud-val{display:block;font-size:22px;font-weight:800;margin-top:2px}
+.stamp-row,.bin-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.bin{border:1px solid var(--border);border-radius:18px;padding:12px;text-align:center;background:#f8fbfe;min-height:92px;display:grid;place-items:center;gap:8px;font-weight:800}
+.bin .emoji{font-size:32px}.bin small{display:block;color:var(--muted);font-weight:700;line-height:1.2}
+.stamp{border:1px solid var(--border);border-radius:18px;padding:12px;background:#fff;display:flex;align-items:center;gap:10px;min-height:70px;justify-content:center;font-weight:800}.stamp.selected{outline:3px solid var(--secondary)}.stamp .emoji{font-size:28px}
+.editor{display:grid;gap:12px}.sheet{border:1px solid var(--border);border-radius:22px;padding:14px;background:#fffaf2;min-height:180px}
+.sheet-title{font-weight:900;color:var(--primary);margin-bottom:10px}.sheet-line{margin:8px 0;font-size:18px;line-height:1.45;color:#334155}.preview{margin-top:12px;border:1px dashed rgba(36,50,74,.2);border-radius:18px;padding:12px;background:#fff;min-height:140px;display:grid;place-items:center;text-align:center}
+.text-input{width:100%;border:1px solid var(--border);border-radius:14px;padding:12px 14px;font-size:16px;outline:none}
+.btn-mini{border:none;border-radius:12px;padding:10px 14px;background:#edf8f6;font-weight:800;border:1px solid var(--border)}
+.tips{display:grid;gap:10px;margin-top:12px}.tip{background:#f7fafc;border:1px solid var(--border);border-radius:16px;padding:12px 14px;color:var(--muted);line-height:1.45}
+.overlay{position:fixed;inset:0;z-index:900;background:rgba(20,30,40,.58);display:none;place-items:center;padding:16px;backdrop-filter:blur(8px)} .overlay.active{display:grid}
+.dialog{width:min(760px,100%);padding:20px;border-radius:26px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow)}
+.dialog p{color:var(--muted);line-height:1.5}.options{display:grid;gap:10px;margin-top:14px}.option{border:none;text-align:left;background:#f4f8fb;border:1px solid var(--border);border-radius:16px;padding:12px 14px;font-weight:700;min-height:46px}
+.feedback{min-height:28px;margin-top:12px;font-weight:800}.good{color:var(--good)}.bad{color:var(--bad)}
+.result-stars{font-size:44px;margin:10px 0 12px;text-align:center}.result{text-align:center;color:var(--muted);font-size:19px;line-height:1.5}
+#endScreen .card{padding:22px;width:min(760px,100%)}
+.banner{background:#edf8f6;border:1px solid var(--border);border-radius:18px;padding:12px 14px;line-height:1.45;color:var(--muted);margin-top:12px}
+</style>
+</head>
+<body>
+  <section id="splashScreen" class="screen active">
+    <div class="box">
+      <img id="innovineLogo" src="./assets/innovine-logo.png" alt="Innovine logo" />
+      <div class="splash-text">Loading Thank You Card Builder...</div>
+    </div>
+  </section>
+  <section id="startScreen" class="screen">
+    <div class="wrap hero">
+      <div class="card hero-grid">
+        <div>
+          <div class="pill-row"><div class="pill">Chapter 4: Appreciation</div><div class="pill">Card-making game</div><div class="pill">Reward questions</div></div>
+          <h1>Thank You Card Builder</h1>
+          <p class="lead">Create a beautiful thank-you card by choosing appreciation words, adding a message, and decorating it with kind stickers.</p>
+          <div class="actions"><button class="btn primary" onclick="startGame()">Start Game</button><button class="btn ghost" onclick="toggleSound()" id="soundBtn">Sound: On</button></div>
+        </div>
+        <div class="art" aria-hidden="true"><div class="sparkle s1">✨</div><div class="sparkle s2">✨</div><div class="sparkle s3">💫</div><div class="sparkle s4">✨</div><div class="sparkle s5">💫</div><div class="sparkle s6">✨</div><div class="stationery">💌</div><div class="note">Appreciation means being thankful, showing respect, and valuing the kindness of others. [file:170]</div></div>
+      </div>
+      <div class="layout" style="margin-top:16px;">
+        <div class="card panel"><h2>How it works</h2><div class="tips"><div class="tip">1. Pick a card style.</div><div class="tip">2. Add a message of appreciation.</div><div class="tip">3. Decorate with stamps and then answer reward questions.</div></div></div>
+        <div class="card panel"><h2>Chapter ideas</h2><div class="tips"><div class="tip">Say thank you.</div><div class="tip">Give compliments.</div><div class="tip">Write a kind note.</div></div></div>
+      </div>
+    </div>
+  </section>
+  <section id="gameScreen" class="screen">
+    <div class="wrap layout" style="padding-top:18px;">
+      <div>
+        <div class="hud"><div class="hud-box"><span class="hud-label">Level</span><span class="hud-val" id="levelNum">1</span></div><div class="hud-box"><span class="hud-label">Score</span><span class="hud-val" id="scoreNum">0</span></div><div class="hud-box"><span class="hud-label">Lives</span><span class="hud-val" id="livesNum">3</span></div><div class="hud-box"><span class="hud-label">Stars</span><span class="hud-val" id="starsNum">0</span></div></div>
+        <div class="card panel canvas-box">
+          <canvas id="gameCanvas" width="640" height="480"></canvas>
+          <div class="controls"><button class="ctrl" onclick="nextCardStyle()">Next Style</button><button class="ctrl" onclick="cycleStamp()">Next Stamp</button><button class="ctrl" onclick="addSelectedStamp()">Add Stamp</button></div>
+          <div class="banner" id="missionText">Build a thank-you card and collect appreciation stars.</div>
+        </div>
+      </div>
+      <div class="card panel editor">
+        <h2>Card Builder</h2>
+        <div class="sheet">
+          <div class="sheet-title">Choose your message</div>
+          <div class="stamp-row" id="messageRow"></div>
+          <div class="sheet-line">Now type one extra kind sentence:</div>
+          <input id="customText" class="text-input" type="text" placeholder="Example: Thank you for helping me." />
+          <div class="controls"><button class="btn-mini" onclick="saveCustomText()">Save Message</button><button class="btn-mini" onclick="clearCard()">Clear Card</button></div>
+          <div class="preview" id="messagePreview">Your thank-you card will appear here.</div>
+        </div>
+        <h2>Decorations</h2>
+        <div class="stamp-row" id="stampRow"></div>
+        <div class="tips"><div class="tip">Use appreciation words like thank you, kind, helpful, amazing, and caring.</div><div class="tip">Every 3 correct choices unlocks a reward question.</div><div class="tip">A good card shows gratitude and respect.</div></div>
+      </div>
+    </div>
+  </section>
+  <section id="endScreen" class="screen center">
+    <div class="card"><h2 id="finalTitle" style="text-align:center;color:var(--primary)">Wonderful!</h2><div class="result-stars" id="finalStars">💌💌💌</div><div class="result">Card score: <strong id="finalScore">0</strong></div><div class="result">Quiz stars: <strong id="finalQuizStars">0</strong></div><p class="result" id="finalMessage">You created a beautiful thank-you card full of appreciation.</p><div class="actions" style="justify-content:center;margin-top:16px;"><button class="btn primary" onclick="startGame()">Play Again</button><button class="btn ghost" onclick="showStart()">Back to Start</button></div></div>
+  </section>
+  <div id="questionOverlay" class="overlay" aria-hidden="true"><div class="dialog card"><h2>Reward Question</h2><p id="questionText"></p><div class="options" id="optionBox"></div><div class="feedback" id="questionFeedback"></div></div></div>
+<script>
+const canvas=document.getElementById('gameCanvas'),ctx=canvas.getContext('2d');
+const messageChoices=['Thank you for helping me.','You are very kind.','I appreciate your effort.','Thanks for being my friend.','You did a wonderful job!','I am grateful for your help.'];
+const stamps=[{emoji:'⭐',name:'Star'},{emoji:'💖',name:'Heart'},{emoji:'🌼',name:'Flower'},{emoji:'🎀',name:'Bow'},{emoji:'✨',name:'Sparkle'},{emoji:'🖍️',name:'Crayon'}];
+const cardStyles=[{bg1:'#fff7e8',bg2:'#fce4ec',title:'Warm Sunset'},{bg1:'#e8f4ff',bg2:'#f3e5f5',title:'Soft Sky'},{bg1:'#eef8ff',bg2:'#fff8e1',title:'Bright Garden'}];
+const questions=[{q:'What does appreciation mean?',options:['Being thankful for good things and kind people','Ignoring people who help you','Taking everything for granted'],answer:'Being thankful for good things and kind people',tip:'Appreciation is gratitude.'},{q:'What can you say to show appreciation?',options:['Thank you!','Whatever.','No thanks.'],answer:'Thank you!',tip:'Simple words can show gratitude.'},{q:'Which is a kind compliment?',options:['You did a wonderful job!','That was silly.','I do not care.'],answer:'You did a wonderful job!',tip:'Compliments make others feel valued.'},{q:'How can you appreciate a teacher?',options:['Say thank you for helping me learn','Ignore their effort','Talk over them'],answer:'Say thank you for helping me learn',tip:'Teachers deserve respect and gratitude.'},{q:'What can a thank-you card include?',options:['Kind words and a nice message','Only messy scribbles','Unkind jokes'],answer:'Kind words and a nice message',tip:'A card should feel warm and respectful.'},{q:'Who can we appreciate?',options:['Family, friends, teachers, and helpers','Only ourselves','Only famous people'],answer:'Family, friends, teachers, and helpers',tip:'Many people deserve appreciation.'}];
+let audioCtx=null,soundOn=true,gameActive=false,usedQuestions=[];let level=1,score=0,lives=3,stars=0,correctInRow=0,selectedMessage=0,selectedStamp=0,cardStyle=0,customMessage='';
+const splash=document.getElementById('splashScreen'),logo=document.getElementById('innovineLogo'),overlay=document.getElementById('questionOverlay');
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function toggleSound(){soundOn=!soundOn;document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off'}
+function play(kind){if(!soundOn)return;if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const tone=(f,d,t='triangle')=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=t;o.frequency.value=f;o.connect(g);g.connect(audioCtx.destination);g.gain.value=.05;o.start();g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+d);o.stop(audioCtx.currentTime+d)};if(kind==='good'){tone(660,.14);setTimeout(()=>tone(880,.18),80)}else if(kind==='bad'){tone(220,.22,'sawtooth')}else if(kind==='win'){tone(523,.12);setTimeout(()=>tone(659,.12),80);setTimeout(()=>tone(784,.18),160)}}
+function hideSplash(){splash.classList.remove('active');show('startScreen')} logo.addEventListener('error',hideSplash); window.addEventListener('load',()=>setTimeout(hideSplash,2200));
+function startGame(){level=1;score=0;lives=3;stars=0;correctInRow=0;usedQuestions=[];selectedMessage=0;selectedStamp=0;cardStyle=0;customMessage='';document.getElementById('customText').value='';gameActive=true;show('gameScreen');renderAll();draw()}
+function showStart(){gameActive=false;show('startScreen')}
+function renderAll(){renderMessages();renderStamps();updateHud();renderPreview()}
+function updateHud(){document.getElementById('levelNum').textContent=level;document.getElementById('scoreNum').textContent=score;document.getElementById('livesNum').textContent=lives;document.getElementById('starsNum').textContent=stars;document.getElementById('missionText').textContent='Build a thank-you card and collect appreciation stars.'}
+function renderMessages(){const row=document.getElementById('messageRow');row.innerHTML='';messageChoices.forEach((m,i)=>{const d=document.createElement('div');d.className='stamp'+(i===selectedMessage?' selected':'');d.innerHTML=`<div class="emoji">💌</div><div>${m}</div>`;d.onclick=()=>{selectedMessage=i;renderMessages();renderPreview()};row.appendChild(d)})}
+function renderStamps(){const row=document.getElementById('stampRow');row.innerHTML='';stamps.forEach((s,i)=>{const d=document.createElement('div');d.className='stamp'+(i===selectedStamp?' selected':'');d.innerHTML=`<div class="emoji">${s.emoji}</div><div>${s.name}</div>`;d.onclick=()=>{selectedStamp=i;renderStamps();renderPreview()};row.appendChild(d)})}
+function nextCardStyle(){cardStyle=(cardStyle+1)%cardStyles.length;play('good');draw();renderPreview()}
+function cycleStamp(){selectedStamp=(selectedStamp+1)%stamps.length;renderStamps();renderPreview();play('good')}
+function addSelectedStamp(){stars++;score+=5;correctInRow++;play('good');updateHud();renderPreview();if(correctInRow%3===0){showQuestion();return}if(score>=20)endGame(true)}
+function saveCustomText(){const t=document.getElementById('customText').value.trim();if(t){customMessage=t;score+=10;correctInRow++;play('good');updateHud();renderPreview();if(correctInRow%3===0){showQuestion();return}if(score>=20)endGame(true)}}
+function clearCard(){customMessage='';document.getElementById('customText').value='';selectedMessage=0;selectedStamp=0;cardStyle=0;renderAll();draw()}
+function renderPreview(){const base=cardStyles[cardStyle];ctx.clearRect(0,0,canvas.width,canvas.height);const g=ctx.createLinearGradient(0,0,0,canvas.height);g.addColorStop(0,base.bg1);g.addColorStop(1,base.bg2);ctx.fillStyle=g;ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='rgba(255,255,255,.7)';for(let i=0;i<8;i++){ctx.beginPath();ctx.arc(70+i*74,40+Math.sin(i)*8,16,0,Math.PI*2);ctx.fill()}ctx.save();ctx.translate(128,64);ctx.fillStyle='#fff';ctx.strokeStyle='rgba(36,50,74,.12)';ctx.lineWidth=2;roundRect(ctx,0,0,384,240,22);ctx.fill();ctx.stroke();ctx.restore();ctx.fillStyle='#ef6c00';ctx.font='700 28px Arial';ctx.textAlign='center';ctx.fillText('Thank You!',canvas.width/2,116);ctx.fillStyle='#24324a';ctx.font='600 18px Arial';const msg=messageChoices[selectedMessage];wrapText(ctx,msg,canvas.width/2,154,320,24);if(customMessage){ctx.fillStyle='#0288d1';ctx.font='600 16px Arial';wrapText(ctx,customMessage,canvas.width/2,214,320,22)}ctx.font='36px Arial';ctx.fillText(stamps[selectedStamp].emoji,canvas.width/2,276);ctx.fillText(stamps[(selectedStamp+1)%stamps.length].emoji,canvas.width/2-120,250);ctx.fillText(stamps[(selectedStamp+2)%stamps.length].emoji,canvas.width/2+120,250)}
+function draw(){renderPreview()}
+function showQuestion(){const available=questions.map((_,i)=>i).filter(i=>!usedQuestions.includes(i));const idx=available.length?available[Math.floor(Math.random()*available.length)]:Math.floor(Math.random()*questions.length);if(!usedQuestions.includes(idx))usedQuestions.push(idx);const q=questions[idx];document.getElementById('questionText').textContent=q.q;const box=document.getElementById('optionBox');box.innerHTML='';document.getElementById('questionFeedback').textContent='';document.getElementById('questionFeedback').className='feedback';q.options.slice().sort(()=>Math.random()-.5).forEach(opt=>{const b=document.createElement('button');b.className='option';b.textContent=opt;b.onclick=()=>answerQuestion(opt,q);box.appendChild(b)});overlay.classList.add('active');overlay.setAttribute('aria-hidden','false')}
+function answerQuestion(selected,q){const fb=document.getElementById('questionFeedback');if(selected===q.answer){stars++;score+=5;fb.textContent='Correct! '+q.tip;fb.className='feedback good';play('good');updateHud();renderPreview();setTimeout(()=>{overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true')},1000);if(score>=20) setTimeout(()=>endGame(true),1200)}else{lives--;correctInRow=0;fb.textContent='Try again. ' + q.tip;fb.className='feedback bad';play('bad');updateHud();if(lives<=0){setTimeout(()=>endGame(false),900)}}}
+function endGame(won){gameActive=false;show('endScreen');document.getElementById('finalScore').textContent=score;document.getElementById('finalQuizStars').textContent=stars;if(won||score>=20){document.getElementById('finalTitle').textContent='Card Creator!';document.getElementById('finalStars').textContent='💌💌💌';document.getElementById('finalMessage').textContent='You built a beautiful card full of gratitude and kind words.';play('win')}else{document.getElementById('finalTitle').textContent='Keep Creating';document.getElementById('finalStars').textContent='💌💌';document.getElementById('finalMessage').textContent='Try again and add more appreciation words to your card.'}}
+function roundRect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath()}
+function wrapText(c,t,x,y,maxWidth,lineHeight){const words=t.split(' ');let line='';let lines=[];for(let n=0;n<words.length;n++){const test=line+words[n]+' ';if(c.measureText(test).width>maxWidth&&n>0){lines.push(line.trim());line=words[n]+' '}else line=test}lines.push(line.trim());lines.forEach((l,i)=>c.fillText(l,x,y+(i*lineHeight))) }
+</script>
+</body>
+</html>
