@@ -18,8 +18,15 @@
     .screen { display: none; min-height: 100vh; padding: 16px; }
     .screen.active { display: flex; }
     #splashScreen {
-      position: fixed; inset: 0; z-index: 9999; background: #ffffff;
-      align-items: center; justify-content: center; flex-direction: column; gap: 16px;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #ffffff;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      display: flex;
     }
     #splashScreen img {
       width: min(78vw, 420px);
@@ -35,7 +42,8 @@
     }
     @keyframes bob { 50% { transform: translateY(-10px); } }
     #startScreen, #endScreen {
-      align-items: center; justify-content: center;
+      align-items: center;
+      justify-content: center;
     }
     .card {
       width: min(1100px, 100%);
@@ -56,7 +64,13 @@
       line-height: 1.5;
       margin-bottom: 16px;
     }
-    .pill-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px; }
+    .pill-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
     .pill {
       background: #fff3cd;
       border-radius: 999px;
@@ -64,7 +78,13 @@
       font-weight: 700;
       font-size: 16px;
     }
-    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; align-items: center; }
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
     button {
       border: none;
       cursor: pointer;
@@ -142,8 +162,14 @@
     .ctrl { width: 64px; height: 64px; border-radius: 18px; font-size: 26px; padding: 0; }
     .ctrl.blank { visibility: hidden; }
     .question-overlay {
-      position: fixed; inset: 0; background: rgba(35, 35, 55, 0.7);
-      display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;
+      position: fixed;
+      inset: 0;
+      background: rgba(35, 35, 55, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 16px;
     }
     .question-overlay.active { display: flex; }
     .question-card {
@@ -157,18 +183,41 @@
     .question-card p { font-size: 22px; line-height: 1.45; margin-bottom: 14px; }
     .options { display: grid; gap: 10px; }
     .option-btn {
-      width: 100%; text-align: left; background: #eef7ff; color: #17324d;
-      box-shadow: 0 4px 0 #9ec5f8; border-radius: 16px; font-size: 18px;
+      width: 100%;
+      text-align: left;
+      background: #eef7ff;
+      color: #17324d;
+      box-shadow: 0 4px 0 #9ec5f8;
+      border-radius: 16px;
+      font-size: 18px;
     }
     .feedback { min-height: 42px; margin-top: 12px; font-size: 18px; font-weight: 700; }
     .final-title {
-      text-align: center; font-size: clamp(30px, 5vw, 56px); color: #2e7d32; margin-bottom: 10px;
+      text-align: center;
+      font-size: clamp(30px, 5vw, 56px);
+      color: #2e7d32;
+      margin-bottom: 10px;
     }
-    .final-text, .score-text { text-align: center; font-size: 21px; line-height: 1.5; margin-bottom: 14px; }
+    .final-text, .score-text {
+      text-align: center;
+      font-size: 21px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
     .stars { text-align: center; font-size: 50px; margin: 10px 0 18px; }
-    .confetti { position: fixed; top: -20px; width: 12px; height: 18px; z-index: 1100; animation: fall 3s linear forwards; }
+    .confetti {
+      position: fixed;
+      top: -20px;
+      width: 12px;
+      height: 18px;
+      z-index: 1100;
+      animation: fall 3s linear forwards;
+    }
     @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
-    @media (max-width: 960px) { .main-grid { grid-template-columns: 1fr; } .hud { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 960px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .hud { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 560px) {
       .screen { padding: 10px; }
       .card, .panel, .question-card { padding: 14px; border-radius: 22px; }
@@ -293,7 +342,7 @@
     let soundOn = true;
     let pausedForQuestion = false;
     let usedQuestions = [];
-    let splashTimerStarted = false;
+    let splashStarted = false;
 
     const correctSound = document.getElementById('correctSound');
     const wrongSound = document.getElementById('wrongSound');
@@ -317,17 +366,17 @@
     }
 
     function hideSplashAndShowStart() {
+      const splash = document.getElementById('splashScreen');
+      splash.classList.remove('active');
+      splash.style.display = 'none';
       showScreen('startScreen');
     }
 
     function startSplashTimer() {
-      if (splashTimerStarted) return;
-      splashTimerStarted = true;
+      if (splashStarted) return;
+      splashStarted = true;
       setTimeout(hideSplashAndShowStart, 3000);
     }
-
-    innovineLogo.addEventListener('load', startSplashTimer);
-    innovineLogo.addEventListener('error', hideSplashAndShowStart);
 
     function startGame() {
       level = 1;
@@ -588,10 +637,13 @@
       spawnFood();
       updateHud();
       drawGame();
+
       if (innovineLogo.complete && innovineLogo.naturalWidth !== 0) {
         startSplashTimer();
       } else {
         innovineLogo.addEventListener('load', startSplashTimer, { once: true });
+        innovineLogo.addEventListener('error', hideSplashAndShowStart, { once: true });
+        setTimeout(startSplashTimer, 100);
       }
     });
   </script>
