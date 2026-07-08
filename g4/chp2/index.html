@@ -293,7 +293,7 @@
     let soundOn = true;
     let pausedForQuestion = false;
     let usedQuestions = [];
-    let splashDone = false;
+    let splashTimerStarted = false;
 
     const correctSound = document.getElementById('correctSound');
     const wrongSound = document.getElementById('wrongSound');
@@ -317,11 +317,16 @@
     }
 
     function hideSplashAndShowStart() {
-      if (splashDone) return;
-      splashDone = true;
       showScreen('startScreen');
     }
 
+    function startSplashTimer() {
+      if (splashTimerStarted) return;
+      splashTimerStarted = true;
+      setTimeout(hideSplashAndShowStart, 3000);
+    }
+
+    innovineLogo.addEventListener('load', startSplashTimer);
     innovineLogo.addEventListener('error', hideSplashAndShowStart);
 
     function startGame() {
@@ -583,7 +588,11 @@
       spawnFood();
       updateHud();
       drawGame();
-      setTimeout(hideSplashAndShowStart, 2500);
+      if (innovineLogo.complete && innovineLogo.naturalWidth !== 0) {
+        startSplashTimer();
+      } else {
+        innovineLogo.addEventListener('load', startSplashTimer, { once: true });
+      }
     });
   </script>
 </body>
