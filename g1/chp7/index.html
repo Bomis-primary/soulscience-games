@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fair-Share Bakery - Chapter 7: Sharing</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #fff9f0;
+            font-family: 'Arial Rounded MT Bold', 'Comic Sans MS', sans-serif;
+        }
+
+        /* 3-Second Innovine Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+        #splash-screen img {
+            max-width: 280px;
+            height: auto;
+        }
+
+        /* Main Canvas Framework Window */
+        #game-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 800px;
+            max-height: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* UI Overlays */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 249, 240, 0.96);
+            padding: 20px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        h1 {
+            color: #d35400;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #5d4037;
+            font-size: 18px;
+            max-width: 500px;
+            line-height: 1.5;
+        }
+
+        /* Grade-1 Oversized Buttons */
+        .btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px #27ae60;
+            transition: all 0.1s;
+            margin-top: 20px;
+        }
+
+        .btn:active {
+            box-shadow: 0 2px #27ae60;
+            transform: translateY(4px);
+        }
+
+        /* Control Panel at Bottom */
+        #controls-panel {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .slider-label {
+            font-size: 20px;
+            color: #5d4037;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Super friendly touch slider */
+        .share-slider {
+            width: 80%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 25px;
+            border-radius: 15px;
+            background: #e0e0e0;
+            outline: none;
+        }
+
+        .share-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #e67e22;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+
+        .share-slider::-moz-range-thumb {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #e67e22;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Innovine Logo Splash Screen -->
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" id="logo-img">
+    </div>
+
+    <!-- 2. Game Display Wrapper -->
+    <div id="game-container">
+        
+        <canvas id="bakeryCanvas" width="800" height="600"></canvas>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen hidden">
+            <h1>Fair-Share Bakery 🍰</h1>
+            <p>Welcome! Friends are here to eat. Let's practice <b>sharing</b> by cutting the treats into perfectly equal pieces!</p>
+            <button class="btn" onclick="startGame()">OPEN SHOP</button>
+        </div>
+
+        <!-- Interactive Gameplay Control System -->
+        <div id="controls-panel" class="hidden">
+            <div class="slider-label" id="instruction-text">Cut the treat for 2 friends!</div>
+            <input type="range" min="1" max="100" value="50" class="share-slider" id="cutSlider">
+            <button class="btn" style="margin-top:12px; background-color:#e67e22; box-shadow:0 6px #d35400" onclick="evaluateShare()">SHARE IT! ✨</button>
+        </div>
+
+        <!-- End Evaluation Screen -->
+        <div id="end-screen" class="screen hidden">
+            <h1 id="end-title">Fantastic Sharing!</h1>
+            <p id="end-message">You made all the bakery visitors happy by sharing equally!</p>
+            <button class="btn" onclick="showStartScreen()">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('bakeryCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Assets Configuration mapping
+        const assets = {
+            bg: new Image(),
+            treat: new Image()
+        };
+        assets.bg.src = 'assets/background.png';
+        assets.treat.src = 'assets/treat.png';
+
+        // Game Configuration Settings
+        let gameActive = false;
+        let currentRound = 1;
+        const totalRounds = 3;
+        let targetShares = 2; // Can be 2 or 3 portions for Grade 1 math
+        let feedbackText = "";
+        let feedbackTimer = 0;
+
+        const slider = document.getElementById('cutSlider');
+
+        // Splash Loader Sequence Loop
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.classList.add('hidden');
+                    showStartScreen();
+                }, 500);
+            }, 3000); // Fixed 3-Second Hold
+        });
+
+        function showStartScreen() {
+            document.getElementById('start-screen').classList.remove('hidden');
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('controls-panel').classList.add('hidden');
+            currentRound = 1;
+            renderScene();
+        }
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('controls-panel').classList.remove('hidden');
+            gameActive = true;
+            setupRound();
+            gameLoop();
+        }
+
+        function setupRound() {
+            slider.value = 50; // Reset slider to center position
+            feedbackText = "";
+            feedbackTimer = 0;
+            
+            if (currentRound === 1) {
+                targetShares = 2; // Share evenly between 2 friends
+            } else if (currentRound === 2) {
+                targetShares = 3; // Share evenly between 3 friends
+            } else {
+                targetShares = 2; // Final round wrap-up
+            }
+            
+            document.getElementById('instruction-text').innerText = `Share this treat evenly among ${targetShares} friends!`;
+        }
+
+        function evaluateShare() {
+            let playerVal = parseInt(slider.value);
+            let isAccurate = false;
+
+            if (targetShares === 2) {
+                // Perfect spot is 50. Allow a friendly margin of error for Grade 1 hands
+                if (playerVal >= 44 && playerVal <= 56) isAccurate = true;
+            } else if (targetShares === 3) {
+                // Perfect spots for 3 ways inside slider range are near 33 or 66
+                if ((playerVal >= 28 && playerVal <= 38) || (playerVal >= 60 && playerVal <= 70)) isAccurate = true;
+            }
+
+            if (isAccurate) {
+                feedbackText = "Wonderful Fair Sharing! ⭐";
+                feedbackTimer = 90; // Frame duration display window
+                setTimeout(() => {
+                    nextStep();
+                }, 1500);
+            } else {
+                feedbackText = "Let's try to make the pieces more equal! ❤️";
+                feedbackTimer = 90;
+            }
+        }
+
+        function nextStep() {
+            if (currentRound < totalRounds) {
+                currentRound++;
+                setupRound();
+            } else {
+                gameActive = false;
+                document.getElementById('controls-panel').classList.add('hidden');
+                document.getElementById('end-screen').classList.remove('hidden');
+            }
+        }
+
+        // Draw Environment Function
+        function renderScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. Render Background View
+            if (assets.bg.complete && assets.bg.naturalWidth !== 0) {
+                ctx.drawImage(assets.bg, 0, 0, canvas.width, canvas.height);
+            } else {
+                // Soft colorful Bakery Counter room aesthetic fallback color fill
+                ctx.fillStyle = "#ffeaa7";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "#d35400";
+                ctx.fillRect(0, 420, canvas.width, 180); // Counter Table bar top
+            }
+
+            if (!gameActive && document.getElementById('start-screen').classList.contains('hidden') === false) {
+                return; // Early stop if just displaying welcome loop
+            }
+
+            // 2. Render Little Customers asking to share
+            drawFriends();
+
+            // 3. Render the Treat to cut on the counter
+            let treatX = canvas.width / 2;
+            let treatY = 320;
+            let radius = 100;
+
+            if (assets.treat.complete && assets.treat.naturalWidth !== 0) {
+                ctx.drawImage(assets.treat, treatX - radius, treatY - radius, radius * 2, radius * 2);
+            } else {
+                // Fallback Shape representing a big round baked pie/cake
+                ctx.beginPath();
+                ctx.arc(treatX, treatY, radius, 0, Math.PI * 2);
+                ctx.fillStyle = "#e67e22";
+                ctx.fill();
+                ctx.lineWidth = 6;
+                ctx.strokeStyle = "#fff";
+                ctx.stroke();
+                ctx.closePath();
+            }
+
+            // 4. Draw Interactive Cut Guidelines based on slider values
+            drawCutLines(treatX, treatY, radius);
+
+            // 5. Draw Feedback Prompt Overlay
+            if (feedbackTimer > 0) {
+                ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+                ctx.fillRect(150, 20, 500, 60);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#e67e22";
+                ctx.strokeRect(150, 20, 500, 60);
+
+                ctx.fillStyle = "#2c3e50";
+                ctx.font = "bold 22px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText(feedbackText, canvas.width / 2, 56);
+                feedbackTimer--;
+            }
+        }
+
+        function drawFriends() {
+            ctx.textAlign = "center";
+            ctx.font = "50px Arial";
+            
+            // Render target placeholder emoji kids to share with across screen spaces
+            if (targetShares === 2) {
+                ctx.fillText("👧", 200, 160);
+                ctx.fillText("👦", 600, 160);
+            } else if (targetShares === 3) {
+                ctx.fillText("👧", 150, 160);
+                ctx.fillText("🧑‍🦱", 400, 160);
+                ctx.fillText("👦", 650, 160);
+            }
+        }
+
+        function drawCutLines(cx, cy, r) {
+            let sliderPercent = parseInt(slider.value) / 100;
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = "#d63031"; // High visibility cutting knife indicator line
+            ctx.setLineDash([6, 6]);
+
+            if (targetShares === 2) {
+                // Draw 1 single dividing slice vertical cut shifting left to right
+                let cuttingX = (cx - r) + ((r * 2) * sliderPercent);
+                ctx.beginPath();
+                ctx.moveTo(cuttingX, cy - r);
+                ctx.lineTo(cuttingX, cy + r);
+                ctx.stroke();
+            } else if (targetShares === 3) {
+                // Draw a 3-way slice configuration based around the slider location
+                let angleOffset = (sliderPercent * Math.PI);
+                
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + Math.cos(angleOffset) * r, cy + Math.sin(angleOffset) * r);
+                
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + Math.cos(angleOffset + (2 * Math.PI / 3)) * r, cy + Math.sin(angleOffset + (2 * Math.PI / 3)) * r);
+                
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + Math.cos(angleOffset + (4 * Math.PI / 3)) * r, cy + Math.sin(angleOffset + (4 * Math.PI / 3)) * r);
+                ctx.stroke();
+            }
+            ctx.setLineDash([]); // Clear formatting dash settings
+        }
+
+        function gameLoop() {
+            if (!gameActive) return;
+            renderScene();
+            requestAnimationFrame(gameLoop);
+        }
+    </script>
+</body>
+</html>
