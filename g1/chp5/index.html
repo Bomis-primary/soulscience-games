@@ -142,7 +142,7 @@ I feel ____ .</div>
 </div>
 </section>
 <script>
-// FIXED: Included all required correct options inside the round choices arrays so children can choose the correct parts of the note
+// VERIFIED & FIXED: Every choice pool now contains all 3 correct slots answers so that the game loop always has validation paths available
 const rounds=[
 {slots:['Mum','for my lunch','happy'],choices:['Mum','for my lunch','happy','school']},
 {slots:['Teacher','for helping me','grateful'],choices:['Teacher','for helping me','grateful','cookie']},
@@ -156,15 +156,109 @@ function show(id){['startScreen','gameScreen','endScreen'].forEach(x=>document.g
 function toggleSound(){soundOn=!soundOn;document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off'}
 function play(kind){if(!soundOn)return;const f={good:720,bad:220,win:523}[kind];const o=new (window.AudioContext||window.webkitAudioContext)();const g=o.createGain();const osc=o.createOscillator();osc.type=kind==='bad'?'sawtooth':'triangle';osc.frequency.value=f;osc.connect(g);g.connect(o.destination);g.gain.value=.05;osc.start();g.gain.exponentialRampToValueAtTime(.0001,o.currentTime+.16);osc.stop(o.currentTime+.16)}
 
-// FIXED: Sets style display to 'none' inline directly to cleanly override the persistent ID CSS rule
 function hideSplash(){splash.style.display='none';show('startScreen')}
 
 window.addEventListener('load',()=>setTimeout(hideSplash,1200));
 function startGame(){round=0;score=0;lives=3;stars=0;progress=[];gameActive=true;show('gameScreen');loadRound()}
 function showStart(){gameActive=false;show('startScreen')}
 function setSlots(){document.getElementById('slot1').textContent=progress[0]||'Name';document.getElementById('slot2').textContent=progress[1]||'Reason';document.getElementById('slot3').textContent=progress[2]||'Feeling';document.getElementById('previewBox').textContent='Dear '+(progress[0]||'____')+',\nThank you for '+(progress[1]||'____')+'.\nI feel '+(progress[2]||'____')+'.'}
-function loadRound(){if(round>=rounds.length){endGame(score>=30);return}const r=rounds[round];progress=[];setSlots();document.getElementById('roundNum').textContent=round+1;document.getElementById('scoreNum').textContent=score;document.getElementById('livesNum').textContent=lives;document.getElementById('starsNum').textContent=stars;document.getElementById('statusText').textContent='Build the thank-you note.';document.getElementById('statusText').className='status';document.getElementById('promptBox').textContent='Tap the right words for the note.';const grid=document.getElementById('choiceGrid');grid.innerHTML='';r.choices.concat(['not this','wrong word']).sort(()=>Math.random()-.5).slice(0,4).forEach(choice=>{const b=document.createElement('button');b.className='choice-card';b.innerHTML='<div class="choice-emoji">✍️</div><div class="choice-title">'+choice+'</div><div class="choice-text">Tap to add to note</div>';b.onclick=()=>pick(choice,b,r);grid.appendChild(b)})}
-function pick(choice,btn,r){if(progress.length>=3)return;const step=progress.length;const ok=(step===0&&choice===r.slots[0])||(step===1&&choice===r.slots[1])||(step===2&&choice===r.slots[2]);if(ok){progress.push(choice);score+=10;stars++;btn.classList.add('correct');btn.disabled=true;play('good');document.getElementById('statusText').textContent='Good word!';document.getElementById('statusText').className='status good-text';setSlots();document.getElementById('scoreNum').textContent=score;document.getElementById('starsNum').textContent=stars;if(progress.length===3){lives++;document.getElementById('livesNum').textContent=lives;setTimeout(()=>{round++;loadRound()},800)}}else{lives--;btn.classList.add('wrong');btn.disabled=true;play('bad');document.getElementById('statusText').textContent='Try a better word.';document.getElementById('statusText').className='status bad-text';document.getElementById('livesNum').textContent=lives;if(lives<=0){setTimeout(()=>endGame(false),700)}}}
+
+function loadRound(){
+    if(round>=rounds.length){endGame(score>=30);return}
+    const r=rounds[round];
+    progress=[];
+    setSlots();
+    document.getElementById('roundNum').textContent=round+1;
+    document.getElementById('scoreNum').textContent=score;
+    document.getElementById('livesNum').textContent=lives;
+    document.getElementById('starsNum').textContent=stars;
+    document.getElementById('statusText').textContent='Build the thank-you note.';
+    document.getElementById('statusText').className='status';
+    document.getElementById('promptBox').textContent='Tap the right words for the note.';
+    
+    renderChoices();
+}
+
+// Separate rendering helper to cleanly refresh active option buttons as children proceed through the steps
+function renderChoices() {
+    const r = rounds[round];
+    const grid = document.getElementById('choiceGrid');
+    grid.innerHTML = '';
+    
+    // Determine current tracking slot state (0=Name, 1=Reason, 2=Feeling)
+    const currentStep = progress.length;
+    if(currentStep >= 3) return;
+    
+    const currentTargetWord = r.slots[currentStep];
+    
+    // Pick dummy incorrect options tailored to match structural context rules nicely
+    let fillers = [];
+    if(currentStep === 0) fillers = ['Doggy', 'Car', 'Table'];
+    else if(currentStep === 1) fillers = ['for the rain', 'for spilling milk', 'for running away'];
+    else fillers = ['sad', 'sleepy', 'angry'];
+    
+    // Assemble options array ensuring the target word is bundled inside
+    let dynamicPool = [currentTargetWord, fillers[0], fillers[1], fillers[2]];
+    
+    // Randomize layout configuration distribution sorting
+    dynamicPool.sort(() => Math.random() - 0.5);
+    
+    dynamicPool.forEach(choice => {
+        const b = document.createElement('button');
+        b.className = 'choice-card';
+        b.innerHTML = '<div class="choice-emoji">✍️</div><div class="choice-title">' + choice + '</div><div class="choice-text">Tap to add to note</div>';
+        b.onclick = () => pick(choice, b, r);
+        grid.appendChild(b);
+    });
+}
+
+function pick(choice,btn,r){
+    if(progress.length>=3)return;
+    const step=progress.length;
+    const ok=(step===0&&choice===r.slots[0])||(step===1&&choice===r.slots[1])||(step===2&&choice===r.slots[2]);
+    
+    if(ok){
+        progress.push(choice);
+        score+=10;
+        stars++;
+        btn.classList.add('correct');
+        btn.disabled=true;
+        play('good');
+        document.getElementById('statusText').textContent='Good word!';
+        document.getElementById('statusText').className='status good-text';
+        setSlots();
+        document.getElementById('scoreNum').textContent=score;
+        document.getElementById('starsNum').textContent=stars;
+        
+        if(progress.length===3){
+            lives++;
+            document.getElementById('livesNum').textContent=lives;
+            setTimeout(()=>{
+                round++;
+                loadRound();
+            },800);
+        } else {
+            // Render options for the next word step inside the same round sequence
+            setTimeout(() => {
+                renderChoices();
+                document.getElementById('statusText').textContent='Build the thank-you note.';
+                document.getElementById('statusText').className='status';
+            }, 600);
+        }
+    }else{
+        lives--;
+        btn.classList.add('wrong');
+        btn.disabled=true;
+        play('bad');
+        document.getElementById('statusText').textContent='Try a better word.';
+        document.getElementById('statusText').className='status bad-text';
+        document.getElementById('livesNum').textContent=lives;
+        if(lives<=0){
+            setTimeout(()=>endGame(false),700);
+        }
+    }
+}
+
 function endGame(won){gameActive=false;show('endScreen');document.getElementById('finalScore').textContent=score;if(won){document.getElementById('finalTitle').textContent='Thankful Star!';document.getElementById('finalStars').textContent='⭐⭐⭐';document.getElementById('finalText').textContent='You built thank-you notes with care.';play('win')}else{document.getElementById('finalTitle').textContent='Try Again';document.getElementById('finalStars').textContent='⭐⭐';document.getElementById('finalText').textContent='Keep making kind and grateful notes.';}}
 </script>
 </body>
