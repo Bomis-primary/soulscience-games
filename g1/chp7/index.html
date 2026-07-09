@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Fair-Share Bakery - Chapter 7: Sharing</title>
     <style>
+        :root {
+            --bg-sweet: #fff9f2;
+            --primary-bakery: #e67e22;
+            --primary-dark: #d35400;
+            --success-green: #2ecc71;
+            --text-cozy: #5d4037;
+            --border-rgba: rgba(93, 64, 55, 0.15);
+        }
         * {
             box-sizing: border-box;
             user-select: none;
@@ -16,11 +24,11 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #fff9f0;
+            background-color: var(--bg-sweet);
             font-family: 'Arial Rounded MT Bold', 'Comic Sans MS', sans-serif;
         }
 
-        /* 3-Second Innovine Splash Screen */
+        /* 3-Second Logo Splash Screen */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -29,6 +37,7 @@
             height: 100%;
             background-color: #ffffff;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
@@ -39,8 +48,14 @@
             max-width: 280px;
             height: auto;
         }
+        .splash-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin-top: 15px;
+        }
 
-        /* Main Canvas Framework Window */
+        /* Main Game Framework Container */
         #game-container {
             position: relative;
             width: 100%;
@@ -49,7 +64,10 @@
             max-height: 600px;
             margin: 0 auto;
             background-color: #fff;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            box-shadow: 0 14px 35px rgba(93, 64, 55, 0.15);
+            border: 4px solid #fff;
+            border-radius: 24px;
+            overflow: hidden;
         }
 
         canvas {
@@ -58,7 +76,7 @@
             height: 100%;
         }
 
-        /* UI Overlays */
+        /* Overlays & Screens */
         .screen {
             position: absolute;
             top: 0;
@@ -69,8 +87,8 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: rgba(255, 249, 240, 0.96);
-            padding: 20px;
+            background: rgba(255, 249, 242, 0.97);
+            padding: 30px;
             text-align: center;
             z-index: 10;
         }
@@ -80,124 +98,139 @@
         }
 
         h1 {
-            color: #d35400;
-            font-size: 36px;
-            margin-bottom: 10px;
+            color: var(--primary-dark);
+            font-size: clamp(32px, 5vw, 46px);
+            margin: 0 0 15px 0;
         }
 
         p {
-            color: #5d4037;
-            font-size: 18px;
-            max-width: 500px;
-            line-height: 1.5;
+            color: var(--text-cozy);
+            font-size: clamp(16px, 2.5vw, 20px);
+            max-width: 550px;
+            line-height: 1.6;
+            margin: 0 0 25px 0;
         }
 
-        /* Grade-1 Oversized Buttons */
+        /* Oversized Buttons */
         .btn {
-            background-color: #2ecc71;
+            background-color: var(--success-green);
             color: white;
             border: none;
-            padding: 15px 40px;
+            padding: 16px 45px;
             font-size: 24px;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
             box-shadow: 0 6px #27ae60;
-            transition: all 0.1s;
-            margin-top: 20px;
+            transition: all 0.1s ease;
         }
-
         .btn:active {
             box-shadow: 0 2px #27ae60;
             transform: translateY(4px);
         }
 
-        /* Control Panel at Bottom */
+        /* Control Panel Widget */
         #controls-panel {
             position: absolute;
-            bottom: 25px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            width: 90%;
+            width: 92%;
             display: flex;
             flex-direction: column;
             align-items: center;
             z-index: 5;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            border-radius: 24px;
+            border: 2px solid var(--border-rgba);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
         }
 
         .slider-label {
-            font-size: 20px;
-            color: #5d4037;
+            font-size: 22px;
+            color: var(--text-cozy);
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
-        /* Super friendly touch slider */
         .share-slider {
-            width: 80%;
+            width: 88%;
             -webkit-appearance: none;
             appearance: none;
-            height: 25px;
-            border-radius: 15px;
-            background: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            background: #e0dcd8;
             outline: none;
+            margin: 8px 0;
         }
-
         .share-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 45px;
-            height: 45px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            background: #e67e22;
+            background: var(--primary-bakery);
             cursor: pointer;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border: 3px solid #fff;
+        }
+        .share-slider::-moz-range-thumb {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary-bakery);
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border: 3px solid #fff;
         }
 
-        .share-slider::-moz-range-thumb {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: #e67e22;
-            cursor: pointer;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        /* HUD Indicators */
+        .hud-tag {
+            position: absolute;
+            top: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-cozy);
+            border: 1px solid var(--border-rgba);
+            z-index: 4;
         }
+        #round-tag { left: 15px; }
+        #score-tag { right: 15px; }
     </style>
 </head>
 <body>
 
-    <!-- 1. Innovine Logo Splash Screen -->
     <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" id="logo-img">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
+        <div class="splash-text">Loading Fair-Share Bakery...</div>
     </div>
 
-    <!-- 2. Game Display Wrapper -->
     <div id="game-container">
         
+        <div id="round-tag" class="hud-tag hidden">Round: 1/5</div>
+        <div id="score-tag" class="hud-tag hidden">Stars: ⭐ 0</div>
+
         <canvas id="bakeryCanvas" width="800" height="600"></canvas>
 
-        <!-- Start Screen -->
         <div id="start-screen" class="screen hidden">
             <h1>Fair-Share Bakery 🍰</h1>
-            <p>Welcome! Friends are here to eat. Let's practice <b>sharing</b> by cutting the treats into perfectly equal pieces!</p>
+            <p>Big groups of hungry friends are visiting the shop! Let's practice <b>sharing</b> by cutting sweet treats into completely equal pieces!</p>
             <button class="btn" onclick="startGame()">OPEN SHOP</button>
         </div>
 
-        <!-- Interactive Gameplay Control System -->
         <div id="controls-panel" class="hidden">
-            <div class="slider-label" id="instruction-text">Cut the treat for 2 friends!</div>
-            <input type="range" min="1" max="100" value="50" class="share-slider" id="cutSlider">
-            <button class="btn" style="margin-top:12px; background-color:#e67e22; box-shadow:0 6px #d35400" onclick="evaluateShare()">SHARE IT! ✨</button>
+            <div class="slider-label" id="instruction-text">Share this treat among 2 friends!</div>
+            <input type="range" min="10" max="90" value="30" class="share-slider" id="cutSlider">
+            <button class="btn" style="margin-top:8px; background-color:var(--primary-bakery); box-shadow:0 6px var(--primary-dark)" onclick="evaluateShare()">SHARE IT! ✨</button>
         </div>
 
-        <!-- End Evaluation Screen -->
         <div id="end-screen" class="screen hidden">
-            <h1 id="end-title">Fantastic Sharing!</h1>
-            <p id="end-message">You made all the bakery visitors happy by sharing equally!</p>
+            <h1 id="end-title">Excellent Job! 🌟</h1>
+            <p id="end-message">You are a master baker! Everyone received an exactly equal slice of the bakery treats.</p>
             <button class="btn" onclick="showStartScreen()">PLAY AGAIN</button>
         </div>
     </div>
@@ -206,88 +239,101 @@
         const canvas = document.getElementById('bakeryCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Assets Configuration mapping
-        const assets = {
-            bg: new Image(),
-            treat: new Image()
-        };
+        // Assets Configuration
+        const assets = { bg: new Image(), treat: new Image() };
         assets.bg.src = 'assets/background.png';
         assets.treat.src = 'assets/treat.png';
 
-        // Game Configuration Settings
+        // Expanded Gameplay Rounds Layout (2, 3, 4, 5, 6 shares)
         let gameActive = false;
         let currentRound = 1;
-        const totalRounds = 3;
-        let targetShares = 2; // Can be 2 or 3 portions for Grade 1 math
+        const totalRounds = 5;
+        const roundShares = [2, 3, 4, 5, 6]; 
+        
+        // Custom visual treatments loaded systematically for backup procedural renderer
+        const treatStyles = [
+            { fill: "#ff7495", name: "Pink Strawberry Cake", sprinkles: "#fff" },
+            { fill: "#54a0ff", name: "Blueberry Glaze Pie", sprinkles: "#ffea82" },
+            { fill: "#2ecc71", name: "Sweet Lime Tart", sprinkles: "#ffffff" },
+            { fill: "#ffb142", name: "Orange Custard Chiffon", sprinkles: "#ff7495" },
+            { fill: "#9b59b6", name: "Grape Jello Shortcake", sprinkles: "#1abc9c" }
+        ];
+
+        let targetShares = 2; 
+        let scoreStars = 0;
         let feedbackText = "";
         let feedbackTimer = 0;
+        let isSuccessFeedback = true;
 
         const slider = document.getElementById('cutSlider');
 
-        // Splash Loader Sequence Loop
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.classList.add('hidden');
-                    showStartScreen();
-                }, 500);
-            }, 3000); // Fixed 3-Second Hold
+                if(splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => {
+                        splash.classList.add('hidden');
+                        showStartScreen();
+                    }, 500);
+                }
+            }, 3000);
+        });
+
+        slider.addEventListener('input', () => {
+            if (gameActive) renderScene();
         });
 
         function showStartScreen() {
             document.getElementById('start-screen').classList.remove('hidden');
             document.getElementById('end-screen').classList.add('hidden');
             document.getElementById('controls-panel').classList.add('hidden');
+            document.getElementById('round-tag').classList.add('hidden');
+            document.getElementById('score-tag').classList.add('hidden');
+            gameActive = false;
             currentRound = 1;
+            scoreStars = 0;
             renderScene();
         }
 
         function startGame() {
             document.getElementById('start-screen').classList.add('hidden');
             document.getElementById('controls-panel').classList.remove('hidden');
+            document.getElementById('round-tag').classList.remove('hidden');
+            document.getElementById('score-tag').classList.remove('hidden');
             gameActive = true;
             setupRound();
             gameLoop();
         }
 
         function setupRound() {
-            slider.value = 50; // Reset slider to center position
+            // Throw the slider off-balance initially so kids must consciously track and tune it
+            slider.value = Math.random() > 0.5 ? 15 : 85; 
             feedbackText = "";
             feedbackTimer = 0;
             
-            if (currentRound === 1) {
-                targetShares = 2; // Share evenly between 2 friends
-            } else if (currentRound === 2) {
-                targetShares = 3; // Share evenly between 3 friends
-            } else {
-                targetShares = 2; // Final round wrap-up
-            }
+            targetShares = roundShares[currentRound - 1];
             
-            document.getElementById('instruction-text').innerText = `Share this treat evenly among ${targetShares} friends!`;
+            document.getElementById('round-tag').innerText = `Round: ${currentRound}/${totalRounds}`;
+            document.getElementById('score-tag').innerText = `Stars: ${"⭐".repeat(scoreStars)}`;
+            document.getElementById('instruction-text').innerText = `Make equal pieces for ${targetShares} friends!`;
         }
 
         function evaluateShare() {
             let playerVal = parseInt(slider.value);
-            let isAccurate = false;
-
-            if (targetShares === 2) {
-                // Perfect spot is 50. Allow a friendly margin of error for Grade 1 hands
-                if (playerVal >= 44 && playerVal <= 56) isAccurate = true;
-            } else if (targetShares === 3) {
-                // Perfect spots for 3 ways inside slider range are near 33 or 66
-                if ((playerVal >= 28 && playerVal <= 38) || (playerVal >= 60 && playerVal <= 70)) isAccurate = true;
-            }
+            // Symmetrical math engine balances slices squarely at center point (50)
+            let isAccurate = (playerVal >= 44 && playerVal <= 56);
 
             if (isAccurate) {
-                feedbackText = "Wonderful Fair Sharing! ⭐";
-                feedbackTimer = 90; // Frame duration display window
-                setTimeout(() => {
-                    nextStep();
-                }, 1500);
+                scoreStars++;
+                feedbackText = "Wonderful Fair Sharing! Slices are perfectly equal! 🤩";
+                isSuccessFeedback = true;
+                feedbackTimer = 90;
+                document.getElementById('score-tag').innerText = `Stars: ${"⭐".repeat(scoreStars)}`;
+                setTimeout(() => { nextStep(); }, 2000);
             } else {
-                feedbackText = "Let's try to make the pieces more equal! ❤️";
+                feedbackText = "Look closely! Let's make all the pieces equal! ❤️";
+                isSuccessFeedback = false;
                 feedbackTimer = 90;
             }
         }
@@ -299,115 +345,188 @@
             } else {
                 gameActive = false;
                 document.getElementById('controls-panel').classList.add('hidden');
+                document.getElementById('round-tag').classList.add('hidden');
+                document.getElementById('score-tag').classList.add('hidden');
                 document.getElementById('end-screen').classList.remove('hidden');
+                
+                document.getElementById('end-title').innerText = scoreStars >= 4 ? "Magnificent Master Baker! 🏆" : "Wonderful Effort! 🌟";
+                document.getElementById('end-message').innerText = `You earned ${scoreStars} kindness stars by sharing treats equally with your friends!`;
             }
         }
 
-        // Draw Environment Function
         function renderScene() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 1. Render Background View
+            // 1. Render Room Environment Background
             if (assets.bg.complete && assets.bg.naturalWidth !== 0) {
                 ctx.drawImage(assets.bg, 0, 0, canvas.width, canvas.height);
             } else {
-                // Soft colorful Bakery Counter room aesthetic fallback color fill
-                ctx.fillStyle = "#ffeaa7";
+                ctx.fillStyle = "#fff5ea"; 
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = "#d35400";
-                ctx.fillRect(0, 420, canvas.width, 180); // Counter Table bar top
+                
+                // Polka dot wallpaper aesthetic
+                ctx.fillStyle = "rgba(230, 126, 34, 0.04)";
+                for(let i=0; i<canvas.width; i+=40) {
+                    for(let j=0; j<400; j+=40) {
+                        ctx.beginPath(); ctx.arc(i, j, 4, 0, Math.PI*2); ctx.fill();
+                    }
+                }
+                // Wooden Counter Table
+                ctx.fillStyle = "#e0a370"; ctx.fillRect(0, 390, canvas.width, 210);
+                ctx.fillStyle = "#bd7a42"; ctx.fillRect(0, 390, canvas.width, 12);
             }
 
-            if (!gameActive && document.getElementById('start-screen').classList.contains('hidden') === false) {
-                return; // Early stop if just displaying welcome loop
+            if (!gameActive && !document.getElementById('start-screen').classList.contains('hidden')) {
+                return; 
             }
 
-            // 2. Render Little Customers asking to share
+            // 2. Render Customers & Live Expression Matrices
             drawFriends();
 
-            // 3. Render the Treat to cut on the counter
+            // 3. Render Treat Platter Layer
             let treatX = canvas.width / 2;
-            let treatY = 320;
-            let radius = 100;
+            let treatY = 325;
+            let radius = 105;
 
-            if (assets.treat.complete && assets.treat.naturalWidth !== 0) {
-                ctx.drawImage(assets.treat, treatX - radius, treatY - radius, radius * 2, radius * 2);
-            } else {
-                // Fallback Shape representing a big round baked pie/cake
-                ctx.beginPath();
-                ctx.arc(treatX, treatY, radius, 0, Math.PI * 2);
-                ctx.fillStyle = "#e67e22";
-                ctx.fill();
-                ctx.lineWidth = 6;
-                ctx.strokeStyle = "#fff";
-                ctx.stroke();
-                ctx.closePath();
+            ctx.beginPath();
+            ctx.arc(treatX, treatY + 5, radius + 14, 0, Math.PI * 2);
+            ctx.fillStyle = "#f5f6fa"; ctx.fill();
+            ctx.lineWidth = 4; ctx.strokeStyle = "#dcdde1"; ctx.stroke();
+
+            // Slices fall back to vectors gracefully to dynamically switch dessert visual styles per round
+            let currentStyle = treatStyles[(currentRound - 1) % treatStyles.length];
+            
+            ctx.beginPath();
+            ctx.arc(treatX, treatY, radius, 0, Math.PI * 2);
+            ctx.fillStyle = "#e5a93b"; // Flaky golden crust edge
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(treatX, treatY, radius - 10, 0, Math.PI * 2);
+            ctx.fillStyle = currentStyle.fill; 
+            ctx.fill();
+
+            // Sprinkle bits array placement loop
+            ctx.fillStyle = currentStyle.sprinkles;
+            for (let i = 0; i < 360; i += 45) {
+                let rad = i * Math.PI / 180;
+                ctx.fillRect(treatX + Math.cos(rad)*(radius-50), treatY + Math.sin(rad)*(radius-50), 6, 6);
             }
 
-            // 4. Draw Interactive Cut Guidelines based on slider values
+            // 4. Draw Cutting Matrix lines
             drawCutLines(treatX, treatY, radius);
 
-            // 5. Draw Feedback Prompt Overlay
+            // 5. HUD Text Prompt Display Window Box
             if (feedbackTimer > 0) {
-                ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-                ctx.fillRect(150, 20, 500, 60);
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = "#e67e22";
-                ctx.strokeRect(150, 20, 500, 60);
+                ctx.save();
+                ctx.fillStyle = "white";
+                ctx.shadowBlur = 15; ctx.shadowColor = "rgba(0,0,0,0.1)";
+                ctx.fillRect(100, 24, 600, 64);
+                
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = isSuccessFeedback ? "#2ecc71" : "#e67e22";
+                ctx.strokeRect(100, 24, 600, 64);
 
                 ctx.fillStyle = "#2c3e50";
                 ctx.font = "bold 22px Arial";
-                ctx.textAlign = "center";
+                ctx.textAlign = "center"; ctx.textBaseline = "middle";
                 ctx.fillText(feedbackText, canvas.width / 2, 56);
+                ctx.restore();
                 feedbackTimer--;
             }
         }
 
         function drawFriends() {
-            ctx.textAlign = "center";
-            ctx.font = "50px Arial";
+            ctx.save();
+            ctx.textBaseline = "middle";
             
-            // Render target placeholder emoji kids to share with across screen spaces
-            if (targetShares === 2) {
-                ctx.fillText("👧", 200, 160);
-                ctx.fillText("👦", 600, 160);
-            } else if (targetShares === 3) {
-                ctx.fillText("👧", 150, 160);
-                ctx.fillText("🧑‍🦱", 400, 160);
-                ctx.fillText("👦", 650, 160);
+            let val = parseInt(slider.value);
+            let deviation = Math.abs(val - 50);
+
+            // Emotional states evaluate dynamically on accuracy
+            let generalExpression = "🙂"; 
+            if (deviation < 6) generalExpression = "🤩"; 
+            else if (deviation > 20) generalExpression = "😟"; 
+
+            // Adaptive spatial layout layout mapping engine handles up to 6 targets clearly
+            const emojis = ["👧", "👦", "🧑‍🦱", "👧", "👱", "👶"];
+            let spacing = canvas.width / (targetShares + 1);
+
+            for (let i = 0; i < targetShares; i++) {
+                let fx = spacing * (i + 1);
+                let fy = 155;
+
+                // Alternate kids expressions as direct sensory metrics
+                let friendExpression = generalExpression;
+                if (deviation > 6) {
+                    if (targetShares === 2) {
+                        friendExpression = (i === 0 && val < 50) || (i === 1 && val > 50) ? "🤩" : "😢";
+                    } else {
+                        // Multi-slice variants dynamically weight visual expressions
+                        friendExpression = (i % 2 === 0 && val < 50) || (i % 2 !== 0 && val > 50) ? "🤩" : "😟";
+                    }
+                }
+
+                ctx.textAlign = "center";
+                ctx.fillStyle = varValues('--text-cozy', '#5d4037');
+                ctx.font = targetShares > 4 ? "bold 16px Arial" : "bold 20px Arial";
+                ctx.fillText(`Friend ${String.fromCharCode(65 + i)}`, fx, fy - 50);
+
+                ctx.font = targetShares > 4 ? "58px Arial" : "72px Arial";
+                ctx.fillText(friendExpression + emojis[i % emojis.length], fx, fy + 5);
             }
+            ctx.restore();
         }
 
         function drawCutLines(cx, cy, r) {
-            let sliderPercent = parseInt(slider.value) / 100;
-            ctx.lineWidth = 5;
-            ctx.strokeStyle = "#d63031"; // High visibility cutting knife indicator line
-            ctx.setLineDash([6, 6]);
+            let sliderVal = parseInt(slider.value);
+            ctx.save();
+            ctx.lineWidth = 6;
+            ctx.strokeStyle = "#e74c3c"; // Crimson slicing knife overlay 
+            ctx.setLineDash([8, 6]);
+            ctx.shadowBlur = 5; ctx.shadowColor = "rgba(0,0,0,0.3)";
+
+            let baseTopAngle = -Math.PI / 2; // Fixed anchor reference at 12 o'clock position
 
             if (targetShares === 2) {
-                // Draw 1 single dividing slice vertical cut shifting left to right
-                let cuttingX = (cx - r) + ((r * 2) * sliderPercent);
+                // 2 Parts: Vertical straight cut line translating side to side smoothly
+                let cuttingX = (cx - r) + ((r * 2) * (sliderVal / 100));
                 ctx.beginPath();
                 ctx.moveTo(cuttingX, cy - r);
                 ctx.lineTo(cuttingX, cy + r);
                 ctx.stroke();
-            } else if (targetShares === 3) {
-                // Draw a 3-way slice configuration based around the slider location
-                let angleOffset = (sliderPercent * Math.PI);
+            } 
+            else {
+                // Multi-Part Angle Engine: Symmetrical distribution spreads uniformly when slider hits 50%
+                let baseSegmentAngle = (2 * Math.PI) / targetShares;
                 
+                // Variance factor stretches the structural distribution dynamically based on input values
+                let expansionFactor = (sliderVal / 50);
+
                 ctx.beginPath();
+                // Draw default index line safely anchored to top (12 o'clock)
                 ctx.moveTo(cx, cy);
-                ctx.lineTo(cx + Math.cos(angleOffset) * r, cy + Math.sin(angleOffset) * r);
-                
-                ctx.moveTo(cx, cy);
-                ctx.lineTo(cx + Math.cos(angleOffset + (2 * Math.PI / 3)) * r, cy + Math.sin(angleOffset + (2 * Math.PI / 3)) * r);
-                
-                ctx.moveTo(cx, cy);
-                ctx.lineTo(cx + Math.cos(angleOffset + (4 * Math.PI / 3)) * r, cy + Math.sin(angleOffset + (4 * Math.PI / 3)) * r);
+                ctx.lineTo(cx, cy - r);
+
+                // Dynamically offset rest of radial paths away from fixed top ray
+                for (let i = 1; i < targetShares; i++) {
+                    let currentAngle;
+                    if (i <= targetShares / 2) {
+                        currentAngle = baseTopAngle + (i * baseSegmentAngle * expansionFactor);
+                    } else {
+                        let mirrorIndex = targetShares - i;
+                        currentAngle = baseTopAngle - (mirrorIndex * baseSegmentAngle * expansionFactor);
+                    }
+
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(cx + Math.cos(currentAngle) * r, cy + Math.sin(currentAngle) * r);
+                }
                 ctx.stroke();
             }
-            ctx.setLineDash([]); // Clear formatting dash settings
+            ctx.restore();
         }
+
+        function varValues(v, fallback){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || fallback; }
 
         function gameLoop() {
             if (!gameActive) return;
