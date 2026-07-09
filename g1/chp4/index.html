@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kindness Garden</title>
+<style>
+:root{--bg1:#eef9ff;--bg2:#fff8e9;--card:#ffffff;--text:#203245;--muted:#5f6d7c;--primary:#4caf50;--primary2:#2e7d32;--good:#2e7d32;--bad:#c62828;--soft:#f2fbf2;--border:rgba(32,50,69,.12);--shadow:0 14px 30px rgba(32,50,69,.12)}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--text)}
+button{font:inherit;cursor:pointer}
+.screen{display:none;min-height:100vh}
+.screen.active{display:grid}
+.center{place-items:center;padding:16px}
+.wrap{width:min(1180px,calc(100% - 20px));margin:0 auto}
+.card{background:var(--card);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow)}
+#splashScreen{position:fixed;inset:0;z-index:999;background:#fff;display:grid;place-items:center;padding:16px}
+#splashScreen .box{display:grid;gap:14px;justify-items:center;text-align:center}
+#splashScreen img{width:min(320px,70vw);height:auto;filter:drop-shadow(0 10px 20px rgba(0,0,0,.12))}
+.splash-text{font-size:clamp(18px,2.8vw,28px);font-weight:800;color:var(--primary2)}
+.hero{padding:22px 0 18px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:center;padding:18px}
+.layout{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;padding:0 0 22px}
+.panel{padding:18px}
+@media (max-width:980px){.hero-grid,.layout{grid-template-columns:1fr}.hud{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.panel,.card{border-radius:22px;padding:14px}.btn{width:100%}.choice-grid{grid-template-columns:1fr}}
+h1,h2{margin:0;line-height:1.05}
+h1{font-size:clamp(34px,5vw,58px);color:var(--primary2)}
+h2{font-size:clamp(24px,3vw,36px)}
+.lead{font-size:clamp(18px,2.3vw,23px);color:var(--muted);line-height:1.5;margin:14px 0 18px;max-width:56ch}
+.pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.pill{padding:10px 14px;border-radius:999px;background:#edf8ed;border:1px solid var(--border);font-weight:700}
+.actions{display:flex;flex-wrap:wrap;gap:10px}.btn{border:none;border-radius:16px;padding:14px 20px;font-weight:800;min-height:46px}.primary{background:var(--primary);color:#fff}.ghost{background:#f2f5f8;color:var(--text);border:1px solid var(--border)}
+.art{min-height:320px;position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(180deg,#f7fbff,#fff3df)}
+.cloud{position:absolute;background:rgba(255,255,255,.92);border-radius:999px}.cloud:before,.cloud:after{content:'';position:absolute;background:inherit;border-radius:999px}
+.cloud.one{width:110px;height:42px;top:34px;left:28px}.cloud.one:before{width:42px;height:42px;left:12px;top:-18px}.cloud.one:after{width:54px;height:54px;right:12px;top:-26px}
+.cloud.two{width:130px;height:48px;top:92px;right:24px}.cloud.two:before{width:46px;height:46px;left:18px;top:-18px}.cloud.two:after{width:58px;height:58px;right:18px;top:-28px}
+.big-icon{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:96px;filter:drop-shadow(0 10px 14px rgba(0,0,0,.14))}
+.note{position:absolute;left:18px;right:18px;bottom:16px;background:rgba(255,255,255,.88);border:1px solid var(--border);border-radius:18px;padding:12px 14px;font-size:16px;line-height:1.45;color:var(--muted)}
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.hud-box{padding:12px;border-radius:18px;background:#fff;border:1px solid var(--border);text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.06)}
+.hud-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.hud-val{display:block;font-size:22px;font-weight:800;margin-top:2px}
+.status{min-height:28px;font-size:18px;font-weight:800;text-align:center;margin-bottom:12px}
+.game-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.choice-card{border:none;border-radius:24px;padding:18px;min-height:250px;background:#f8fbff;border:1px solid var(--border);display:grid;align-content:space-between;gap:10px;text-align:center}
+.choice-emoji{font-size:80px;line-height:1}
+.choice-title{font-size:24px;font-weight:900}
+.choice-text{font-size:18px;color:var(--muted);line-height:1.35;margin:0 auto;max-width:18ch}
+.choice-card.correct{background:#e8f5e9;border-color:#81c784}
+.choice-card.wrong{background:#ffebee;border-color:#ef9a9a}
+.good-text{color:var(--good)}
+.bad-text{color:var(--bad)}
+.tips{display:grid;gap:10px}
+.tip{background:#f8fafc;border:1px solid var(--border);border-radius:16px;padding:12px 14px;line-height:1.45;color:var(--muted)}
+.final-title{text-align:center;font-size:clamp(30px,5vw,54px);color:var(--good);margin-bottom:10px}
+.stars{text-align:center;font-size:52px;margin:10px 0 16px}
+.final-text{text-align:center;font-size:20px;line-height:1.45;margin-bottom:18px}
+.prompt-box{padding:14px 16px;background:var(--soft);border:1px solid var(--border);border-radius:20px;text-align:center;font-size:24px;font-weight:900;margin-bottom:12px}
+.flower-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:10px 0 6px}
+.flower{font-size:34px;filter:drop-shadow(0 5px 8px rgba(0,0,0,.08))}
+</style>
+</head>
+<body>
+<section id="splashScreen" class="screen active"><div class="box"><img src="./assets/innovine-logo.png" alt="Innovine logo" /><div class="splash-text">Loading Kindness Garden...</div></div></section>
+<section id="startScreen" class="screen"><div class="wrap hero"><div class="card hero-grid"><div><div class="pill-row"><div class="pill">Grade 1</div><div class="pill">Chapter 4: Kindness</div><div class="pill">Garden game</div></div><h1>Kindness Garden</h1><p class="lead">Tap the kind choice and grow a happy garden.</p><div class="actions"><button class="btn primary" onclick="startGame()">Start Game</button><button class="btn ghost" onclick="toggleSound()" id="soundBtn">Sound: On</button></div></div><div class="art" aria-hidden="true"><div class="cloud one"></div><div class="cloud two"></div><div class="big-icon">🌷</div><div class="note">Kindness means helping, smiling, sharing, listening, and caring without expecting anything back. [file:178]</div></div></div><div class="layout" style="margin-top:16px;"><div class="card panel"><h2>How to play</h2><div class="tips"><div class="tip">Tap the kind picture.</div><div class="tip">Grow a flower each round.</div><div class="tip">Fill the garden with stars.</div></div></div><div class="card panel"><h2>Kindness words</h2><div class="tips"><div class="tip">Smile.</div><div class="tip">Help.</div><div class="tip">Share.</div></div></div></div></div></section>
+<section id="gameScreen" class="screen"><div class="wrap" style="padding-top:18px;"><div class="hud"><div class="hud-box"><span class="hud-label">Round</span><span class="hud-val" id="roundNum">1</span></div><div class="hud-box"><span class="hud-label">Score</span><span class="hud-val" id="scoreNum">0</span></div><div class="hud-box"><span class="hud-label">Lives</span><span class="hud-val" id="livesNum">3</span></div><div class="hud-box"><span class="hud-label">Stars</span><span class="hud-val" id="starsNum">0</span></div></div><div class="layout"><div class="card panel"><div id="statusText" class="status">Tap the kind choice.</div><div id="promptBox" class="prompt-box">A friend looks sad.</div><div class="flower-row" id="flowerRow"></div><div id="choiceGrid" class="game-grid"></div></div><div class="card panel"><h2>Garden tips</h2><div class="tips"><div class="tip">Use kind words.</div><div class="tip">Help people.</div><div class="tip">Be a good listener.</div><div class="tip">Share and smile.</div></div></div></div></div></section>
+<section id="endScreen" class="screen center"><div class="card" style="padding:22px;width:min(760px,100%);"><div class="final-title" id="finalTitle">Great job!</div><div class="stars" id="finalStars">⭐⭐⭐</div><div class="final-text" id="finalText">Your garden is full of kindness.</div><div style="text-align:center;font-size:20px;margin-bottom:14px;">Final Score: <strong id="finalScore">0</strong>/50</div><div class="actions" style="justify-content:center"><button class="btn primary" onclick="startGame()">Play Again</button><button class="btn ghost" onclick="showStart()">Back to Start</button></div></div></section>
+<script>
+const rounds=[
+{prompt:'A friend looks sad.',choices:[{emoji:'💛',title:'Help',text:'Ask if they are okay',good:true},{emoji:'😜',title:'Laugh',text:'Make fun',good:false}]},
+{prompt:'Someone drops books.',choices:[{emoji:'🤝',title:'Kind',text:'Pick them up',good:true},{emoji:'🙈',title:'Ignore',text:'Walk away',good:false}]},
+{prompt:'A child is alone.',choices:[{emoji:'😊',title:'Smile',text:'Invite to play',good:true},{emoji:'😠',title:'Push',text:'Be rude',good:false}]},
+{prompt:'Your friend needs a pencil.',choices:[{emoji:'✏️',title:'Share',text:'Lend it kindly',good:true},{emoji:'🫣',title:'Keep',text:'Do not help',good:false}]},
+{prompt:'Teacher needs help.',choices:[{emoji:'🌼',title:'Listen',text:'Follow the teacher',good:true},{emoji:'🙃',title:'Shout',text:'Make noise',good:false}]}
+];
+let soundOn=true,round=0,score=0,lives=3,stars=0,gameActive=false;
+const splash=document.getElementById('splashScreen');
+function show(id){['startScreen','gameScreen','endScreen'].forEach(x=>document.getElementById(x).classList.remove('active'));document.getElementById(id).classList.add('active')}
+function toggleSound(){soundOn=!soundOn;document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off'}
+function play(kind){if(!soundOn)return;const f={good:700,bad:220,win:523}[kind];const o=new (window.AudioContext||window.webkitAudioContext)();const g=o.createGain();const osc=o.createOscillator();osc.type=kind==='bad'?'sawtooth':'triangle';osc.frequency.value=f;osc.connect(g);g.connect(o.destination);g.gain.value=.05;osc.start();g.gain.exponentialRampToValueAtTime(.0001,o.currentTime+.16);osc.stop(o.currentTime+.16)}
+function hideSplash(){splash.classList.remove('active');show('startScreen')}
+window.addEventListener('load',()=>setTimeout(hideSplash,1800));
+function startGame(){round=0;score=0;lives=3;stars=0;gameActive=true;show('gameScreen');loadRound()}
+function showStart(){gameActive=false;show('startScreen')}
+function loadRound(){if(round>=rounds.length){endGame(score>=30);return}const r=rounds[round];document.getElementById('roundNum').textContent=round+1;document.getElementById('scoreNum').textContent=score;document.getElementById('livesNum').textContent=lives;document.getElementById('starsNum').textContent=stars;document.getElementById('statusText').textContent='Tap the kind choice.';document.getElementById('statusText').className='status';document.getElementById('promptBox').textContent=r.prompt;const row=document.getElementById('flowerRow');row.innerHTML='';for(let i=0;i<stars;i++){const s=document.createElement('div');s.className='flower';s.textContent='🌸';row.appendChild(s)}const grid=document.getElementById('choiceGrid');grid.innerHTML='';const shuffled=[...r.choices].sort(()=>Math.random()-.5);shuffled.forEach(choice=>{const b=document.createElement('button');b.className='choice-card';b.innerHTML='<div class="choice-emoji">'+choice.emoji+'</div><div class="choice-title">'+choice.title+'</div><div class="choice-text">'+choice.text+'</div>';b.onclick=()=>pick(choice.good,b);grid.appendChild(b)})}
+function pick(correct,btn){[...document.querySelectorAll('.choice-card')].forEach(x=>x.disabled=true);if(correct){score+=10;stars++;btn.classList.add('correct');document.getElementById('statusText').textContent='Kind choice!';document.getElementById('statusText').className='status good-text';play('good')}else{lives--;btn.classList.add('wrong');document.getElementById('statusText').textContent='Try a kind choice.';document.getElementById('statusText').className='status bad-text';play('bad')}document.getElementById('scoreNum').textContent=score;document.getElementById('livesNum').textContent=lives;document.getElementById('starsNum').textContent=stars;setTimeout(()=>{if(lives<=0){endGame(false);return}round++;loadRound()},900)}
+function endGame(won){gameActive=false;show('endScreen');document.getElementById('finalScore').textContent=score;if(won){document.getElementById('finalTitle').textContent='Kindness Bloom!';document.getElementById('finalStars').textContent='⭐⭐⭐';document.getElementById('finalText').textContent='You grew a garden full of kindness.';play('win')}else{document.getElementById('finalTitle').textContent='Try Again';document.getElementById('finalStars').textContent='⭐⭐';document.getElementById('finalText').textContent='Keep planting kind choices.';}}
+</script>
+</body>
+</html>
