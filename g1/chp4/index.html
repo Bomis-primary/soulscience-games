@@ -80,8 +80,8 @@ function show(id){['startScreen','gameScreen','endScreen'].forEach(x=>document.g
 function toggleSound(){soundOn=!soundOn;document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off'}
 function play(kind){if(!soundOn)return;const f={good:700,bad:220,win:523}[kind];const o=new (window.AudioContext||window.webkitAudioContext)();const g=o.createGain();const osc=o.createOscillator();osc.type=kind==='bad'?'sawtooth':'triangle';osc.frequency.value=f;osc.connect(g);g.connect(o.destination);g.gain.value=.05;osc.start();g.gain.exponentialRampToValueAtTime(.0001,o.currentTime+.16);osc.stop(o.currentTime+.16)}
 function hideSplash(){splash.classList.remove('active');show('startScreen')}
-window.addEventListener('load',()=>setTimeout(hideSplash,1200));
-setTimeout(hideSplash,2500);
+window.addEventListener('load',()=>setTimeout(hideSplash,3000));
+setTimeout(hideSplash,3000);
 function startGame(){round=0;score=0;lives=3;stars=0;gameActive=true;show('gameScreen');loadRound()}
 function showStart(){gameActive=false;show('startScreen')}
 function loadRound(){if(round>=rounds.length){endGame(score>=30);return}const r=rounds[round];document.getElementById('roundNum').textContent=round+1;document.getElementById('scoreNum').textContent=score;document.getElementById('livesNum').textContent=lives;document.getElementById('starsNum').textContent=stars;document.getElementById('statusText').textContent='Tap the kind choice.';document.getElementById('statusText').className='status';document.getElementById('promptBox').textContent=r.prompt;const row=document.getElementById('flowerRow');row.innerHTML='';for(let i=0;i<stars;i++){const s=document.createElement('div');s.className='flower';s.textContent='🌸';row.appendChild(s)}const grid=document.getElementById('choiceGrid');grid.innerHTML='';const shuffled=[...r.choices].sort(()=>Math.random()-.5);shuffled.forEach(choice=>{const b=document.createElement('button');b.className='choice-card';b.innerHTML='<div class="choice-emoji">'+choice.emoji+'</div><div class="choice-title">'+choice.title+'</div><div class="choice-text">'+choice.text+'</div>';b.onclick=()=>pick(choice.good,b);grid.appendChild(b)})}
