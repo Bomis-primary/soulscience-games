@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Classroom Manners - Respect Game</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #eef7ff;
+            font-family: 'Arial Rounded MT Bold', 'Comic Sans MS', sans-serif;
+        }
+
+        /* 3-Second Splash Screen Wrapper */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+        #splash-screen img {
+            max-width: 280px;
+            height: auto;
+        }
+
+        /* Main Canvas & UI Frame */
+        #game-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 800px;
+            max-height: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background-color: #cce7ff;
+        }
+
+        /* Overlay UI styling */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(238, 247, 255, 0.95);
+            padding: 20px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        h1 {
+            color: #2b5c8f;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #4a5568;
+            font-size: 18px;
+            max-width: 500px;
+            line-height: 1.5;
+        }
+
+        /* Grade 1 Friendly Buttons */
+        .btn {
+            background-color: #ff7675;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 22px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px #d63031;
+            transition: all 0.1s;
+            margin-top: 20px;
+        }
+
+        .btn:active {
+            box-shadow: 0 2px #d63031;
+            transform: translateY(4px);
+        }
+
+        /* Giant Touch Controls for Tablets/Mobiles */
+        #mobile-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 30px;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .control-btn {
+            width: 90px;
+            height: 90px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border: 4px solid #2b5c8f;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            color: #2b5c8f;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: 0 6px rgba(0,0,0,0.15);
+        }
+
+        .control-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" id="logo-img">
+    </div>
+
+    <div id="game-container">
+        
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+        <div id="start-screen" class="screen hidden">
+            <h1>Classroom Manners Game</h1>
+            <p>Show <b>Respect</b>! Move the basket to catch the good manners bubbles and dodge the rude ones!</p>
+            <button class="btn" onclick="startGame()">PLAY GAME</button>
+        </div>
+
+        <div id="end-screen" class="screen hidden">
+            <h1 id="end-title">Wonderful Job!</h1>
+            <p id="end-score-text">Your Score: 0</p>
+            <p id="end-message">"I show respect by being honest and kind."</p>
+            <button class="btn" onclick="showStartScreen()">PLAY AGAIN</button>
+        </div>
+
+        <div id="mobile-controls" class="hidden">
+            <div class="control-btn" id="left-btn">⬅️</div>
+            <div class="control-btn" id="right-btn">➡️</div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Text Content arrays based entirely on Chp 6 - Respect matching behavior rules
+        const goodManners = [
+            "Listening to others", "Raising your hand", "Saying Thank You", 
+            "Saying Please", "Following Rules", "Being Kind"
+        ];
+        const badManners = [
+            "Being rude", "Pushing others", "Swinging on chair", 
+            "Calling out loud", "Being messy", "Interrupting"
+        ];
+
+        // Asset Loader Setup
+        const assets = {
+            bg: new Image(),
+            basket: new Image()
+        };
+        assets.bg.src = 'assets/background.png';
+        assets.basket.src = 'assets/basket.png';
+
+        // Game State Variables
+        let score = 0;
+        let health = 3;
+        let gameActive = false;
+        let bubbles = [];
+        let playerX = 350;
+        const playerWidth = 110;
+        const playerHeight = 70;
+        let spawnTimer = 0;
+
+        // Input Management flags
+        let keys = { Left: false, Right: false };
+
+        // --- Splash Screen 3 Seconds Timing logic ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.classList.add('hidden');
+                    showStartScreen();
+                }, 500); // Wait for transition fade to complete safely
+            }, 3000); // 3 Seconds Hold
+        });
+
+        // Interface Management
+        function showStartScreen() {
+            document.getElementById('start-screen').classList.remove('hidden');
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('mobile-controls').classList.add('hidden');
+            resetGameEngine();
+            renderStaticScene();
+        }
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('mobile-controls').classList.remove('hidden');
+            gameActive = true;
+            gameLoop();
+        }
+
+        function gameOver() {
+            gameActive = false;
+            document.getElementById('mobile-controls').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+            
+            document.getElementById('end-score-text').innerText = "Manners Points: " + score;
+            if (score >= 50) {
+                document.getElementById('end-title').innerText = "Super Respect Star! 🌟";
+                document.getElementById('end-message').innerText = '"I listen when others are talking." You know your classroom manners perfectly!';
+            } else {
+                document.getElementById('end-title').innerText = "Good Try! 👍";
+                document.getElementById('end-message').innerText = "Let's remember to show respect and try catching more kind choices next time!";
+            }
+        }
+
+        function resetGameEngine() {
+            score = 0;
+            health = 3;
+            bubbles = [];
+            playerX = (canvas.width / 2) - (playerWidth / 2);
+        }
+
+        // Object Constructor for falling Respect Bubbles
+        function Bubble() {
+            this.isGood = Math.random() < 0.6; // Higher frequency of good items
+            this.text = this.isGood ? goodManners[Math.floor(Math.random() * goodManners.length)] : badManners[Math.floor(Math.random() * badManners.length)];
+            this.radius = 55;
+            this.x = Math.random() * (canvas.width - this.radius * 2) + this.radius;
+            this.y = -this.radius;
+            this.speed = Math.random() * 1.5 + 2; // Perfectly balanced for 6 year olds
+        }
+
+        // Draw Game Framework
+        function renderStaticScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw background if asset loads successfully, otherwise color fallback
+            if (assets.bg.complete && assets.bg.naturalWidth !== 0) {
+                ctx.drawImage(assets.bg, 0, 0, canvas.width, canvas.height);
+            } else {
+                ctx.fillStyle = "#cce7ff";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            // Draw Player Character Basket
+            if (assets.basket.complete && assets.basket.naturalWidth !== 0) {
+                ctx.drawImage(assets.basket, playerX, canvas.height - 110, playerWidth, playerHeight);
+            } else {
+                ctx.fillStyle = "#ff7675";
+                ctx.fillRect(playerX, canvas.height - 110, playerWidth, playerHeight);
+            }
+        }
+
+        function updateGameEngine() {
+            // Player Movement Update Rules
+            if (keys.Left && playerX > 0) playerX -= 7;
+            if (keys.Right && playerX < canvas.width - playerWidth) playerX += 7;
+
+            // Bubble Spawning Logic
+            spawnTimer++;
+            if (spawnTimer > 100) { 
+                bubbles.push(new Bubble());
+                spawnTimer = 0;
+            }
+
+            // Loop back updating bubbles
+            for (let i = bubbles.length - 1; i >= 0; i--) {
+                let b = bubbles[i];
+                b.y += b.speed;
+
+                // Hit Detection Check with Basket Base Area
+                if (b.y + b.radius >= canvas.height - 110 && b.y - b.radius <= canvas.height - 40) {
+                    if (b.x + b.radius/2 >= playerX && b.x - b.radius/2 <= playerX + playerWidth) {
+                        if (b.isGood) {
+                            score += 10;
+                        } else {
+                            health--;
+                            if (health <= 0) gameOver();
+                        }
+                        bubbles.splice(i, 1);
+                        continue;
+                    }
+                }
+
+                // Off Screen Miss Boundaries Rule
+                if (b.y - b.radius > canvas.height) {
+                    bubbles.splice(i, 1);
+                }
+            }
+        }
+
+        function drawGameHUD() {
+            // Live Status Text Rendering
+            ctx.fillStyle = "#2b5c8f";
+            ctx.font = "bold 22px Arial";
+            ctx.fillText("Points: " + score, 25, 40);
+
+            ctx.fillStyle = "#ff2a2a";
+            ctx.font = "bold 22px Arial";
+            ctx.fillText("Hearts: " + "❤️".repeat(health), canvas.width - 160, 40);
+
+            // Render actively moving Bubbles
+            bubbles.forEach(b => {
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.fillStyle = b.isGood ? "rgba(180, 245, 190, 0.95)" : "rgba(255, 195, 195, 0.95)";
+                ctx.fill();
+                ctx.strokeStyle = b.isGood ? "#27ae60" : "#c0392b";
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.closePath();
+
+                // Bubble Center Manners Text formatting wrapping configuration
+                ctx.fillStyle = "#2c3e50";
+                ctx.font = "bold 12px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                
+                // Splitting word logic for double line strings cleanly
+                let words = b.text.split(' ');
+                if (words.length > 2) {
+                    ctx.fillText(words.slice(0, 2).join(' '), b.x, b.y - 8);
+                    ctx.fillText(words.slice(2).join(' '), b.x, b.y + 10);
+                } else {
+                    ctx.fillText(b.text, b.x, b.y);
+                }
+            });
+            ctx.textAlign = "left"; // Reset defaults
+        }
+
+        // Main Engine Loop Thread
+        function gameLoop() {
+            if (!gameActive) return;
+            renderStaticScene();
+            updateGameEngine();
+            drawGameHUD();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Desktop Interactive Input Listeners
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a') keys.Left = true;
+            if (e.key === 'ArrowRight' || e.key === 'd') keys.Right = true;
+        });
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a') keys.Left = false;
+            if (e.key === 'ArrowRight' || e.key === 'd') keys.Right = false;
+        });
+
+        // Mobile / Tablet Interactive Touch Event System
+        const leftBtn = document.getElementById('left-btn');
+        const rightBtn = document.getElementById('right-btn');
+
+        leftBtn.addEventListener('mousedown', () => keys.Left = true);
+        leftBtn.addEventListener('mouseup', () => keys.Left = false);
+        leftBtn.addEventListener('touchstart', (e) => { e.preventDefault(); keys.Left = true; });
+        leftBtn.addEventListener('touchend', () => keys.Left = false);
+
+        rightBtn.addEventListener('mousedown', () => keys.Right = true);
+        rightBtn.addEventListener('mouseup', () => keys.Right = false);
+        rightBtn.addEventListener('touchstart', (e) => { e.preventDefault(); keys.Right = true; });
+        rightBtn.addEventListener('touchend', () => keys.Right = false);
+
+    </script>
+</body>
+</html>
