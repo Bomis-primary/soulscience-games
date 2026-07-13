@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Good Habits Quest</title>
+<style>
+:root{--bg:#f7fbff;--card:#ffffff;--ink:#1f2a37;--muted:#5b6472;--accent:#4f8cff;--accent2:#22c55e;--warn:#f59e0b;--bad:#ef4444;--good:#10b981;}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#eaf4ff,#fff7e8);color:var(--ink)}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+.top{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:rgba(255,255,255,.78);backdrop-filter:blur(6px);padding:14px 16px;border-radius:18px;box-shadow:0 10px 28px rgba(0,0,0,.08)}
+h1{margin:0;font-size:28px}
+.sub{margin:4px 0 0;color:var(--muted);font-size:14px}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.pill{background:#fff;border:2px solid #d8e3f5;border-radius:999px;padding:8px 12px;font-weight:700}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}
+.card{background:rgba(255,255,255,.92);border-radius:20px;padding:16px;box-shadow:0 10px 28px rgba(0,0,0,.08)}
+.scene{min-height:420px;display:flex;flex-direction:column;justify-content:space-between}
+.habitBox{border:3px dashed #cfdcf4;border-radius:18px;padding:14px;background:#f9fcff}
+.habitTitle{font-size:24px;font-weight:800;margin:0 0 8px}
+.habitDesc{font-size:18px;line-height:1.45;margin:0;color:#24364b}
+.taskArea{margin-top:12px;display:grid;gap:10px}
+.choice{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;border:2px solid #dbe7fb;background:#fff;font-size:18px}
+.choice button{padding:10px 14px;border:none;border-radius:12px;font-weight:800;color:#fff;cursor:pointer}
+.good{background:var(--good)} .bad{background:var(--bad)} .neutral{background:var(--accent)}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+button.main{padding:12px 16px;border:none;border-radius:14px;background:var(--accent);color:#fff;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 8px 16px rgba(79,140,255,.25)}
+button.alt{background:#f3f6fb;color:var(--ink);box-shadow:none;border:2px solid #dbe7fb}
+.message{margin-top:12px;font-size:18px;font-weight:700;min-height:28px}
+.progressOuter{height:16px;background:#e8eef8;border-radius:999px;overflow:hidden}
+.progressInner{height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#4f8cff);transition:width .35s ease}
+.habitList{display:grid;gap:10px;margin-top:10px}
+.habitItem{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:14px;background:#f8fbff;border:2px solid #e1ebfb;font-size:15px}
+.star{font-size:22px}
+.footerNote{margin-top:10px;color:var(--muted);font-size:13px;line-height:1.4}
+.badge{display:inline-block;background:#fff4cc;color:#8a5a00;border:1px solid #f2d27a;padding:5px 10px;border-radius:999px;font-size:13px;font-weight:700}
+@media (max-width:900px){.grid{grid-template-columns:1fr}.scene{min-height:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top">
+<div>
+<h1>Good Habits Quest</h1>
+<div class="sub">Grade 3 HTML game: choose the habit that matches the situation.</div>
+</div>
+<div class="stats">
+<div class="pill">Score: <span id="score">0</span></div>
+<div class="pill">Level: <span id="level">1</span></div>
+<div class="pill">Lives: <span id="lives">3</span></div>
+</div>
+</div>
+
+<div class="grid">
+<div class="card scene">
+<div>
+<span class="badge">Choose the correct habit</span>
+<div class="habitBox" style="margin-top:12px;">
+<p class="habitTitle" id="scenarioTitle">Loading...</p>
+<p class="habitDesc" id="scenarioText"></p>
+</div>
+<div class="taskArea" id="choices"></div>
+</div>
+<div>
+<div class="controls">
+<button class="main" id="nextBtn">Next Situation</button>
+<button class="main alt" id="restartBtn">Restart Game</button>
+</div>
+<div class="message" id="message"></div>
+</div>
+</div>
+
+<div class="card">
+<div class="progressOuter"><div class="progressInner" id="progress"></div></div>
+<div class="habitList" id="habitList"></div>
+<div class="footerNote">
+How to play: Read the situation, click the good habit, and earn points. Wrong answers reduce lives. When the level goes up, situations get a little harder.
+</div>
+</div>
+</div>
+</div>
+
+<script>
+const habits = [
+{name:'Wash hands', emoji:'🧼'},
+{name:'Brush teeth', emoji:'🪥'},
+{name:'Keep room tidy', emoji:'🧹'},
+{name:'Say please and thank you', emoji:'🙏'},
+{name:'Listen carefully', emoji:'👂'},
+{name:'Sleep on time', emoji:'🌙'},
+{name:'Eat healthy food', emoji:'🍎'},
+{name:'Share with others', emoji:'🤝'}
+];
+
+const scenarios = [
+{t:'Before snack time', s:'You are about to eat a sandwich after playing outside. Which good habit should you do first?', a:'Wash hands'},
+{t:'After brushing', s:'It is bedtime and you want your teeth to stay healthy. What should you do?', a:'Brush teeth'},
+{t:'After art time', s:'Your crayons and paper are scattered on the floor. What is the best habit?', a:'Keep room tidy'},
+{t:'Meeting a friend', s:'Your friend gives you a pencil. What good habit should you use?', a:'Say please and thank you'},
+{t:'Teacher is speaking', s:'The teacher gives important directions for a class game. What habit helps most?', a:'Listen carefully'},
+{t:'Bedtime routine', s:'It is late and tomorrow is a school day. What habit is best?', a:'Sleep on time'},
+{t:'Lunch choice', s:'You can choose between chips and fruit. What good habit helps your body?', a:'Eat healthy food'},
+{t:'Sharing time', s:'A classmate forgot a pencil. What kind habit should you show?', a:'Share with others'},
+{t:'After bathroom time', s:'You finished using the restroom. What should you do next?', a:'Wash hands'},
+{t:'Morning routine', s:'You need strong teeth and a fresh smile before school. What habit fits?', a:'Brush teeth'}
+];
+
+let score = 0, lives = 3, level = 1, current = null, round = 0;
+const el = id => document.getElementById(id);
+const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+
+function renderHabitList(){
+el('habitList').innerHTML = habits.map(h => <div class="habitItem"><span>${h.emoji} ${h.name}</span><span class="star">⭐</span></div>).join('');
+}
+
+function setMessage(msg, color='#24364b'){ el('message').style.color=color; el('message').textContent = msg; }
+function updateStats(){
+el('score').textContent = score; el('lives').textContent = lives; el('level').textContent = level;
+const pct = Math.min(100, (round / scenarios.length) * 100);
+el('progress').style.width = pct + '%';
+}
+
+function nextScenario(){
+if(lives <= 0){ setMessage('Game over. Press Restart Game.', '#ef4444'); return; }
+round++;
+current = scenarios[(round - 1) % scenarios.length];
+el('scenarioTitle').textContent = current.t;
+el('scenarioText').textContent = current.s;
+const options = shuffle(habits).slice(0,4);
+if(!options.some(o => o.name === current.a)) options = habits.find(h => h.name === current.a);
+const finalOptions = shuffle(options);
+el('choices').innerHTML = finalOptions.map(o => `
+<div class="choice">
+<div>${o.emoji} ${o.name}</div>
+<button class="${o.name === current.a ? 'good' : 'bad'}" data-name="${o.name}">Choose</button>
+</div>`).join('');
+document.querySelectorAll('#choices button').forEach(btn => btn.onclick = () => checkAnswer(btn.dataset.name));
+setMessage('Pick the habit that matches the situation.');
+updateStats();
+}
+
+function checkAnswer(name){
+if(name === current.a){
+score += 10;
+if(score % 30 === 0) level++;
+setMessage('Correct! Great habit choice. 👍', '#10b981');
+} else {
+lives -= 1;
+setMessage(Try again. The best answer was ${current.a}., '#ef4444');
+} updateStats();
+if(lives <= 0) setMessage('Game over. Press Restart Game.', '#ef4444');
+}
+
+el('nextBtn').onclick = nextScenario;
+el('restartBtn').onclick = () => { score=0; lives=3; level=1; round=0; updateStats(); nextScenario(); };
+renderHabitList();
+updateStats();
+nextScenario();
+</script>
+</body>
+</html>
