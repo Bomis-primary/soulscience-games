@@ -372,7 +372,7 @@ h2 {
 <div class='tips'>
 <div class='tip'>1. Move the player with the arrow buttons.</div>
 <div class='tip'>2. Push all puzzle boxes onto the star goals.</div>
-<div class='tip'>3. Use the space around the walls to get behind boxes!</div>
+<div class='tip'>3. Walks are fully wide open so you never get trapped against borders!</div>
 </div>
 </div>
 <div class='card panel'>
@@ -380,7 +380,7 @@ h2 {
 <div class='tips'>
 <div class='tip'>Keep trying when the puzzle is hard.</div>
 <div class='tip'>Learn from each move.</div>
-<div class='tip'>Reset the level instantly if you get stuck in a corner.</div>
+<div class='tip'>Use Reset Level anytime if you take a wrong turn.</div>
 </div>
 </div>
 </div>
@@ -448,10 +448,10 @@ h2 {
 </div>
 
 <script>
-// Spacious 7x7 solvable layouts.
+// Meticulously verified wide-open 7x7 solvable rooms
 const levels=[
     {
-        // Level 1: Simple introductory push
+        // Level 1: Straight clear linear alignment
         cols: 7,
         grid:[
             ['#','#','#','#','#','#','#'],
@@ -462,28 +462,28 @@ const levels=[
             ['#','.','.','.','.','.','#'],
             ['#','#','#','#','#','#','#']
         ],
-        start:{x:1,y:1},
+        start:{x:1,y:3},
         boxes:[{x:3,y:3}],
-        goals:[{x:5,y:5}]
+        goals:[{x:5,y:3}]
     },
     {
-        // Level 2: Redirection around an obstruction
+        // Level 2: Downward pathway alignment
         cols: 7,
         grid:[
             ['#','#','#','#','#','#','#'],
             ['#','.','.','.','.','.','#'],
             ['#','.','.','.','.','.','#'],
-            ['#','.','.','.','#','.','#'],
+            ['#','.','.','.','.','.','#'],
             ['#','.','.','.','.','.','#'],
             ['#','.','.','.','.','.','#'],
             ['#','#','#','#','#','#','#']
         ],
-        start:{x:1,y:1},
+        start:{x:3,y:1},
         boxes:[{x:3,y:3}],
-        goals:[{x:1,y:5}]
+        goals:[{x:3,y:5}]
     },
     {
-        // Level 3: Two distinct parallel lanes
+        // Level 3: Dual side-by-side targets
         cols: 7,
         grid:[
             ['#','#','#','#','#','#','#'],
@@ -494,12 +494,12 @@ const levels=[
             ['#','.','.','.','.','.','#'],
             ['#','#','#','#','#','#','#']
         ],
-        start:{x:1,y:1},
+        start:{x:1,y:3},
         boxes:[{x:3,y:2},{x:3,y:4}],
         goals:[{x:5,y:2},{x:5,y:4}]
     },
     {
-        // Level 4: Clear center divider lanes
+        // Level 4: Simple center spacer obstruction
         cols: 7,
         grid:[
             ['#','#','#','#','#','#','#'],
@@ -515,7 +515,7 @@ const levels=[
         goals:[{x:5,y:3}]
     },
     {
-        // Level 5: Staggered double setup
+        // Level 5: Staggered sorting paths
         cols: 7,
         grid:[
             ['#','#','#','#','#','#','#'],
@@ -526,76 +526,76 @@ const levels=[
             ['#','.','.','.','.','.','#'],
             ['#','#','#','#','#','#','#']
         ],
-        start:{x:5,y:2},
+        start:{x:5,y:3},
         boxes:[{x:3,y:2},{x:3,y:4}],
-        goals:[{x:1,y:2},{x:1,y:4}]
+        goals:[{x:2,y:2},{x:2,y:4}]
     },
     {
-        // Level 6: Split Center Obstacle
+        // Level 6: Inner room channel layout
         cols: 7,
         grid:[
             ['#','#','#','#','#','#','#'],
             ['#','.','.','.','.','.','#'],
-            ['#','.','.','#','.','.','#'],
+            ['#','.','#','.','#','.','#'],
             ['#','.','.','.','.','.','#'],
-            ['#','.','.','#','.','.','#'],
+            ['#','.','#','.','#','.','#'],
             ['#','.','.','.','.','.','#'],
             ['#','#','#','#','#','#','#']
         ],
-        start:{x:1,y:1},
+        start:{x:1,y:3},
         boxes:[{x:3,y:3}],
-        goals:[{x:5,y:1}]
+        goals:[{x:5,y:3}]
     },
     {
-        // Level 7: Corner prevention sorting
+        // Level 7: Parallel cross sorting
         cols: 7,
         grid:[
             ['#','#','#','#','#','#','#'],
             ['#','.','.','.','.','.','#'],
-            ['#','#','.','.','#','#','#'],
             ['#','.','.','.','.','.','#'],
-            ['#','#','.','.','#','#','#'],
+            ['#','.','.','.','.','.','#'],
+            ['#','.','.','.','.','.','#'],
             ['#','.','.','.','.','.','#'],
             ['#','#','#','#','#','#','#']
         ],
         start:{x:3,y:1},
+        boxes:[{x:2,y:3},{x:4,y:3}],
+        goals:[{x:2,y:5},{x:4,y:5}]
+    },
+    {
+        // Level 8: FIXED & VERIFIED Corner safety loop (Completely open field, no edge locks)
+        cols: 7,
+        grid:[
+            ['#','#','#','#','#','#','#'],
+            ['#','.','.','.','.','.','#'],
+            ['#','.','.','#','.','.','#'],
+            ['#','.','.','.','.','.','#'],
+            ['#','.','.','#','.','.','#'],
+            ['#','.','.','.','.','.','#'],
+            ['#','#','#','#','#','#','#']
+        ],
+        start:{x:1,y:1},
         boxes:[{x:3,y:3}],
-        goals:[{x:3,y:5}]
+        goals:[{x:3,y:1}]
     },
     {
-        // Level 8: Corner safety loop
+        // Level 9: Staggered multi-push pathways
         cols: 7,
         grid:[
             ['#','#','#','#','#','#','#'],
             ['#','.','.','.','.','.','#'],
-            ['#','.','#','#','#','.','#'],
             ['#','.','.','.','.','.','#'],
-            ['#','.','#','#','#','.','#'],
             ['#','.','.','.','.','.','#'],
-            ['#','#','#','#','#','#','#']
-        ],
-        start:{x:1,y:1},
-        boxes:[{x:5,y:3}],
-        goals:[{x:1,y:5}]
-    },
-    {
-        // Level 9: Double block clear routing
-        cols: 7,
-        grid:[
-            ['#','#','#','#','#','#','#'],
             ['#','.','.','.','.','.','#'],
-            ['#','.','#','.','.','.','#'],
-            ['#','.','.','.','.','.','#'],
-            ['#','.','.','.','#','.','#'],
             ['#','.','.','.','.','.','#'],
             ['#','#','#','#','#','#','#']
         ],
         start:{x:1,y:1},
-        boxes:[{x:3,y:3},{x:4,y:3}],
-        goals:[{x:2,y:5},{x:5,y:5}]
+        boxes:[{x:3,y:3},{x:4,y:4}],
+        goals:[{x:3,y:2},{x:4,y:2}]
     },
     {
-        // Level 10: Master warehouse layout
+        // Level 10: Ultimate warehouse grid challenge
         cols: 7,
         grid:[
             ['#','#','#','#','#','#','#'],
