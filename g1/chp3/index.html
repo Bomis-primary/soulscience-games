@@ -14,10 +14,13 @@ button{font:inherit;cursor:pointer}
 .center{place-items:center;padding:16px}
 .wrap{width:min(1180px,calc(100% - 20px));margin:0 auto}
 .card{background:var(--card);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow)}
-#splashScreen{position:fixed;inset:0;z-index:999;background:#fff;display:grid;place-items:center;padding:16px}
+
+/* Fixed Loading Overlay Specificity & Animation Rules */
+#splashScreen{position:fixed;inset:0;z-index:999;background:#fff;display:grid;place-items:center;padding:16px;transition:opacity 0.4s ease-out, visibility 0.4s}
 #splashScreen .box{display:grid;gap:14px;justify-items:center;text-align:center}
 #splashScreen img{width:min(320px,70vw);height:auto;filter:drop-shadow(0 10px 20px rgba(0,0,0,.12))}
 .splash-text{font-size:clamp(18px,2.8vw,28px);font-weight:800;color:var(--primary2)}
+
 .hero{padding:22px 0 18px}
 .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:center;padding:18px}
 .layout{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;padding:0 0 22px}
@@ -64,12 +67,14 @@ h2{font-size:clamp(24px,3vw,36px)}
 </style>
 </head>
 <body>
-<section id="splashScreen" class="screen active">
+
+<section id="splashScreen">
 <div class="box">
-<img src="./assets/innovine-logo.png" alt="Innovine logo" />
+<img src="./assets/innovine-logo.png" alt="Innovine logo" onerror="this.style.display='none';" />
 <div class="splash-text">Loading Quiet Ears...</div>
 </div>
 </section>
+
 <section id="startScreen" class="screen">
 <div class="wrap hero">
 <div class="card hero-grid">
@@ -90,7 +95,7 @@ h2{font-size:clamp(24px,3vw,36px)}
 <div class="cloud one"></div>
 <div class="cloud two"></div>
 <div class="big-icon">👂</div>
-<div class="note">Humility includes listening with genuine interest, showing respect, helping others, and learning from mistakes. [file:175]</div>
+<div class="note">Humility includes listening with genuine interest, showing respect, helping others, and learning from mistakes.</div>
 </div>
 </div>
 <div class="layout" style="margin-top:16px;">
@@ -113,6 +118,7 @@ h2{font-size:clamp(24px,3vw,36px)}
 </div>
 </div>
 </section>
+
 <section id="gameScreen" class="screen">
 <div class="wrap" style="padding-top:18px;">
 <div class="hud">
@@ -139,6 +145,7 @@ h2{font-size:clamp(24px,3vw,36px)}
 </div>
 </div>
 </section>
+
 <section id="endScreen" class="screen center">
 <div class="card" style="padding:22px;width:min(760px,100%);">
 <div class="final-title" id="finalTitle">Great job!</div>
@@ -151,6 +158,7 @@ h2{font-size:clamp(24px,3vw,36px)}
 </div>
 </div>
 </section>
+
 <script>
 const rounds=[
 {prompt:'Teacher is talking.',choices:[{emoji:'🙂',title:'Listening',text:'Eyes on teacher',good:true},{emoji:'😆',title:'Talking',text:'Chatting loudly',good:false}]},
@@ -161,16 +169,127 @@ const rounds=[
 ];
 let soundOn=true,round=0,score=0,lives=3,stars=0,gameActive=false;
 const splash=document.getElementById('splashScreen');
-function show(id){['startScreen','gameScreen','endScreen'].forEach(x=>document.getElementById(x).classList.remove('active'));document.getElementById(id).classList.add('active')}
-function toggleSound(){soundOn=!soundOn;document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off'}
-function play(kind){if(!soundOn)return;const f={good:680,bad:240,win:520}[kind];const o=new (window.AudioContext||window.webkitAudioContext)();const g=o.createGain();const osc=o.createOscillator();osc.type=kind==='bad'?'sawtooth':'triangle';osc.frequency.value=f;osc.connect(g);g.connect(o.destination);g.gain.value=.05;osc.start();g.gain.exponentialRampToValueAtTime(.0001,o.currentTime+.18);osc.stop(o.currentTime+.18)}
-function hideSplash(){splash.classList.remove('active');show('startScreen')}
+
+function show(id){
+    ['startScreen','gameScreen','endScreen'].forEach(x=>document.getElementById(x).classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function toggleSound(){
+    soundOn=!soundOn;
+    document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off';
+}
+
+function play(kind){
+    if(!soundOn)return;
+    const f={good:680,bad:240,win:520}[kind];
+    const o=new (window.AudioContext||window.webkitAudioContext)();
+    const g=o.createGain();
+    const osc=o.createOscillator();
+    osc.type=kind==='bad'?'sawtooth':'triangle';
+    osc.frequency.value=f;
+    osc.connect(g);
+    g.connect(o.destination);
+    g.gain.value=.05;
+    osc.start();
+    g.gain.exponentialRampToValueAtTime(.0001,o.currentTime+.18);
+    osc.stop(o.currentTime+.18);
+}
+
+function hideSplash(){
+    splash.style.opacity = '0';
+    splash.style.visibility = 'hidden';
+    show('startScreen');
+}
+
 window.addEventListener('load',()=>setTimeout(hideSplash,1800));
-function startGame(){round=0;score=0;lives=3;stars=0;gameActive=true;show('gameScreen');loadRound()}
-function showStart(){gameActive=false;show('startScreen')}
-function loadRound(){if(round>=rounds.length){endGame(score>=30);return}const r=rounds[round];document.getElementById('roundNum').textContent=round+1;document.getElementById('scoreNum').textContent=score;document.getElementById('livesNum').textContent=lives;document.getElementById('starsNum').textContent=stars;document.getElementById('statusText').textContent='Tap the kind listener.';document.getElementById('statusText').className='status';document.getElementById('promptBox').textContent=r.prompt;const grid=document.getElementById('choiceGrid');grid.innerHTML='';const shuffled=[...r.choices].sort(()=>Math.random()-.5);shuffled.forEach(choice=>{const b=document.createElement('button');b.className='choice-card';b.innerHTML='<div class=\"choice-emoji\">'+choice.emoji+'</div><div class=\"choice-title\">'+choice.title+'</div><div class=\"choice-text\">'+choice.text+'</div>';b.onclick=()=>pick(choice.good,b);grid.appendChild(b)})}
-function pick(correct,btn){[...document.querySelectorAll('.choice-card')].forEach(x=>x.disabled=true);if(correct){score+=10;stars++;btn.classList.add('correct');document.getElementById('statusText').textContent='Yes! Good listening.';document.getElementById('statusText').className='status good-text';play('good')}else{lives--;btn.classList.add('wrong');document.getElementById('statusText').textContent='Try the kind choice.';document.getElementById('statusText').className='status bad-text';play('bad')}document.getElementById('scoreNum').textContent=score;document.getElementById('livesNum').textContent=lives;document.getElementById('starsNum').textContent=stars;setTimeout(()=>{if(lives<=0){endGame(false);return}round++;loadRound()},900)}
-function endGame(won){gameActive=false;show('endScreen');document.getElementById('finalScore').textContent=score;if(won){document.getElementById('finalTitle').textContent='Quiet Ears Star!';document.getElementById('finalStars').textContent='⭐⭐⭐';document.getElementById('finalText').textContent='You listened with humility and care.';play('win')}else{document.getElementById('finalTitle').textContent='Try Again';document.getElementById('finalStars').textContent='⭐⭐';document.getElementById('finalText').textContent='Take a breath and listen kindly.';}}
+
+function startGame(){
+    round=0;
+    score=0;
+    lives=3;
+    stars=0;
+    gameActive=true;
+    show('gameScreen');
+    loadRound();
+}
+
+function showStart(){
+    gameActive=false;
+    show('startScreen');
+}
+
+function loadRound(){
+    if(round>=rounds.length){
+        endGame(score>=30);
+        return;
+    }
+    const r=rounds[round];
+    document.getElementById('roundNum').textContent=round+1;
+    document.getElementById('scoreNum').textContent=score;
+    document.getElementById('livesNum').textContent=lives;
+    document.getElementById('starsNum').textContent=stars;
+    document.getElementById('statusText').textContent='Tap the kind listener.';
+    document.getElementById('statusText').className='status';
+    document.getElementById('promptBox').textContent=r.prompt;
+    
+    const grid=document.getElementById('choiceGrid');
+    grid.innerHTML='';
+    const shuffled=[...r.choices].sort(()=>Math.random()-.5);
+    shuffled.forEach(choice=>{
+        const b=document.createElement('button');
+        b.className='choice-card';
+        b.innerHTML='<div class="choice-emoji">'+choice.emoji+'</div><div class="choice-title">'+choice.title+'</div><div class="choice-text">'+choice.text+'</div>';
+        b.onclick=()=>pick(choice.good,b);
+        grid.appendChild(b);
+    });
+}
+
+function pick(correct,btn){
+    [...document.querySelectorAll('.choice-card')].forEach(x=>x.disabled=true);
+    if(correct){
+        score+=10;
+        stars++;
+        btn.classList.add('correct');
+        document.getElementById('statusText').textContent='Yes! Good listening.';
+        document.getElementById('statusText').className='status good-text';
+        play('good');
+    }else{
+        lives--;
+        btn.classList.add('wrong');
+        document.getElementById('statusText').textContent='Try the kind choice.';
+        document.getElementById('statusText').className='status bad-text';
+        play('bad');
+    }
+    document.getElementById('scoreNum').textContent=score;
+    document.getElementById('livesNum').textContent=lives;
+    document.getElementById('starsNum').textContent=stars;
+    
+    setTimeout(()=>{
+        if(lives<=0){
+            endGame(false);
+            return;
+        }
+        round++;
+        loadRound();
+    }, 900);
+}
+
+function endGame(won){
+    gameActive=false;
+    show('endScreen');
+    document.getElementById('finalScore').textContent=score;
+    if(won){
+        document.getElementById('finalTitle').textContent='Quiet Ears Star!';
+        document.getElementById('finalStars').textContent='⭐⭐⭐';
+        document.getElementById('finalText').textContent='You listened with humility and care.';
+        play('win');
+    }else{
+        document.getElementById('finalTitle').textContent='Try Again';
+        document.getElementById('finalStars').textContent='⭐⭐';
+        document.getElementById('finalText').textContent='Take a breath and listen kindly.';
+    }
+}
 </script>
 </body>
 </html>
