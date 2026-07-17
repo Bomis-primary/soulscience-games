@@ -93,8 +93,8 @@ canvas { width: 100%; height: 100%; display: block; }
 <!-- Studio Branding Opener Splash Screen -->
 <section id="splashScreen">
   <div class="splash-box">
-    <!-- Updated path to look straight into the standard runtime folder for the file -->
-    <img src="innovine-logo.png" alt="Innovine Solutions Logo" class="studio-logo" id="innovineLogoImg" onerror="handleLogoError();" />
+    <!-- Multi-stage fallback loop to catch all asset configurations -->
+    <img src="innovine-logo.png" alt="Innovine Solutions Logo" class="studio-logo" id="innovineLogoImg" onerror="tryAlternativePath(this);" />
     <div id="fallbackLogo" style="display:none; font-size:80px; margin-bottom:20px;">⛰️✨</div>
     <div class="splash-text">Innovine Solutions</div>
   </div>
@@ -168,10 +168,19 @@ canvas { width: 100%; height: 100%; display: block; }
 </section>
 
 <script>
-// Safety checker if the asset image fails to display instantly
-function handleLogoError() {
-  document.getElementById('innovineLogoImg').style.display = 'none';
-  document.getElementById('fallbackLogo').style.display = 'block';
+// Dynamic cascade to ensure path issues are caught instantly
+function tryAlternativePath(imgElement) {
+  if (imgElement.getAttribute('src') === 'innovine-logo.png') {
+    // If root search fails, try searching directory context variations
+    imgElement.src = 'asset/innovine-logo.png';
+  } else if (imgElement.getAttribute('src') === 'asset/innovine-logo.png') {
+    // Check asset folder fallback pluralization variant
+    imgElement.src = 'assets/innovine-logo.png';
+  } else {
+    // If all fail, display visual backup smoothly
+    imgElement.style.display = 'none';
+    document.getElementById('fallbackLogo').style.display = 'block';
+  }
 }
 
 // Grade 3 specific Determination Framework Scenarios Array Data
