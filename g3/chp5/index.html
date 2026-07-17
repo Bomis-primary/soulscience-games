@@ -1,251 +1,484 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Crayon Class</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0} :root{--bg1:#fff7d8;--bg2:#d8f3ff;--card:#fff;--text:#22314d;--good:#43a047;--bad:#e53935;--accent:#ffd54f;--primary:#ff7043;--secondary:#26a69a;--tertiary:#7c4dff;--border:rgba(34,49,77,.12);--shadow:0 14px 30px rgba(34,49,77,.14)}
-    body{font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--text);min-height:100vh;overflow-x:hidden}
-    .screen{display:none;min-height:100vh;padding:16px}.screen.active{display:flex;align-items:center;justify-content:center}
-    #splashScreen{position:fixed;inset:0;background:#fff;z-index:9999}.splash-box{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;height:100%}
-    #splashScreen img{width:min(78vw,420px);height:auto;object-fit:contain;animation:floatLogo 1.8s ease-in-out infinite}
-    @keyframes floatLogo{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-    .wrap{width:min(1180px,100%)} .card{background:rgba(255,255,255,.96);border-radius:28px;padding:20px;box-shadow:var(--shadow);border:1px solid var(--border)}
-    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:center}.hero-title{font-size:clamp(34px,5vw,60px);color:var(--primary);margin-bottom:12px;line-height:1.03;text-align:left}
-    .lead{font-size:clamp(18px,2.5vw,24px);color:#355070;line-height:1.45;margin-bottom:16px;max-width:54ch}.pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.pill{padding:10px 14px;border-radius:999px;background:#fff8e1;border:1px solid var(--border);font-weight:700}
-    .btn-row{display:flex;flex-wrap:wrap;gap:10px}.btn{border:none;border-radius:16px;padding:14px 20px;font-size:18px;font-weight:800;cursor:pointer;min-height:46px}.primary{background:var(--accent);box-shadow:0 5px 0 #d8a900;color:#3d2f00}.ghost{background:#eef2f7;color:var(--text);box-shadow:0 5px 0 #cbd5e1}
-    .art{min-height:320px;position:relative;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#fff1c4,#dff7ff)}
-    .cloud{position:absolute;background:rgba(255,255,255,.92);border-radius:999px}.cloud:before,.cloud:after{content:'';position:absolute;background:inherit;border-radius:999px}
-    .cloud.one{width:110px;height:42px;top:34px;left:30px}.cloud.one:before{width:42px;height:42px;left:12px;top:-18px}.cloud.one:after{width:54px;height:54px;right:12px;top:-26px}
-    .cloud.two{width:130px;height:48px;top:92px;right:24px}.cloud.two:before{width:46px;height:46px;left:18px;top:-18px}.cloud.two:after{width:58px;height:58px;right:18px;top:-28px}
-    .hero-icon{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:96px;filter:drop-shadow(0 10px 14px rgba(0,0,0,.12))}
-    .note{position:absolute;left:22px;right:22px;bottom:18px;background:rgba(255,255,255,.88);border:1px solid var(--border);border-radius:18px;padding:12px 14px;font-size:16px;line-height:1.45;color:#4d5d70}
-    .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.panel{padding:18px}
-    .hud{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}.hud-box{background:#fff;border:1px solid var(--border);border-radius:18px;padding:12px;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.06)}
-    .hud-label{display:block;font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:.06em}.hud-val{display:block;margin-top:2px;font-size:22px;font-weight:900}
-    .game-box{background:rgba(255,255,255,.96);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow);padding:18px}
-    .scenario{min-height:145px;background:#fff8e1;border-radius:22px;padding:16px 18px;margin-bottom:14px;display:grid;gap:10px}.scenario h2{font-size:clamp(24px,3vw,34px);color:var(--primary)}
-    .scenario p{font-size:clamp(18px,2.3vw,22px);line-height:1.45;color:#355070}
-    .choices{display:grid;gap:10px}.choice{border:none;border-radius:18px;padding:14px 16px;text-align:left;background:#f3f7fb;border:1px solid var(--border);font-size:18px;font-weight:700;min-height:52px}
-    .choice.correct{background:#e8f5e9;border-color:#81c784}.choice.wrong{background:#ffebee;border-color:#ef9a9a}
-    .status{min-height:28px;margin-top:12px;font-size:18px;font-weight:800}.good{color:var(--good)}.bad{color:var(--bad)}
-    .progress-wrap{margin-top:14px;background:#eef2ff;border-radius:999px;height:18px;overflow:hidden;border:1px solid var(--border)}.progress{height:100%;width:0;background:linear-gradient(90deg,var(--secondary),var(--tertiary));transition:width .3s ease}
-    .tips{display:grid;gap:10px}.tip{background:#f8fafc;border:1px solid var(--border);border-radius:16px;padding:12px 14px;line-height:1.45;color:#4d5d70}
-    .final-title{text-align:center;font-size:clamp(30px,5vw,54px);color:var(--good);margin-bottom:10px}.stars{text-align:center;font-size:52px;margin:10px 0 16px}.final-text{text-align:center;font-size:20px;line-height:1.45;margin-bottom:18px}
-    .confetti{position:fixed;top:-20px;width:14px;height:14px;z-index:999;animation:fall 2.8s linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
-    @media (max-width: 960px){.hero-grid,.layout{grid-template-columns:1fr}.hud{grid-template-columns:repeat(2,1fr)}}
-    @media (max-width: 560px){.screen{padding:10px}.card,.game-box{padding:14px;border-radius:22px}.btn{width:100%}.btn-row{flex-direction:column}.choice{font-size:17px}}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Crayon Crew: Rainbow Highway Quest (Cooperation Game)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg-gradient: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  --panel-bg: #fffbf4;
+  --text-dark: #451a03;
+  --text-muted: #78350f;
+  --primary: #ea580c;
+  --primary-hover: #c2410c;
+  --accent: #eab308;
+  --good: #16a34a;
+  --bad: #dc2626;
+  --shadow: 0 16px 32px rgba(120, 53, 15, 0.12);
+  --card-radius: 24px;
+}
+
+body { 
+  background: var(--bg-gradient); 
+  color: var(--text-dark); 
+  font-family: 'Nunito', sans-serif; 
+  min-height: 100vh; 
+  overflow-x: hidden; 
+}
+
+h1, h2, h3, .title, .hud-val, .btn {
+  font-family: 'Fredoka One', cursive;
+}
+
+button { border: none; font: inherit; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+button:hover { transform: translateY(-3px) scale(1.02); }
+button:active { transform: translateY(1px); }
+
+.screen { display: none; min-height: 100vh; padding: 24px; place-items: center; }
+.screen.active { display: grid; animation: fadeIn 0.4s ease-out forwards; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.wrap { width: min(1000px, 100%); margin: 0 auto; }
+.card { 
+  background: var(--panel-bg); 
+  border: 6px dashed #b45309; 
+  border-radius: var(--card-radius); 
+  box-shadow: var(--shadow); 
+  padding: 40px; 
+  position: relative;
+}
+.card::before {
+  content: ''; position: absolute; inset: -2px; border: 2px solid #fff; border-radius: calc(var(--card-radius) - 4px); pointer-events: none;
+}
+
+/* Studio Intro Splash Layout */
+#splashScreen { position: fixed; inset: 0; z-index: 9999; background: #ffffff; display: grid; place-items: center; transition: opacity 0.5s ease, visibility 0.5s; }
+.splash-box { text-align: center; }
+.studio-logo { max-width: 320px; width: 90%; height: auto; animation: logoBounce 2s infinite alternate ease-in-out; display: block; margin: 0 auto 24px auto; }
+.splash-text { font-size: 24px; font-weight: 900; color: #78350f; letter-spacing: 0.5px; font-family: 'Fredoka One', cursive; }
+@keyframes logoBounce { 0% { transform: translateY(0); } 100% { transform: translateY(-12px); } }
+
+/* Hero Screen Setup */
+.hero { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: center; }
+.title { font-size: clamp(34px, 5vw, 50px); color: #9a3412; line-height: 1.1; margin-bottom: 18px; text-shadow: 2px 2px 0px #ffedd5; }
+.lead { font-size: 19px; line-height: 1.6; color: #78350f; margin-bottom: 28px; font-weight: 700; }
+.pills { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.pill { background: #ffedd5; color: #9a3412; font-weight: 900; padding: 8px 18px; border-radius: 999px; font-size: 14px; border: 2px solid #b45309; }
+
+.btn-row { display: flex; flex-wrap: wrap; gap: 16px; }
+.btn { padding: 16px 32px; font-size: 20px; border-radius: 999px; box-shadow: 0 6px 0px #9a3412; border: 3px solid #78350f; }
+.btn.primary { background: #ea580c; color: #ffffff; }
+.btn.primary:hover { background: #c2410c; }
+.btn.primary:active { box-shadow: 0 2px 0px #9a3412; }
+.btn.ghost { background: #fff; color: var(--text-dark); }
+
+/* Gameplay Grid Dashboard */
+.layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px; }
+@media (max-width: 850px) { .hero, .layout { grid-template-columns: 1fr; } .hero { text-align: center; } .pills, .btn-row { justify-content: center; } }
+
+.canvas-holder { background: #fff; border-radius: var(--card-radius); position: relative; overflow: hidden; border: 4px solid #b45309; min-height: 380px; box-shadow: inset 0 6px 10px rgba(0,0,0,0.05); }
+canvas { width: 100%; height: 100%; display: block; }
+
+.hud { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+.hud-box { background: #fff; padding: 12px; border-radius: 18px; text-align: center; border: 3px solid #b45309; box-shadow: 0 4px 0 #b45309; }
+.hud-label { font-size: 12px; text-transform: uppercase; color: var(--text-muted); font-weight: 900; letter-spacing: 0.5px; }
+.hud-val { font-size: 18px; color: #9a3412; display: block; margin-top: 2px; }
+
+.meter-container { background: #fed7aa; border-radius: 999px; height: 18px; position: relative; overflow: hidden; margin-top: 4px; border: 2px solid #78350f; }
+.meter-fill { height: 100%; width: 50%; background: linear-gradient(90deg, #eab308, #16a34a, #3b82f6); transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); }
+
+.scenario-box { background: #fffdec; border-radius: var(--card-radius); padding: 24px; border: 3px solid #b45309; box-shadow: 0 4px 0 #b45309; display: flex; flex-direction: column; justify-content: space-between; }
+.situation { min-height: 100px; display: flex; flex-direction: column; justify-content: center; margin-bottom: 20px; }
+.situation h3 { font-size: 14px; color: #ea580c; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1px; }
+.situation p { font-size: 18px; font-weight: 700; line-height: 1.4; color: #451a03; }
+
+.choices { display: grid; gap: 12px; }
+.choice { width: 100%; border: 3px solid #d97706; border-radius: 18px; padding: 16px 20px; text-align: left; background: #fff; font-size: 15px; font-weight: 700; color: var(--text-dark); box-shadow: 0 4px 0 #d97706; }
+.choice:hover:not(:disabled) { background: #fef3c7; transform: translateX(4px); }
+.choice.correct { background: #d1fae5; border-color: var(--good); color: #065f46; box-shadow: 0 4px 0 var(--good); }
+.choice.wrong { background: #fee2e2; border-color: var(--bad); color: #991b1b; box-shadow: 0 4px 0 var(--bad); }
+
+.feedback-text { min-height: 40px; margin-top: 14px; font-weight: 700; font-size: 15px; text-align: center; padding: 8px; border-radius: 12px; border: 2px solid transparent; }
+.feedback-text.good { color: #16a34a; background: #f0fdf4; border-color: #bbf7d0; }
+.feedback-text.bad { color: #dc2626; background: #fef2f2; border-color: #fecaca; }
+
+/* End Results Layout */
+.stars { font-size: 64px; margin: 16px 0; animation: logoBounce 1.5s infinite alternate ease-in-out; text-shadow: 2px 2px 0px #b45309; }
+.confetti { position: fixed; top: -20px; width: 14px; height: 14px; z-index: 9999; border-radius: 4px; transform: rotate(45deg); animation: fall 2.5s linear forwards; }
+@keyframes fall { to { transform: translateY(105vh) rotate(720deg); opacity: 0; } }
+</style>
 </head>
 <body>
-  <section id="splashScreen" class="screen active">
-    <div class="splash-box">
-      <img src="./assets/innovine-logo.jpg" alt="Innovine logo" />
-      <div style="font-size:clamp(18px,2.6vw,28px);font-weight:800;color:#ff7043">Loading Crayon Class...</div>
-    </div>
-  </section>
 
-  <section id="startScreen" class="screen">
-    <div class="wrap card">
-      <div class="hero-grid">
-        <div>
-          <div class="pill-row">
-            <div class="pill">Grade 3</div><div class="pill">Chapter 5: Acceptance</div><div class="pill">Simple choices</div>
-          </div>
-          <h1 class="hero-title">Crayon Class</h1>
-          <p class="lead">Choose the kind and accepting action in each situation. Help everyone feel included in the classroom.</p>
-          <div class="btn-row">
-            <button class="btn primary" onclick="startGame()">Start Game</button>
-            <button class="btn ghost" onclick="toggleSound()" id="soundBtn">Sound: On</button>
-          </div>
+<!-- Studio Branding Opener Splash Screen -->
+<section id="splashScreen">
+  <div class="splash-box">
+    <!-- Cascade lookup architecture matching original specifications -->
+    <img src="innovine-logo.png" alt="Innovine Solutions Logo" class="studio-logo" id="innovineLogoImg" onerror="tryAlternativePath(this);" />
+    <div id="fallbackLogo" style="display:none; font-size:90px; margin-bottom:20px;">🖍️✨</div>
+    <div class="splash-text">Innovine Solutions</div>
+  </div>
+</section>
+
+<!-- Main Entry Menu Screen -->
+<section id="startScreen" class="screen">
+  <div class="wrap card">
+    <div class="hero">
+      <div>
+        <div class="pills">
+          <div class="pill">🎨 Grade 3 Creative Classroom</div>
+          <div class="pill">🤝 Core Theme: Cooperation</div>
         </div>
-        <div class="art" aria-hidden="true">
-          <div class="cloud one"></div><div class="cloud two"></div>
-          <div class="hero-icon">🖍️</div>
-          <div class="note">Acceptance means treating everyone with kindness and respect, even if they are different from us.</div>
-        </div>
-      </div>
-      <div class="layout" style="margin-top:16px;">
-        <div class="game-box panel">
-          <h2 style="margin-bottom:10px;color:#ff7043">How to play</h2>
-          <div class="tips">
-            <div class="tip">Read the situation.</div>
-            <div class="tip">Tap the best accepting answer.</div>
-            <div class="tip">Every 3 correct answers, a reward question appears.</div>
-          </div>
-        </div>
-        <div class="game-box panel">
-          <h2 style="margin-bottom:10px;color:#ff7043">Chapter focus</h2>
-          <div class="tips">
-            <div class="tip">Respect differences.</div>
-            <div class="tip">Include others.</div>
-            <div class="tip">Celebrate what makes each person unique.</div>
-          </div>
+        <h1 class="title">The Crayon Crew:<br>Rainbow Highway Quest</h1>
+        <p class="lead">Meet Red, Blue, and Yellow! They want to sketch a beautiful Rainbow Highway across the page. But if they don't cooperate, their tips get blunt and messy. Share the page to design a collaborative masterpiece!</p>
+        <div class="btn-row">
+          <button class="btn primary" onclick="startGame()">Start Drawing! 🖍️</button>
+          <button class="btn ghost" onclick="toggleAudio()" id="audioBtn">Sound Effects: On 🔊</button>
         </div>
       </div>
-    </div>
-  </section>
-
-  <section id="gameScreen" class="screen">
-    <div class="wrap">
-      <div class="hud">
-        <div class="hud-box"><span class="hud-label">Score</span><span class="hud-val" id="scoreNum">0</span></div>
-        <div class="hud-box"><span class="hud-label">Round</span><span class="hud-val" id="roundNum">1</span></div>
-        <div class="hud-box"><span class="hud-label">Lives</span><span class="hud-val" id="livesNum">3</span></div>
-        <div class="hud-box"><span class="hud-label">Stars</span><span class="hud-val" id="starsNum">0</span></div>
-      </div>
-      <div class="layout">
-        <div class="game-box">
-          <div class="scenario">
-            <h2>Situation</h2>
-            <p id="scenarioText"></p>
-          </div>
-          <div class="choices" id="choices"></div>
-          <div class="status" id="statusText"></div>
-          <div class="progress-wrap"><div class="progress" id="progressBar"></div></div>
-        </div>
-        <div class="game-box panel">
-          <h2 style="margin-bottom:10px;color:#ff7043">Helping hints</h2>
-          <div class="tips">
-            <div class="tip">Different is not bad.</div>
-            <div class="tip">Include everyone in games and activities.</div>
-            <div class="tip">Be respectful when someone speaks or looks different.</div>
-            <div class="tip">Kindness makes everyone feel welcome.</div>
-          </div>
-        </div>
+      <div style="background: #fffdec; border-radius: var(--card-radius); padding: 30px; text-align: center; font-size: 100px; border: 4px dashed #b45309; box-shadow: inset 0 4px 10px rgba(0,0,0,0.05);">
+        🖍️🌈🎨
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section id="endScreen" class="screen">
-    <div class="wrap card">
-      <div class="final-title" id="finalTitle">Great job!</div>
-      <div class="stars" id="finalStars">🌟🌟🌟</div>
-      <div class="final-text" id="finalText">You helped make the class welcoming for everyone.</div>
-      <div style="text-align:center;font-size:20px;margin-bottom:14px;">Final Score: <strong id="finalScore">0</strong>/12</div>
-      <div class="btn-row" style="justify-content:center"><button class="btn primary" onclick="startGame()">Play Again</button></div>
+<!-- Active Live Game Dashboard View Screen -->
+<section id="gameScreen" class="screen">
+  <div class="wrap card" style="padding: 24px;">
+    
+    <div class="hud">
+      <div class="hud-box"><span class="hud-label">Page Sector</span><span class="hud-val" id="zoneName">Sketchbook Left</span></div>
+      <div class="hud-box"><span class="hud-label">Color Vibrancy</span><span class="hud-val" id="stabilityNum">0%</span></div>
+      <div class="hud-box">
+        <span class="hud-label">Cooperation Meter</span>
+        <div class="meter-container"><div class="meter-fill" id="meterFill"></div></div>
+      </div>
     </div>
-  </section>
 
-  <audio id="correctSound" preload="auto" src="./assets/correct.mp3"></audio>
-  <audio id="wrongSound" preload="auto" src="./assets/wrong.mp3"></audio>
-  <audio id="clapSound" preload="auto" src="./assets/clapping.mp3"></audio>
+    <div class="layout">
+      <!-- Left side: Crayon Drawing Canvas Sketchbook Layout -->
+      <div class="canvas-holder">
+        <canvas id="crayonCanvas" width="460" height="400"></canvas>
+      </div>
 
-  <script>
-    const scenarios = [
-      {q:'A new student joins the class.', options:['Ask them to sit with us.','Ignore them.','Tell them to go away.'], answer:'Ask them to sit with us.', tip:'Including others shows acceptance.'},
-      {q:'A child speaks with a different accent.', options:['Listen kindly and smile.','Laugh at them.','Make fun of their voice.'], answer:'Listen kindly and smile.', tip:'Different speech is okay.'},
-      {q:'Someone wears glasses in class.', options:['Treat them just like everyone else.','Say rude things about the glasses.','Point and laugh.'], answer:'Treat them just like everyone else.', tip:'Respect people for who they are.'},
-      {q:'A classmate uses a wheelchair.', options:['Make space and help if needed.','Block the way.','Ignore them.'], answer:'Make space and help if needed.', tip:'Acceptance includes helping with kindness.'},
-      {q:'A friend likes a different game.', options:['Let everyone choose a turn.','Say only my game matters.','Refuse to play together.'], answer:'Let everyone choose a turn.', tip:'Sharing choices is respectful.'},
-      {q:'A child is shy and quiet.', options:['Invite them to join gently.','Leave them out.','Say they should not come.'], answer:'Invite them to join gently.', tip:'Kind invitations help others feel safe.'},
-      {q:'Someone says a word in a different way.', options:['Respect the difference.','Laugh loudly.','Correct them in a mean way.'], answer:'Respect the difference.', tip:'Acceptance means no teasing.'},
-      {q:'A friend likes different clothes.', options:['Say they look nice.','Make fun of their clothes.','Tell them to change right now.'], answer:'Say they look nice.', tip:'We can celebrate differences.'},
-      {q:'A classmate is new to school.', options:['Show them around.','Leave them alone all day.','Hide their chair.'], answer:'Show them around.', tip:'Helping new people is accepting.'},
-      {q:'Two children have different opinions.', options:['Listen to both respectfully.','Laugh at one child.','Shout and walk away.'], answer:'Listen to both respectfully.', tip:'Acceptance means respecting opinions too.'},
-      {q:'A student learns slowly.', options:['Be patient and help.','Call them silly.','Rush them and tease them.'], answer:'Be patient and help.', tip:'Everyone learns in their own way.'},
-      {q:'Someone is different from me.', options:['Be kind and include them.','Avoid them forever.','Say they do not belong.'], answer:'Be kind and include them.', tip:'Different people belong too.'}
-    ];
+      <!-- Right side: Cooperative Decision-Making Challenges -->
+      <div class="scenario-box">
+        <div class="situation">
+          <h3 id="stageHeader">Drawing Checkpoint</h3>
+          <p id="scenarioText">Opening the sketchbook lines...</p>
+        </div>
+        
+        <div class="choices" id="choicesBox"></div>
+        <div class="feedback-text" id="feedbackEl"></div>
+      </div>
+    </div>
 
-    const rewardQuestions = [
-      {q:'What is acceptance?', options:['Treating everyone with kindness and respect.','Making fun of differences.','Ignoring people.'], answer:'Treating everyone with kindness and respect.'},
-      {q:'Why is acceptance important?', options:['It helps everyone feel included.','It helps us exclude others.','It makes people sad.'], answer:'It helps everyone feel included.'},
-      {q:'What should you do if someone is different from you?', options:['Be respectful and kind.','Laugh at them.','Tell them to leave.'], answer:'Be respectful and kind.'},
-      {q:'Which is an accepting action?', options:['Including everyone in a game.','Leaving someone out.','Making rude comments.'], answer:'Including everyone in a game.'}
-    ];
+  </div>
+</section>
 
+<!-- End Game Results Screen Wrap Summary Layout -->
+<section id="endScreen" class="screen">
+  <div class="wrap card" style="text-align: center; max-width: 550px;">
+    <h1 class="title" id="endTitle">Masterpiece Complete!</h1>
+    <div class="stars" id="endStars">🖍️🎨🌟</div>
+    <p class="lead" id="endDesc">By sharing your workspace and collaborating across color styles, you built the grandest rainbow art highway ever seen!</p>
+    <button class="btn primary" onclick="startGame()">Draw Another Highway 🔄</button>
+  </div>
+</section>
+
+<script>
+// Multilayer path validation script for full asset discovery
+function tryAlternativePath(imgElement) {
+  if (imgElement.getAttribute('src') === 'innovine-logo.png') {
+    imgElement.src = 'asset/innovine-logo.png';
+  } else if (imgElement.getAttribute('src') === 'asset/innovine-logo.png') {
+    imgElement.src = 'assets/innovine-logo.png';
+  } else {
+    imgElement.style.display = 'none';
+    document.getElementById('fallbackLogo').style.display = 'block';
+  }
+}
+
+// Grade 3 specific Crayon Cooperation Scenarios
+const stages = [
+  {
+    zone: 'Page Left: The Outline',
+    q: '🖍️ Red Crayon is rushing ahead drawing wild lines, but her tip gets blunt and she feels tired out.',
+    options: [
+      { t: 'Pass the drawing turn to Blue Crayon to color the cool skies while Red rests her tip.', correct: true, score: 20, tip: 'Beautiful choice! Taking turns keeps the crayon crew fresh and prevents any single color from wearing out.' },
+      { t: 'Keep forcing Red to draw alone until her color completely breaks off.', correct: false, score: -20, tip: 'Using up only one person or color without sharing causes fatigue and frustration. Work as a team!' }
+    ]
+  },
+  {
+    zone: 'Page Middle: The Meadow Blend',
+    q: '🌿 The sketch needs a vibrant green grass field, but the crew only has basic Red, Blue, and Yellow crayons!',
+    options: [
+      { t: 'Layer Blue and Yellow crayons over each other gently to mix a stunning custom Green texture.', correct: true, score: 20, tip: 'Spectacular cooperation! Blending primary traits produces magic results that separate colors cannot achieve alone.' },
+      { t: 'Start an argument over who gets to cover up the patch, leaving the grass space empty.', correct: false, score: -20, tip: 'Arguing leaves the canvas blank. True cooperation blends talents together to make beautiful combinations!' }
+    ]
+  },
+  {
+    zone: 'Page Center: The Golden Accents',
+    q: '☀️ Yellow Crayon accidentally dropped his paper wrapping sleeve and feels naked, silly, and shy about drawing.',
+    options: [
+      { t: 'Have Red and Blue hold Yellow’s hand to design beautiful orange and purple star sparkles around his work.', correct: true, score: 25, tip: 'Wonderful kindness! Encouraging a partner when they feel embarrassed helps everyone finish together.' },
+      { t: 'Laugh at Yellow and tell him he looks funny without his box wrapper outfit.', correct: false, score: -25, tip: 'Teasing breaks your crew\'s harmony. Support each other to build a safe, cooperative group!' }
+    ]
+  },
+  {
+    zone: 'Page Right: The Final Blend',
+    q: '🌈 The grand Rainbow Highway is almost connected, but the page boundary lines are extremely tricky and tight.',
+    options: [
+      { t: 'Call out: "Red top, Blue bottom, Yellow center!" so all colors slide smoothly into place together.', correct: true, score: 25, tip: 'Superb coordination! Coordinating jobs cleanly guarantees the whole team succeeds at the goal.' },
+      { t: 'Everyone try to scribble over the final corner space at the exact same instant to claim the finish.', correct: false, score: -20, tip: 'Scribbling out your teammates causes clutter and messes up the alignment. Talk out a structured plan first!' }
+    ]
+  }
+];
+
+// Canvas Sketch Rendering Variables
+const canvas = document.getElementById('crayonCanvas');
+const ctx = canvas.getContext('2d');
+let drawProgressX = 0;
+let targetDrawProgressX = 0;
+let handOscillation = 0;
+
+// Game State Parameters
+let currentStage = 0;
+let cooperation = 50; 
+let audioEnabled = true;
+let actionLocked = false;
+let audioCtx = null;
+
+function toggleAudio() {
+  audioEnabled = !audioEnabled;
+  document.getElementById('audioBtn').textContent = audioEnabled ? 'Sound Effects: On 🔊' : 'Sound Effects: Off 🔇';
+}
+
+function playTone(freq, duration, type='sine') {
+  if(!audioEnabled) return;
+  try {
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type; osc.frequency.value = freq;
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    gain.gain.value = 0.04; osc.start();
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+    osc.stop(audioCtx.currentTime + duration);
+  } catch(e){}
+}
+
+// Fade splash controller processing
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
     const splash = document.getElementById('splashScreen');
-    const overlayIds = ['startScreen','gameScreen','endScreen'];
-    const correctSound = document.getElementById('correctSound');
-    const wrongSound = document.getElementById('wrongSound');
-    const clapSound = document.getElementById('clapSound');
-    let soundOn = true, current = 0, score = 0, lives = 3, stars = 0, usedReward = [], lock = false;
-    let shuffled = [];
+    splash.style.opacity = '0';
+    setTimeout(() => {
+      splash.style.display = 'none';
+      switchView('startScreen');
+    }, 500);
+  }, 2500);
+});
 
-    function showScreen(id){overlayIds.forEach(s=>document.getElementById(s).classList.remove('active')); document.getElementById(id).classList.add('active')}
-    function toggleSound(){soundOn=!soundOn; document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off'}
-    function play(audio){if(!soundOn)return; audio.currentTime=0; audio.play().catch(()=>{})}
-    function hideSplash(){splash.classList.remove('active'); showScreen('startScreen')}
-    window.addEventListener('load',()=>setTimeout(hideSplash,2200));
+function switchView(id) {
+  ['startScreen', 'gameScreen', 'endScreen'].forEach(s => document.getElementById(s).classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
-    function shuffle(arr){const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]} return a}
-    function updateHud(){document.getElementById('scoreNum').textContent=score; document.getElementById('roundNum').textContent=current+1; document.getElementById('livesNum').textContent=lives; document.getElementById('starsNum').textContent=stars; document.getElementById('progressBar').style.width=((current)/scenarios.length*100)+'%'}
-    function startGame(){current=0;score=0;lives=3;stars=0;usedReward=[];lock=false;shuffled=shuffle(scenarios); showScreen('gameScreen'); loadRound()}
+function startGame() {
+  currentStage = 0;
+  cooperation = 50;
+  actionLocked = false;
+  drawProgressX = 20; targetDrawProgressX = 20;
+  switchView('gameScreen');
+  renderStage();
+}
 
-    function loadRound(){
-      if(current>=shuffled.length){endGame(); return}
-      lock=false;
-      const s=shuffled[current];
-      document.getElementById('scenarioText').textContent=s.q;
-      document.getElementById('statusText').textContent='';
-      const choices=document.getElementById('choices'); choices.innerHTML='';
-      shuffle(s.options).forEach(opt=>{
-        const b=document.createElement('button');
-        b.className='choice';
-        b.textContent=opt;
-        b.onclick=()=>pickChoice(b,opt,s);
-        choices.appendChild(b);
-      });
-      updateHud();
+function renderStage() {
+  if(currentStage >= stages.length) {
+    handleEndGame(true);
+    return;
+  }
+  
+  actionLocked = false;
+  const currentData = stages[currentStage];
+  
+  document.getElementById('zoneName').textContent = currentData.zone;
+  document.getElementById('stabilityNum').textContent = (currentStage * 25) + '%';
+  document.getElementById('meterFill').style.width = cooperation + '%';
+  document.getElementById('stageHeader').textContent = `✏️ Sector Progress ${currentStage + 1}: ${currentData.zone}`;
+  document.getElementById('scenarioText').textContent = currentData.q;
+  
+  const fb = document.getElementById('feedbackEl');
+  fb.textContent = '';
+  fb.className = 'feedback-text';
+
+  // Drive visual sketchbook coloring lines down target limits
+  targetDrawProgressX = 20 + (currentStage * 105);
+
+  const choicesBox = document.getElementById('choicesBox');
+  choicesBox.innerHTML = '';
+  
+  const formattedOptions = [...currentData.options];
+  if(Math.random() > 0.5) formattedOptions.reverse();
+
+  formattedOptions.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'choice';
+    btn.textContent = opt.t;
+    btn.onclick = () => evaluateChoice(btn, opt);
+    choicesBox.appendChild(btn);
+  });
+}
+
+function evaluateChoice(btnElement, choiceObj) {
+  if(actionLocked) return;
+  actionLocked = true;
+  
+  document.querySelectorAll('.choice').forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedbackEl');
+  
+  cooperation += choiceObj.score;
+  if(cooperation > 100) cooperation = 100;
+  if(cooperation < 0) cooperation = 0;
+  
+  document.getElementById('meterFill').style.width = cooperation + '%';
+
+  if(choiceObj.correct) {
+    btnElement.classList.add('correct');
+    fb.textContent = '🌟 Masterpiece Harmony! ' + choiceObj.tip;
+    fb.className = 'feedback-text good';
+    playTone(440, 0.15); 
+    setTimeout(() => playTone(554.37, 0.2), 100); 
+    
+    setTimeout(() => {
+      currentStage++;
+      renderStage();
+    }, 2500);
+  } else {
+    btnElement.classList.add('wrong');
+    fb.textContent = '✏️ ' + choiceObj.tip;
+    fb.className = 'feedback-text bad';
+    playTone(196, 0.4, 'triangle'); 
+    
+    if(cooperation <= 0) {
+      setTimeout(() => {
+        handleEndGame(false);
+      }, 2500);
+    } else {
+      setTimeout(() => {
+        actionLocked = false;
+        document.querySelectorAll('.choice:not(.wrong)').forEach(b => b.disabled = false);
+      }, 2500);
     }
+  }
+}
 
-    function pickChoice(button,opt,s){
-      if(lock) return;
-      lock=true;
-      const buttons=[...document.querySelectorAll('.choice')];
-      buttons.forEach(b=>b.disabled=true);
-      if(opt===s.answer){
-        score+=10; stars+=1;
-        button.classList.add('correct');
-        document.getElementById('statusText').textContent='Correct! ' + s.tip;
-        document.getElementById('statusText').className='status good';
-        play(correctSound);
-        if(stars%3===0){setTimeout(()=>showRewardQuestion(),600); return}
-        setTimeout(nextRound,1000)
-      } else {
-        lives-=1;
-        button.classList.add('wrong');
-        document.getElementById('statusText').textContent='Try again next round. ' + s.tip;
-        document.getElementById('statusText').className='status bad';
-        play(wrongSound);
-        updateHud();
-        if(lives<=0){setTimeout(()=>endGame(false),900); return}
-        setTimeout(nextRound,1100)
+function handleEndGame(isWin) {
+  switchView('endScreen');
+  const title = document.getElementById('endTitle');
+  const stars = document.getElementById('endStars');
+  const desc = document.getElementById('endDesc');
+  
+  if(isWin) {
+    title.textContent = 'Masterpiece Complete! 🎨';
+    stars.textContent = '🖍️🌈🌟';
+    desc.textContent = 'Splendid job! By using fine communication and taking care of every teammate\'s color tip, your sketchbook highway came out flawless!';
+    spawnConfetti();
+  } else {
+    title.textContent = 'Box Reset Time';
+    stars.textContent = '📦';
+    desc.textContent = 'The crayon tips grew too blunt and broken to finish. Remember, true cooperation requires pooling together and sharing resources. Let\'s try drawing again!';
+  }
+}
+
+function spawnConfetti() {
+  const colors = ['#ef4444', '#3b82f6', '#eab308', '#22c55e', '#a855f7'];
+  for(let i=0; i<40; i++) {
+    const d = document.createElement('div');
+    d.className = 'confetti';
+    d.style.left = Math.random() * 100 + 'vw';
+    d.style.background = colors[Math.floor(Math.random()*colors.length)];
+    d.style.animationDelay = Math.random() * 0.3 + 's';
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), 2500);
+  }
+}
+
+// Sketchbook Interactive Crayon Graphics Renderer Engine Loop
+function loop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  handOscillation += 0.08;
+
+  // Render a clean cream notebook paper sheet structure background layout
+  ctx.fillStyle = '#fcfbf7';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Render notebook ruling guidelines
+  ctx.strokeStyle = '#e5e7eb';
+  ctx.lineWidth = 1;
+  for(let i = 40; i < canvas.height; i += 30) {
+    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+  }
+
+  // Left side red margins separator accent border rule
+  ctx.strokeStyle = '#fca5a5';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(40, 0); ctx.lineTo(40, canvas.height); ctx.stroke();
+
+  // Rainbow Highway Texture Track drawing sequence engine blocks
+  let drawY = 220;
+  drawProgressX += (targetDrawProgressX - drawProgressX) * 0.05;
+
+  if (drawProgressX > 20) {
+    ctx.save();
+    ctx.lineWidth = 14;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    
+    // Simulating hand-scribbled wobbly drawing line styles
+    const generateWobblePath = (offsetY, strokeColor) => {
+      ctx.strokeStyle = strokeColor;
+      ctx.beginPath();
+      ctx.moveTo(40, drawY + offsetY);
+      for (let px = 40; px <= drawProgressX + 20; px += 15) {
+        let w = Math.sin((px * 0.08) + handOscillation) * 3;
+        ctx.lineTo(px, drawY + offsetY + w);
       }
-      updateHud();
-    }
+      ctx.stroke();
+    };
 
-    function nextRound(){current+=1; loadRound()}
+    // Beautiful primary layers intersecting perfectly to mimic collaborative wax drawing
+    generateWobblePath(-16, 'rgba(239, 68, 68, 0.85)');  // Red crayon scribble line
+    generateWobblePath(0, 'rgba(234, 179, 8, 0.85)');   // Yellow crayon scribble line
+    generateWobblePath(16, 'rgba(59, 130, 246, 0.85)');  // Blue crayon scribble line
+    ctx.restore();
+  }
 
-    function showRewardQuestion(){
-      const pool=rewardQuestions.map((_,i)=>i).filter(i=>!usedReward.includes(i));
-      const idx=pool.length?pool[Math.floor(Math.random()*pool.length)]:Math.floor(Math.random()*rewardQuestions.length);
-      if(!usedReward.includes(idx)) usedReward.push(idx);
-      const q=rewardQuestions[idx];
-      document.getElementById('scenarioText').textContent='Reward Question';
-      const choices=document.getElementById('choices'); choices.innerHTML='';
-      document.getElementById('statusText').textContent=q.q;
-      document.getElementById('statusText').className='status';
-      q.options.slice().sort(()=>Math.random()-.5).forEach(opt=>{
-        const b=document.createElement('button'); b.className='choice'; b.textContent=opt;
-        b.onclick=()=>{
-          if(lock) return; lock=true; [...document.querySelectorAll('.choice')].forEach(x=>x.disabled=true);
-          if(opt===q.answer){score+=5; stars+=1; document.getElementById('statusText').textContent='Correct! Great acceptance.'; document.getElementById('statusText').className='status good'; play(correctSound)}
-          else{document.getElementById('statusText').textContent='Good try! The right answer is: ' + q.answer; document.getElementById('statusText').className='status bad'; play(wrongSound)}
-          updateHud(); setTimeout(()=>{current+=1; loadRound()},1200);
-        };
-        choices.appendChild(b);
-      });
-    }
+  // Active Drawing Crew visualization rendering positions mapping nodes
+  ctx.save();
+  ctx.font = '32px Arial';
+  ctx.textAlign = 'center';
+  
+  let bobbing = Math.sin(handOscillation) * 4;
+  let activeDrawTargetX = drawProgressX + 30;
 
-    function burstConfetti(){const colors=['#ff5252','#ffca28','#66bb6a','#42a5f5','#ab47bc','#ff7043']; for(let i=0;i<36;i++){const d=document.createElement('div'); d.className='confetti'; d.style.left=Math.random()*100+'vw'; d.style.background=colors[Math.floor(Math.random()*colors.length)]; d.style.animationDelay=Math.random()*0.4+'s'; document.body.appendChild(d); setTimeout(()=>d.remove(),3200)}}
+  // Display the crayon stack packed close together representing physical unity actions
+  ctx.fillText('🖍️', activeDrawTargetX, drawY - 14 + bobbing);
+  ctx.fillText('✏️', activeDrawTargetX - 25, drawY + 8 - bobbing);
+  ctx.fillText('🌈', activeDrawTargetX + 25, drawY + 2 + bobbing);
+  
+  ctx.restore();
 
-    function endGame(win=true){showScreen('endScreen'); document.getElementById('finalScore').textContent=score; const title=document.getElementById('finalTitle'); const text=document.getElementById('finalText'); const starsLine=document.getElementById('finalStars');
-      if(score>=80){title.textContent='Acceptance Hero!'; text.textContent='You helped everyone feel included and respected.'; starsLine.textContent='🌟🌟🌟'; burstConfetti(); play(clapSound)}
-      else if(score>=50){title.textContent='Great effort!'; text.textContent='You made many kind choices. Keep practising to include everyone.'; starsLine.textContent='🌟🌟'; burstConfetti()}
-      else{title.textContent='Keep practising'; text.textContent='Try again and remember to choose the accepting action each time.'; starsLine.textContent='🌟'}
-    }
-  </script>
+  requestAnimationFrame(loop);
+}
+
+requestAnimationFrame(loop);
+</script>
 </body>
 </html>
