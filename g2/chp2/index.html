@@ -1,110 +1,551 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine Race Animation</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Manners Marathon: Champion Edition</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif; }
+:root {
+  --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #f3e8ff 100%);
+  --panel-bg: rgba(255, 255, 255, 0.95);
+  --text-dark: #1e293b;
+  --text-muted: #64748b;
+  --primary: #ef6c00;
+  --primary-hover: #d86200;
+  --secondary: #0288d1;
+  --accent: #ffca28;
+  --good: #10b981;
+  --bad: #ef4444;
+  --shadow: 0 20px 40px rgba(239, 108, 0, 0.15);
+  --card-radius: 24px;
+}
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            overflow: hidden;
-        }
+body { background: var(--bg-gradient); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
 
-        /* 1. Logo Screen Styling */
-        .logo-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 40px;
-        }
+button { border: none; font: inherit; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+button:hover { transform: translateY(-3px) scale(1.02); }
+button:active { transform: translateY(1px); }
 
-        .logo-img {
-            max-width: 200px;
-            height: auto;
-            object-fit: contain;
-            /* Simple fade-in animation for visual polish */
-            animation: fadeIn 1.5s ease-in-out; 
-        }
+.screen { display: none; min-height: 100vh; padding: 24px; place-items: center; }
+.screen.active { display: grid; animation: fadeIn 0.4s ease-out forwards; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 2. Race Track & Runner Styling */
-        .race-track {
-            position: relative;
-            width: 80%;
-            max-width: 800px;
-            height: 100px;
-            background-color: #333;
-            border-top: 4px dashed #fff;
-            border-bottom: 4px dashed #fff;
-            display: flex;
-            align-items: center;
-            border-radius: 8px;
-        }
+.wrap { width: min(1200px, 100%); margin: 0 auto; }
+.card { background: var(--panel-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 3px solid #ffffff; border-radius: var(--card-radius); box-shadow: var(--shadow); padding: 30px; }
 
-        .runner {
-            position: absolute;
-            left: 0;
-            font-size: 3rem;
-            /* CRITICAL FIX: scaleX(-1) flips the emoji horizontally to face right */
-            transform: scaleX(-1); 
-            animation: race 5s linear infinite;
-        }
+/* Splash Screen Studio Intro Layout */
+#splashScreen { position: fixed; inset: 0; z-index: 9999; background: #ffffff; display: grid; place-items: center; transition: opacity 0.5s ease, visibility 0.5s; }
+.splash-box { text-align: center; }
+.studio-logo { max-width: 280px; height: auto; animation: logoBounce 2s infinite alternate ease-in-out; display: block; margin: 0 auto 20px auto; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+.splash-text { font-size: 26px; font-weight: 800; color: var(--primary); letter-spacing: 0.5px; }
+@keyframes logoBounce { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-12px) scale(1.03); } }
 
-        .finish-line {
-            position: absolute;
-            right: 20px;
-            font-size: 2.5rem;
-        }
+/* Menus & Hero Layout Design */
+.hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 30px; align-items: center; }
+.title { font-size: clamp(36px, 5vw, 56px); color: var(--primary); line-height: 1.1; margin-bottom: 14px; text-shadow: 2px 2px 0px #fff; }
+.lead { font-size: 20px; line-height: 1.5; color: #334155; margin-bottom: 24px; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.pill { background: #fff3e0; color: var(--primary); font-weight: 700; padding: 6px 14px; border-radius: 999px; font-size: 14px; border: 1px solid rgba(239, 108, 0, 0.15); }
 
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+.btn-row { display: flex; flex-wrap: wrap; gap: 14px; }
+.btn { padding: 16px 32px; font-size: 18px; font-weight: 800; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+.btn.primary { background: linear-gradient(135deg, var(--accent) 0%, #f59e0b 100%); color: #451a03; box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3); }
+.btn.ghost { background: #f1f5f9; color: var(--text-dark); border: 2px solid rgba(0,0,0,0.05); }
 
-        @keyframes race {
-            0% {
-                /* Keeps the flip active while moving */
-                left: 0%;
-                transform: scaleX(-1); 
-            }
-            90% {
-                left: calc(100% - 80px);
-                transform: scaleX(-1);
-            }
-            100% {
-                left: calc(100% - 80px);
-                transform: scaleX(-1);
-            }
-        }
-    </style>
+/* Game Dashboard Setup Layout */
+.layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px; margin-top: 20px; }
+.box { background: #ffffff; border-radius: var(--card-radius); padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.05); }
+
+.canvas-holder { background: linear-gradient(to bottom, #bae6fd, #e0f2fe); border-radius: var(--card-radius); padding: 10px; position: relative; box-shadow: inset 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 16px; overflow: hidden; border: 2px solid #fff; }
+canvas { width: 100%; height: 160px; display: block; border-radius: 16px; }
+
+.hud { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+.hud-box { background: #fff; padding: 12px; border-radius: 18px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.04); }
+.hud-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; }
+.hud-val { font-size: 24px; font-weight: 900; color: var(--text-dark); display: block; margin-top: 2px; }
+
+.scenario { min-height: 110px; background: #fff8e1; border-radius: 20px; padding: 20px; margin-bottom: 18px; border-left: 6px solid var(--primary); }
+.scenario h2 { font-size: 20px; color: var(--primary); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+.scenario p { font-size: 20px; font-weight: 700; line-height: 1.4; color: #1e293b; }
+
+.choices { display: grid; gap: 12px; }
+.choice { width: 100%; border: 2px solid #f1f5f9; border-radius: 18px; padding: 16px 20px; text-align: left; background: #f8fafc; font-size: 17px; font-weight: 700; color: var(--text-dark); line-height: 1.3; }
+.choice:hover:not(:disabled) { background: #f1f5f9; border-color: var(--secondary); transform: translateX(4px); }
+.choice.correct { background: #ecfdf5; border-color: var(--good); color: #065f46; }
+.choice.wrong { background: #fef2f2; border-color: var(--bad); color: #991b1b; }
+
+.status { min-height: 32px; margin-top: 14px; font-weight: 800; font-size: 17px; text-align: center; }
+.status.good { color: var(--good); animation: bounce 0.4s ease; }
+.status.bad { color: var(--bad); animation: shake 0.4s ease; }
+
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+.progress-wrap { margin-top: 16px; background: #e2e8f0; border-radius: 999px; height: 14px; overflow: hidden; }
+.progress { height: 100%; width: 0%; background: linear-gradient(90deg, var(--secondary), #06b6d4); transition: width 0.4s ease; }
+
+.tips { display: flex; flex-direction: column; gap: 10px; }
+.tip { background: #f8fafc; border-radius: 16px; padding: 14px; font-size: 14px; color: #475569; border-left: 4px solid var(--secondary); line-height: 1.4; }
+
+/* End Screen Elements Layout */
+.final-title { font-size: 42px; color: var(--primary); font-weight: 900; margin-bottom: 10px; text-shadow: 2px 2px 0px #fff; }
+.stars { font-size: 64px; margin: 15px 0; animation: logoBounce 1.5s infinite alternate ease-in-out; }
+.final-text { font-size: 20px; color: var(--text-muted); margin-bottom: 24px; max-width: 450px; margin-left: auto; margin-right: auto; }
+
+.confetti { position: fixed; top: -20px; width: 12px; height: 12px; z-index: 9999; animation: fall 3s linear forwards; }
+@keyframes fall { to { transform: translateY(105vh) rotate(720deg); opacity: 0; } }
+
+@media (max-width: 960px) { .hero, .layout { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .hud { grid-template-columns: repeat(2, 1fr); } .btn-row { flex-direction: column; } }
+</style>
 </head>
 <body>
 
-    <!-- Logo Screen Section -->
-    <div class="logo-screen">
-        <!-- FIX 1: Pointing to the asset directory explicitly -->
-        <img src="asset/innovine-logo.png" alt="Innovine Logo" class="logo-img" onerror="this.onerror=null; console.error('Logo failed to load. Check if file name matches exactly.');">
+<!-- Splash Screen / Studio Branding -->
+<section id="splashScreen" class="screen active">
+  <div class="splash-box">
+    <!-- FIX 1: Points cleanly to assets/innovine-logo.png with a safe text fallback strategy to ensure execution doesn't lock up -->
+    <img src="assets/innovine-logo.png" alt="Innovine logo" class="studio-logo" onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='block';" />
+    <div id="fallbackLogo" style="display:none; font-size:80px; margin-bottom:20px;">🏃‍♂️✨</div>
+    <div class="splash-text">Innovine Studios Presenting...</div>
+  </div>
+</section>
+
+<!-- Main Start Screen -->
+<section id="startScreen" class="screen">
+  <div class="wrap card">
+    <div class="hero">
+      <div>
+        <div class="pills">
+          <div class="pill">🌟 Grade 2 Module</div>
+          <div class="pill">🏃‍♂️ Character Training</div>
+          <div class="pill">✨ Positive Behaviour</div>
+        </div>
+        <h1 class="title">Manners Marathon</h1>
+        <p class="lead">Sprint through the marathon racecourse checkpoints by identifying positive manners and kind values!</p>
+        <div class="btn-row">
+          <button class="btn primary" onclick="startGame()">Start Marathon! 🏁</button>
+          <button class="btn ghost" onclick="toggleSound()" id="soundBtn">Audio FX: On 🔊</button>
+        </div>
+      </div>
+      <div style="background: linear-gradient(135deg, #ffedd5, #fee2e2); border-radius: var(--card-radius); padding: 30px; text-align: center; font-size: 110px; box-shadow: inset 0 4px 10px rgba(0,0,0,0.02);">
+        🏃‍♂️🏆
+      </div>
+    </div>
+    
+    <div class="layout">
+      <div class="box">
+        <h3 style="color:var(--primary); margin-bottom:12px; font-size:18px;">🎮 Runner Playbook</h3>
+        <div class="tips">
+          <div class="tip">🧠 Read each checkpoint situation carefully.</div>
+          <div class="tip">⚡ Selecting the correct manner fuels your runner with a burst of running speed.</div>
+          <div class="tip">🎁 Every 3 consecutive steps triggers a high-reward Marathon Bonus Question!</div>
+        </div>
+      </div>
+      <div class="box">
+        <h3 style="color:var(--secondary); margin-bottom:12px; font-size:18px;">🎯 Marathon Targets</h3>
+        <div class="tips">
+          <div class="tip">🗣️ Practice magic phrases like Please, Thank You, and Sorry.</div>
+          <div class="tip">🤝 Cooperate beautifully with class peers and helper friends.</div>
+          <div class="tip">🎖️ Build trust at home and school through true honesty.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Active Interactive Gameplay View Screen -->
+<section id="gameScreen" class="screen">
+  <div class="wrap">
+    <div class="hud">
+      <div class="hud-box"><span class="hud-label">Quest Score</span><span class="hud-val" id="scoreNum">0</span></div>
+      <div class="hud-box"><span class="hud-label">Race Lap</span><span class="hud-val" id="roundNum">1</span></div>
+      <div class="hud-box"><span class="hud-label">Energy Hearts</span><span class="hud-val" id="livesNum">❤️ ❤️ ❤️</span></div>
+      <div class="hud-box"><span class="hud-label">Steps Taken</span><span class="hud-val" id="stepsNum">0</span></div>
     </div>
 
-    <!-- Race Animation Section -->
-    <div class="race-track">
-        <!-- FIX 2: The runner emoji style handles the orientation flip -->
-        <div class="runner">🏃</div>
-        <div class="finish-line">🏁</div>
+    <!-- Interactive Track Canvas Component Window Area -->
+    <div class="canvas-holder">
+      <canvas id="marathonCanvas" width="800" height="160"></canvas>
     </div>
 
+    <div class="layout">
+      <div class="box">
+        <div class="scenario">
+          <h2 id="checkpointHeader">Checkpoint</h2>
+          <p id="scenarioText">Loading next track challenge...</p>
+        </div>
+        <div class="choices" id="choices"></div>
+        <div class="status" id="statusText"></div>
+        <div class="progress-wrap"><div class="progress" id="progressBar"></div></div>
+      </div>
+
+      <div class="box" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <h3 style="color:var(--primary); margin-bottom:12px; font-size:18px;">💡 Pro Runner Tips</h3>
+          <div class="tips">
+            <div class="tip">Polite runners build a warm community where everyone finishes with a smile.</div>
+            <div class="tip">Honesty is a superpower that helps resolve accidents or broken rules smoothly!</div>
+          </div>
+        </div>
+        <div style="font-size: 50px; text-align: center; margin-top: 15px; opacity: 0.8;">🏅🌈</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- End / Complete Screen Summary Wrap View -->
+<section id="endScreen" class="screen">
+  <div class="wrap card" style="text-align: center; max-width: 550px;">
+    <div class="final-title" id="finalTitle">Marathon Complete!</div>
+    <div class="stars" id="finalStars">🌟🌟🌟</div>
+    <div class="final-text" id="finalText">Excellent behavior choices observed! You are certified as a Manners Champion.</div>
+    <div style="font-size: 24px; font-weight: 800; margin-bottom: 24px; color: var(--text-dark);">
+      Final Total Score: <span id="finalScore" style="color:var(--primary); font-size:32px;">0</span> Points
+    </div>
+    <div class="btn-row" style="justify-content:center;">
+      <button class="btn primary" onclick="startGame()">Race Again 🔄</button>
+    </div>
+  </div>
+</section>
+
+<!-- Invisible Audio Sound Assets -->
+<audio id="correctSound" preload="auto" src="./assets/correct.mp3"></audio>
+<audio id="wrongSound" preload="auto" src="./assets/wrong.mp3"></audio>
+<audio id="clapSound" preload="auto" src="./assets/clapping.mp3"></audio>
+
+<script>
+const scenarios = [
+  {q:'A friend shares crayons with you.',options:['Say thank you.','Take them and run away.','Hide them from others.'],answer:'Say thank you.',tip:'Gratitude is good manners.'},
+  {q:'Someone drops their books.',options:['Help pick them up.','Laugh at them.','Walk away.'],answer:'Help pick them up.',tip:'Helping is positive behaviour.'},
+  {q:'You are late to the line.',options:['Join politely at the end.','Push to the front.','Shout at others.'],answer:'Join politely at the end.',tip:'Following rules is respectful.'},
+  {q:'You made a mistake.',options:['Say sorry.','Blame someone else.','Pretend it never happened.'],answer:'Say sorry.',tip:'Honesty helps build trust.'},
+  {q:'The teacher is speaking.',options:['Listen quietly.','Talk over the teacher.','Leave the room loudly.'],answer:'Listen quietly.',tip:'Listening is part of good behaviour.'},
+  {q:'You see litter on the floor.',options:['Pick it up and throw it away.','Kick it around.','Leave it there.'],answer:'Pick it up and throw it away.',tip:'Small helpful actions matter.'},
+  {q:'A younger child needs help.',options:['Show kindness and help.','Ignore the child.','Make fun of them.'],answer:'Show kindness and help.',tip:'Kindness makes the world brighter.'},
+  {q:'Someone gives you a gift.',options:['Say thank you and smile.','Take it without a word.','Throw it away.'],answer:'Say thank you and smile.',tip:'Politeness shows respect.'},
+  {q:'Your friend is upset.',options:['Speak kindly and comfort them.','Laugh at them.','Be rude.'],answer:'Speak kindly and comfort them.',tip:'Kind words can help a lot.'},
+  {q:'You want to use a toy that another child has.',options:['Ask politely and wait.','Grab it quickly.','Snatch it away.'],answer:'Ask politely and wait.',tip:'Good manners include patience.'},
+  {q:'The class needs everyone to work together.',options:['Help and cooperate.','Refuse to join.','Cause trouble.'],answer:'Help and cooperate.',tip:'Positive behaviour helps the group.'},
+  {q:'You feel like shouting.',options:['Use a calm voice.','Yell at everyone.','Break things.'],answer:'Use a calm voice.',tip:'Self-control is part of character.'}
+];
+
+const rewards = [
+  {q:'What is positive behaviour?',options:['Being helpful, kind, and respectful.','Being rude to others.','Ignoring rules.'],answer:'Being helpful, kind, and respectful.'},
+  {q:'What should you say when someone helps you?',options:['Thank you.','No way.','Go away.'],answer:'Thank you.'},
+  {q:'Which action shows good manners?',options:['Waiting your turn.','Cutting the line.','Taking things away.'],answer:'Waiting your turn.'},
+  {q:'What should you do after making a mistake?',options:['Say sorry.','Blame others.','Laugh.'],answer:'Say sorry.'}
+];
+
+// Interactive Track Canvas Engine Variables
+const canvas = document.getElementById('marathonCanvas');
+const ctx = canvas.getContext('2d');
+let runnerPos = 40;
+let targetRunnerPos = 40;
+let runnerState = 'idle'; // 'idle', 'running', 'stumble'
+let bobAngle = 0;
+let trackParticles = [];
+
+let audioCtx = null, soundOn = true, current = 0, score = 0, lives = 3, steps = 0, lock = false, shuffled = [], usedReward = [];
+const correctSound = document.getElementById('correctSound');
+const wrongSound = document.getElementById('wrongSound');
+const clapSound = document.getElementById('clapSound');
+
+function show(id){
+  ['startScreen','gameScreen','endScreen'].forEach(x => document.getElementById(x).classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function toggleSound(){
+  soundOn = !soundOn;
+  document.getElementById('soundBtn').textContent = soundOn ? 'Audio FX: On 🔊' : 'Audio FX: Off 🔇';
+}
+
+function playTone(f, d, type='triangle'){
+  if(!soundOn) return;
+  try {
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = type; o.frequency.value = f; o.connect(g); g.connect(audioCtx.destination);
+    g.gain.value = 0.04; o.start(); g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + d); o.stop(audioCtx.currentTime + d);
+  } catch(e){}
+}
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splashScreen');
+    splash.style.opacity = '0';
+    splash.style.visibility = 'hidden';
+    show('startScreen');
+  }, 2200);
+});
+
+function shuffle(arr){
+  const a = [...arr];
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function updateHud(){
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('roundNum').textContent = current + 1;
+  document.getElementById('stepsNum').textContent = steps;
+  document.getElementById('progressBar').style.width = ((current) / scenarios.length * 100) + '%';
+  
+  let heartsText = '';
+  for(let i=0; i<3; i++) heartsText += (i < lives) ? '❤️ ' : '🖤 ';
+  document.getElementById('livesNum').textContent = heartsText;
+
+  // Calculate proportional target pixel steps along canvas length
+  const progressRatio = Math.min(steps / scenarios.length, 1);
+  targetRunnerPos = 40 + progressRatio * (canvas.width - 120);
+}
+
+function startGame(){
+  current = 0; score = 0; lives = 3; steps = 0; lock = false; usedReward = [];
+  shuffled = shuffle(scenarios);
+  show('gameScreen');
+  updateHud();
+  runnerPos = 40; targetRunnerPos = 40;
+  loadRound();
+}
+
+function loadRound(){
+  if(current >= shuffled.length || lives <= 0){
+    endGame(lives > 0);
+    return;
+  }
+  lock = false;
+  runnerState = 'idle';
+  const s = shuffled[current];
+  document.getElementById('checkpointHeader').textContent = `Checkpoint ${current + 1}`;
+  document.getElementById('scenarioText').textContent = s.q;
+  document.getElementById('statusText').textContent = '';
+  document.getElementById('statusText').className = 'status';
+
+  const choices = document.getElementById('choices');
+  choices.innerHTML = '';
+  shuffle(s.options).forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'choice';
+    b.textContent = opt;
+    b.onclick = () => pick(b, opt, s);
+    choices.appendChild(b);
+  });
+  updateHud();
+}
+
+function pick(button, opt, s){
+  if(lock) return;
+  lock = true;
+  document.querySelectorAll('.choice').forEach(b => b.disabled = true);
+
+  const statusEl = document.getElementById('statusText');
+
+  if(opt === s.answer){
+    score += 10;
+    steps += 1;
+    runnerState = 'running';
+    button.classList.add('correct');
+    statusEl.textContent = '⚡ Brilliant Choice! ' + s.tip;
+    statusEl.className = 'status good';
+    
+    // Trigger canvas visual kick effects
+    for(let i=0; i<12; i++) {
+      trackParticles.push({
+        x: runnerPos + 20, y: 100,
+        vx: (Math.random() - 0.5) * 6 - 4, vy: (Math.random() - 0.5) * 4 - 2,
+        color: '#ffca28', radius: Math.random() * 4 + 2, alpha: 1
+      });
+    }
+
+    try { correctSound.play().catch(() => playTone(587.33, 0.15)); } catch(e){ playTone(587.33, 0.15); }
+    updateHud();
+
+    if(steps % 3 === 0){
+      setTimeout(showReward, 1200);
+      return;
+    }
+    setTimeout(nextRound, 1400);
+  } else {
+    lives -= 1;
+    runnerState = 'stumble';
+    button.classList.add('wrong');
+    statusEl.textContent = '⚠️ Stumble! Try again next lap. ' + s.tip;
+    statusEl.className = 'status bad';
+    
+    try { wrongSound.play().catch(() => playTone(220, 0.3, 'sawtooth')); } catch(e){ playTone(220, 0.3, 'sawtooth'); }
+    updateHud();
+
+    if(lives <= 0){
+      setTimeout(() => endGame(false), 1400);
+      return;
+    }
+    setTimeout(nextRound, 1600);
+  }
+}
+
+function nextRound(){
+  current += 1;
+  loadRound();
+}
+
+function showReward(){
+  lock = false;
+  runnerState = 'idle';
+  const available = rewards.map((_,i)=>i).filter(i=>!usedReward.includes(i));
+  const idx = available.length ? available[Math.floor(Math.random()*available.length)] : Math.floor(Math.random()*rewards.length);
+  if(!usedReward.includes(idx)) usedReward.push(idx);
+  
+  const q = rewards[idx];
+  document.getElementById('checkpointHeader').textContent = '🎁 Marathon Bonus Zone!';
+  document.getElementById('scenarioText').textContent = q.q;
+  
+  const choices = document.getElementById('choices');
+  choices.innerHTML = '';
+  
+  shuffle(q.options).forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'choice';
+    b.textContent = opt;
+    b.onclick = () => {
+      if(lock) return;
+      lock = true;
+      document.querySelectorAll('.choice').forEach(x => x.disabled = true);
+      const statusEl = document.getElementById('statusText');
+
+      if(opt === q.answer){
+        score += 15;
+        steps += 1;
+        runnerState = 'running';
+        statusEl.textContent = '🌈 Outstanding Manners Mastered! +15 Pts';
+        statusEl.className = 'status good';
+        try { correctSound.play().catch(()=>playTone(659.25, 0.15)); } catch(e){}
+      } else {
+        statusEl.textContent = 'Good try! Perfect Solution: ' + q.answer;
+        statusEl.className = 'status bad';
+        runnerState = 'stumble';
+        try { wrongSound.play().catch(()=>playTone(180, 0.3, 'sawtooth')); } catch(e){}
+      }
+      updateHud();
+      setTimeout(() => { current += 1; loadRound(); }, 1600);
+    };
+    choices.appendChild(b);
+  });
+}
+
+function burst(){
+  const colors = ['#ef6c00','#ffca28','#10b981','#0288d1','#7c4dff'];
+  for(let i=0; i<30; i++){
+    const d = document.createElement('div');
+    d.className = 'confetti';
+    d.style.left = Math.random() * 100 + 'vw';
+    d.style.background = colors[Math.floor(Math.random() * colors.length)];
+    d.style.animationDelay = Math.random() * 0.4 + 's';
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), 3000);
+  }
+}
+
+function endGame(win = true){
+  show('endScreen');
+  document.getElementById('finalScore').textContent = score;
+  const title = document.getElementById('finalTitle');
+  const text = document.getElementById('finalText');
+  const stars = document.getElementById('finalStars');
+
+  if(score >= 80 && win){
+    title.textContent = 'Manners Champion! 🏆';
+    text.textContent = 'Sensational race! You demonstrated flawless etiquette choices and rules respect across all zones.';
+    stars.textContent = '🌟🌟🌟';
+    burst();
+    try { clapSound.play().catch(() => {}); } catch(e){}
+  } else if(score >= 40 && win){
+    title.textContent = 'Great Finish Line! 🥈';
+    text.textContent = 'Wonderful effort! You selected many helpful, polite choices throughout your tracks.';
+    stars.textContent = '🌟🌟';
+    burst();
+  } else {
+    title.textContent = 'Keep Practising! 📑';
+    text.textContent = 'Remember to use key words like please, sorry, and thank you. Try running the lap again!';
+    stars.textContent = '🌟';
+  }
+}
+
+// 2D Canvas Graphics Animation Loop
+function updateCanvasLoop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Smooth lerping character positioning translation
+  runnerPos += (targetRunnerPos - runnerPos) * 0.08;
+  bobAngle += 0.2;
+
+  // Draw modern running path textures
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillRect(0, 75, canvas.width, 35);
+  
+  // Track white separation lines
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([15, 10]);
+  ctx.beginPath(); ctx.moveTo(0, 92); ctx.lineTo(canvas.width, 92); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw Finish banner line target indicator
+  ctx.fillStyle = '#ef4444';
+  ctx.fillRect(canvas.width - 60, 65, 6, 50);
+  ctx.font = '12px sans-serif';
+  ctx.fillStyle = '#7f1d1d';
+  ctx.fillText('🏁 FINISH', canvas.width - 80, 55);
+
+  // Render and update speed dust particles safely
+  trackParticles.forEach((p, index) => {
+    p.x += p.vx; p.y += p.vy; p.alpha -= 0.02;
+    if(p.alpha <= 0) { trackParticles.splice(index, 1); return; }
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.alpha;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2); ctx.fill();
+  });
+  ctx.globalAlpha = 1.0;
+
+  // Render dynamic avatar emojis based on sprint states
+  let runnerEmoji = '🏃‍♂️';
+  let heightBob = Math.sin(bobAngle) * 4;
+
+  if (runnerState === 'running') {
+    runnerEmoji = '🏃‍♂️';
+    heightBob = Math.sin(bobAngle * 2) * 6;
+    
+    // Additional sprint line trail effect on correct answers
+    ctx.font = '24px Arial';
+    ctx.fillText('💨', runnerPos - 30, 90 + heightBob);
+  } else if (runnerState === 'stumble') {
+    runnerEmoji = '🚶‍♂️';
+    heightBob = 4;
+    ctx.font = '24px Arial';
+    ctx.fillText('💥', runnerPos + 15, 70);
+  }
+
+  // FIX 2: Transform canvas matrix horizontally locally to flip the emoji to face forward (Right)
+  ctx.save();
+  ctx.translate(runnerPos, 90 + heightBob);
+  ctx.scale(-1, 1); // Flips horizontally
+  ctx.font = '38px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(runnerEmoji, 0, 0);
+  ctx.restore();
+
+  requestAnimationFrame(updateCanvasLoop);
+}
+
+// Fire up graphic drawing loop automatically
+requestAnimationFrame(updateCanvasLoop);
+</script>
 </body>
 </html>
