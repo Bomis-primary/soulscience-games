@@ -3,24 +3,36 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>The Crayon Crew: Rainbow Highway Quest (Cooperation Game)</title>
+<title>The Odd-One-Out Club: Playground Party!</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<script>
+function tryAlternativePath(imgElement) {
+  if (imgElement.getAttribute('src') === 'innovine-logo.png') {
+    imgElement.src = 'asset/innovine-logo.png';
+  } else if (imgElement.getAttribute('src') === 'asset/innovine-logo.png') {
+    imgElement.src = 'assets/innovine-logo.png';
+  } else {
+    imgElement.style.display = 'none';
+    document.getElementById('fallbackLogo').style.display = 'block';
+  }
+}
+</script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+:root {
+  --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #ffedd5 100%);
+  --panel-bg: #ffffff;
+  --text-dark: #0f172a;
+  --text-muted: #475569;
+  --primary: #0284c7;
+  --primary-hover: #0369a1;
+  --accent: #f97316;
+  --good: #10b981;
+  --bad: #ef4444;
+  --shadow: 0 20px 40px rgba(2, 132, 199, 0.15);
+  --card-radius: 28px;
+}
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg-gradient: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-  --panel-bg: #fffbf4;
-  --text-dark: #451a03;
-  --text-muted: #78350f;
-  --primary: #ea580c;
-  --primary-hover: #c2410c;
-  --accent: #eab308;
-  --good: #16a34a;
-  --bad: #dc2626;
-  --shadow: 0 16px 32px rgba(120, 53, 15, 0.12);
-  --card-radius: 24px;
-}
 
 body { 
   background: var(--bg-gradient); 
@@ -35,142 +47,131 @@ h1, h2, h3, .title, .hud-val, .btn {
 }
 
 button { border: none; font: inherit; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-button:hover { transform: translateY(-3px) scale(1.02); }
+button:hover { transform: translateY(-4px) scale(1.02); }
 button:active { transform: translateY(1px); }
 
 .screen { display: none; min-height: 100vh; padding: 24px; place-items: center; }
 .screen.active { display: grid; animation: fadeIn 0.4s ease-out forwards; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
 .wrap { width: min(1000px, 100%); margin: 0 auto; }
 .card { 
   background: var(--panel-bg); 
-  border: 6px dashed #b45309; 
+  border: 4px solid #ffffff; 
   border-radius: var(--card-radius); 
   box-shadow: var(--shadow); 
   padding: 40px; 
   position: relative;
 }
-.card::before {
-  content: ''; position: absolute; inset: -2px; border: 2px solid #fff; border-radius: calc(var(--card-radius) - 4px); pointer-events: none;
-}
 
-/* Studio Intro Splash Layout */
 #splashScreen { position: fixed; inset: 0; z-index: 9999; background: #ffffff; display: grid; place-items: center; transition: opacity 0.5s ease, visibility 0.5s; }
 .splash-box { text-align: center; }
-.studio-logo { max-width: 320px; width: 90%; height: auto; animation: logoBounce 2s infinite alternate ease-in-out; display: block; margin: 0 auto 24px auto; }
-.splash-text { font-size: 24px; font-weight: 900; color: #78350f; letter-spacing: 0.5px; font-family: 'Fredoka One', cursive; }
-@keyframes logoBounce { 0% { transform: translateY(0); } 100% { transform: translateY(-12px); } }
+.studio-logo { max-width: 300px; width: 85%; height: auto; animation: logoBounce 2s infinite alternate ease-in-out; display: block; margin: 0 auto 24px auto; }
+.splash-text { font-size: 24px; font-weight: 900; color: #0284c7; letter-spacing: 0.5px; font-family: 'Fredoka One', cursive; }
+@keyframes logoBounce { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
 
-/* Hero Screen Setup */
-.hero { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: center; }
-.title { font-size: clamp(34px, 5vw, 50px); color: #9a3412; line-height: 1.1; margin-bottom: 18px; text-shadow: 2px 2px 0px #ffedd5; }
-.lead { font-size: 19px; line-height: 1.6; color: #78350f; margin-bottom: 28px; font-weight: 700; }
+.hero { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 40px; align-items: center; }
+.title { font-size: clamp(34px, 5vw, 48px); color: #0369a1; line-height: 1.1; margin-bottom: 18px; text-shadow: 2px 2px 0px #e0f2fe; }
+.lead { font-size: 19px; line-height: 1.6; color: #334155; margin-bottom: 28px; font-weight: 700; }
 .pills { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-.pill { background: #ffedd5; color: #9a3412; font-weight: 900; padding: 8px 18px; border-radius: 999px; font-size: 14px; border: 2px solid #b45309; }
+.pill { background: #e0f2fe; color: #0369a1; font-weight: 900; padding: 8px 18px; border-radius: 999px; font-size: 14px; border: 2px solid #0284c7; }
 
 .btn-row { display: flex; flex-wrap: wrap; gap: 16px; }
-.btn { padding: 16px 32px; font-size: 20px; border-radius: 999px; box-shadow: 0 6px 0px #9a3412; border: 3px solid #78350f; }
-.btn.primary { background: #ea580c; color: #ffffff; }
-.btn.primary:hover { background: #c2410c; }
-.btn.primary:active { box-shadow: 0 2px 0px #9a3412; }
+.btn { padding: 16px 32px; font-size: 19px; border-radius: 999px; box-shadow: 0 6px 0px #0369a1; border: 3px solid #0f172a; }
+.btn.primary { background: #0284c7; color: #ffffff; }
+.btn.primary:hover { background: #0284c7; }
+.btn.primary:active { box-shadow: 0 2px 0px #0369a1; }
 .btn.ghost { background: #fff; color: var(--text-dark); }
 
-/* Gameplay Grid Dashboard */
 .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px; }
 @media (max-width: 850px) { .hero, .layout { grid-template-columns: 1fr; } .hero { text-align: center; } .pills, .btn-row { justify-content: center; } }
 
-.canvas-holder { background: #fff; border-radius: var(--card-radius); position: relative; overflow: hidden; border: 4px solid #b45309; min-height: 380px; box-shadow: inset 0 6px 10px rgba(0,0,0,0.05); }
+.canvas-holder { background: #fff; border-radius: var(--card-radius); position: relative; overflow: hidden; border: 4px solid #0f172a; min-height: 380px; box-shadow: inset 0 6px 10px rgba(0,0,0,0.05); }
 canvas { width: 100%; height: 100%; display: block; }
 
 .hud { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
-.hud-box { background: #fff; padding: 12px; border-radius: 18px; text-align: center; border: 3px solid #b45309; box-shadow: 0 4px 0 #b45309; }
+.hud-box { background: #fff; padding: 12px; border-radius: 20px; text-align: center; border: 3px solid #0f172a; box-shadow: 0 4px 0 #0f172a; }
 .hud-label { font-size: 12px; text-transform: uppercase; color: var(--text-muted); font-weight: 900; letter-spacing: 0.5px; }
-.hud-val { font-size: 18px; color: #9a3412; display: block; margin-top: 2px; }
+.hud-val { font-size: 18px; color: #0369a1; display: block; margin-top: 2px; }
 
-.meter-container { background: #fed7aa; border-radius: 999px; height: 18px; position: relative; overflow: hidden; margin-top: 4px; border: 2px solid #78350f; }
-.meter-fill { height: 100%; width: 50%; background: linear-gradient(90deg, #eab308, #16a34a, #3b82f6); transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); }
+.meter-container { background: #bae6fd; border-radius: 999px; height: 18px; position: relative; overflow: hidden; margin-top: 4px; border: 2px solid #0f172a; }
+.meter-fill { height: 100%; width: 50%; background: linear-gradient(90deg, #f97316, #10b981); transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); }
 
-.scenario-box { background: #fffdec; border-radius: var(--card-radius); padding: 24px; border: 3px solid #b45309; box-shadow: 0 4px 0 #b45309; display: flex; flex-direction: column; justify-content: space-between; }
+.scenario-box { background: #f8fafc; border-radius: var(--card-radius); padding: 24px; border: 3px solid #0f172a; box-shadow: 0 4px 0 #0f172a; display: flex; flex-direction: column; justify-content: space-between; }
 .situation { min-height: 100px; display: flex; flex-direction: column; justify-content: center; margin-bottom: 20px; }
-.situation h3 { font-size: 14px; color: #ea580c; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1px; }
-.situation p { font-size: 18px; font-weight: 700; line-height: 1.4; color: #451a03; }
+.situation h3 { font-size: 13px; color: #f97316; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1px; }
+.situation p { font-size: 17px; font-weight: 700; line-height: 1.4; color: #0f172a; }
 
 .choices { display: grid; gap: 12px; }
-.choice { width: 100%; border: 3px solid #d97706; border-radius: 18px; padding: 16px 20px; text-align: left; background: #fff; font-size: 15px; font-weight: 700; color: var(--text-dark); box-shadow: 0 4px 0 #d97706; }
-.choice:hover:not(:disabled) { background: #fef3c7; transform: translateX(4px); }
+.choice { width: 100%; border: 3px solid #0f172a; border-radius: 18px; padding: 16px 20px; text-align: left; background: #fff; font-size: 14px; font-weight: 700; color: var(--text-dark); box-shadow: 0 4px 0 #0f172a; }
+.choice:hover:not(:disabled) { background: #f0f9ff; transform: translateX(4px); }
 .choice.correct { background: #d1fae5; border-color: var(--good); color: #065f46; box-shadow: 0 4px 0 var(--good); }
 .choice.wrong { background: #fee2e2; border-color: var(--bad); color: #991b1b; box-shadow: 0 4px 0 var(--bad); }
 
-.feedback-text { min-height: 40px; margin-top: 14px; font-weight: 700; font-size: 15px; text-align: center; padding: 8px; border-radius: 12px; border: 2px solid transparent; }
-.feedback-text.good { color: #16a34a; background: #f0fdf4; border-color: #bbf7d0; }
-.feedback-text.bad { color: #dc2626; background: #fef2f2; border-color: #fecaca; }
+.feedback-text { min-height: 40px; margin-top: 14px; font-weight: 700; font-size: 14px; text-align: center; padding: 8px; border-radius: 12px; border: 2px solid transparent; }
+.feedback-text.good { color: #10b981; background: #f0fdf4; border-color: #a7f3d0; }
+.feedback-text.bad { color: #ef4444; background: #fef2f2; border-color: #fecaca; }
 
-/* End Results Layout */
-.stars { font-size: 64px; margin: 16px 0; animation: logoBounce 1.5s infinite alternate ease-in-out; text-shadow: 2px 2px 0px #b45309; }
-.confetti { position: fixed; top: -20px; width: 14px; height: 14px; z-index: 9999; border-radius: 4px; transform: rotate(45deg); animation: fall 2.5s linear forwards; }
-@keyframes fall { to { transform: translateY(105vh) rotate(720deg); opacity: 0; } }
+.stars { font-size: 64px; margin: 16px 0; animation: logoBounce 1.5s infinite alternate ease-in-out; text-shadow: 2px 2px 0px #0284c7; }
+.confetti { position: fixed; top: -20px; width: 14px; height: 14px; z-index: 9999; border-radius: 50%; animation: fall 2.5s linear forwards; }
+@keyframes fall { to { transform: translateY(105vh) rotate(360deg); opacity: 0; } }
 </style>
 </head>
 <body>
 
-<!-- Studio Branding Opener Splash Screen -->
 <section id="splashScreen">
   <div class="splash-box">
-    <!-- Cascade lookup architecture matching original specifications -->
     <img src="innovine-logo.png" alt="Innovine Solutions Logo" class="studio-logo" id="innovineLogoImg" onerror="tryAlternativePath(this);" />
-    <div id="fallbackLogo" style="display:none; font-size:90px; margin-bottom:20px;">🖍️✨</div>
+    <div id="fallbackLogo" style="display:none; font-size:90px; margin-bottom:20px;">🤝🎈</div>
     <div class="splash-text">Innovine Solutions</div>
   </div>
 </section>
 
-<!-- Main Entry Menu Screen -->
 <section id="startScreen" class="screen">
   <div class="wrap card">
     <div class="hero">
       <div>
         <div class="pills">
-          <div class="pill">🎨 Grade 3 Creative Classroom</div>
-          <div class="pill">🤝 Core Theme: Cooperation</div>
+          <div class="pill">🌟 Grade 3 Character Quest</div>
+          <div class="pill">🤝 Theme: Acceptance</div>
         </div>
-        <h1 class="title">The Crayon Crew:<br>Rainbow Highway Quest</h1>
-        <p class="lead">Meet Red, Blue, and Yellow! They want to sketch a beautiful Rainbow Highway across the page. But if they don't cooperate, their tips get blunt and messy. Share the page to design a collaborative masterpiece!</p>
+        <h1 class="title">The Odd-One-Out Club:<br>Playground Party</h1>
+        <p class="lead">Unique, quirky shape-buddies are arriving at the Shapeville Party! Standard circles and squares are whispering that they are too "weird" to join. Help welcoming captain make accepting choices to include everyone!</p>
         <div class="btn-row">
-          <button class="btn primary" onclick="startGame()">Start Drawing! 🖍️</button>
+          <button class="btn primary" onclick="startGame()">Start Planning! 🎈</button>
           <button class="btn ghost" onclick="toggleAudio()" id="audioBtn">Sound Effects: On 🔊</button>
         </div>
       </div>
-      <div style="background: #fffdec; border-radius: var(--card-radius); padding: 30px; text-align: center; font-size: 100px; border: 4px dashed #b45309; box-shadow: inset 0 4px 10px rgba(0,0,0,0.05);">
-        🖍️🌈🎨
+      <div style="background: #e0f2fe; border-radius: var(--card-radius); padding: 30px; text-align: center; font-size: 100px; border: 4px dashed #0284c7; box-shadow: inset 0 4px 10px rgba(0,0,0,0.05);">
+        ⚡📐🧼
       </div>
     </div>
   </div>
 </section>
 
-<!-- Active Live Game Dashboard View Screen -->
 <section id="gameScreen" class="screen">
   <div class="wrap card" style="padding: 24px;">
     
     <div class="hud">
-      <div class="hud-box"><span class="hud-label">Page Sector</span><span class="hud-val" id="zoneName">Sketchbook Left</span></div>
-      <div class="hud-box"><span class="hud-label">Color Vibrancy</span><span class="hud-val" id="stabilityNum">0%</span></div>
+      <div class="hud-box"><span class="hud-label">Party Entrance</span><span class="hud-val" id="zoneName">Base Playground</span></div>
+      <div class="hud-box"><span class="hud-label">Inclusive Harmony</span><span class="hud-val" id="stabilityNum">0%</span></div>
       <div class="hud-box">
-        <span class="hud-label">Cooperation Meter</span>
+        <span class="hud-label">Belonging Bar</span>
         <div class="meter-container"><div class="meter-fill" id="meterFill"></div></div>
       </div>
     </div>
 
     <div class="layout">
-      <!-- Left side: Crayon Drawing Canvas Sketchbook Layout -->
+      <!-- Left side: Playground Live View Interactive Canvas -->
       <div class="canvas-holder">
-        <canvas id="crayonCanvas" width="460" height="400"></canvas>
+        <canvas id="playgroundCanvas" width="460" height="400"></canvas>
       </div>
 
-      <!-- Right side: Cooperative Decision-Making Challenges -->
+      <!-- Right side: Questions, Dilemmas, and Dialog choices -->
       <div class="scenario-box">
         <div class="situation">
-          <h3 id="stageHeader">Drawing Checkpoint</h3>
-          <p id="scenarioText">Opening the sketchbook lines...</p>
+          <h3 id="stageHeader">Welcoming Captain Check</h3>
+          <p id="scenarioText">Gathering unique guests...</p>
         </div>
         
         <div class="choices" id="choicesBox"></div>
@@ -181,75 +182,62 @@ canvas { width: 100%; height: 100%; display: block; }
   </div>
 </section>
 
-<!-- End Game Results Screen Wrap Summary Layout -->
 <section id="endScreen" class="screen">
   <div class="wrap card" style="text-align: center; max-width: 550px;">
-    <h1 class="title" id="endTitle">Masterpiece Complete!</h1>
-    <div class="stars" id="endStars">🖍️🎨🌟</div>
-    <p class="lead" id="endDesc">By sharing your workspace and collaborating across color styles, you built the grandest rainbow art highway ever seen!</p>
-    <button class="btn primary" onclick="startGame()">Draw Another Highway 🔄</button>
+    <h1 class="title" id="endTitle">Everyone Belongs!</h1>
+    <div class="stars" id="endStars">⚡🧼📐🌟</div>
+    <p class="lead" id="endDesc">By showing kindness and adapting the rules so everyone could play, you proved that unique shapes make the party much more spectacular!</p>
+    <button class="btn primary" onclick="startGame()">Plan Another Party 🔄</button>
   </div>
 </section>
 
 <script>
-// Multilayer path validation script for full asset discovery
-function tryAlternativePath(imgElement) {
-  if (imgElement.getAttribute('src') === 'innovine-logo.png') {
-    imgElement.src = 'asset/innovine-logo.png';
-  } else if (imgElement.getAttribute('src') === 'asset/innovine-logo.png') {
-    imgElement.src = 'assets/innovine-logo.png';
-  } else {
-    imgElement.style.display = 'none';
-    document.getElementById('fallbackLogo').style.display = 'block';
-  }
-}
-
-// Grade 3 specific Crayon Cooperation Scenarios
 const stages = [
   {
-    zone: 'Page Left: The Outline',
-    q: '🖍️ Red Crayon is rushing ahead drawing wild lines, but her tip gets blunt and she feels tired out.',
+    zone: 'Playground Slide',
+    id: 'ziggy',
+    q: '⚡ Ziggy the zig-zag lightning bolt arrives. Standard round circles are playing "Roll-and-Seek" on the slide. They whisper: "Ziggy can\'t roll, he doesn\'t belong here!"',
     options: [
-      { t: 'Pass the drawing turn to Blue Crayon to color the cool skies while Red rests her tip.', correct: true, score: 20, tip: 'Beautiful choice! Taking turns keeps the crayon crew fresh and prevents any single color from wearing out.' },
-      { t: 'Keep forcing Red to draw alone until her color completely breaks off.', correct: false, score: -20, tip: 'Using up only one person or color without sharing causes fatigue and frustration. Work as a team!' }
+      { t: 'Suggest a bouncy obstacle climb where Ziggy’s zig-zag springs help everyone hop higher!', correct: true, score: 25, tip: 'Wonderful captain! Changing the play style to fit Ziggy made the game twice as fun!' },
+      { t: 'Tell Ziggy he should stick to walking on flat paths since slides are only for round rollers.', correct: false, score: -20, tip: 'Leaving Ziggy out hurts. Always look for ways to adjust the game so everyone gets a turn!' }
     ]
   },
   {
-    zone: 'Page Middle: The Meadow Blend',
-    q: '🌿 The sketch needs a vibrant green grass field, but the crew only has basic Red, Blue, and Yellow crayons!',
+    zone: 'Castle Block Sandbox',
+    id: 'pips',
+    q: '📐 Pips the bumpy triangle arrives at the building arena. Standard squares complain: "Pips has three sharp pointy corners! He might scrape our block fortress roof!"',
     options: [
-      { t: 'Layer Blue and Yellow crayons over each other gently to mix a stunning custom Green texture.', correct: true, score: 20, tip: 'Spectacular cooperation! Blending primary traits produces magic results that separate colors cannot achieve alone.' },
-      { t: 'Start an argument over who gets to cover up the patch, leaving the grass space empty.', correct: false, score: -20, tip: 'Arguing leaves the canvas blank. True cooperation blends talents together to make beautiful combinations!' }
+      { t: 'Use Pips as a cool top spire tower to hold the majestic decorative flag on top of the castle!', correct: true, score: 25, tip: 'Amazing! Pointy shapes are perfect for reaching high tops. You celebrated his unique shape!' },
+      { t: 'Ask Pips to sit in the corner and play with sand so he doesn\'t touch any building blocks.', correct: false, score: -20, tip: 'Banning Pips from building makes him feel excluded. Every shape has a unique job in the construction!' }
     ]
   },
   {
-    zone: 'Page Center: The Golden Accents',
-    q: '☀️ Yellow Crayon accidentally dropped his paper wrapping sleeve and feels naked, silly, and shy about drawing.',
+    zone: 'Prickly Rose patch',
+    id: 'fuzz',
+    q: '🧼 Fuzz the hairy circle wants to play tag near the garden, but he is terrified of snagging his soft wool on thorns. Standard shapes laugh at him.',
     options: [
-      { t: 'Have Red and Blue hold Yellow’s hand to design beautiful orange and purple star sparkles around his work.', correct: true, score: 25, tip: 'Wonderful kindness! Encouraging a partner when they feel embarrassed helps everyone finish together.' },
-      { t: 'Laugh at Yellow and tell him he looks funny without his box wrapper outfit.', correct: false, score: -25, tip: 'Teasing breaks your crew\'s harmony. Support each other to build a safe, cooperative group!' }
+      { t: 'Move the game to the open bouncy lawn patch so Fuzz can tumble and roll securely with everyone!', correct: true, score: 25, tip: 'Incredible kindness! Moving the play zone kept Fuzz safe and showed high empathy.' },
+      { t: 'Laugh and tell Fuzz he is too soft to hang out with tough shapes.', correct: false, score: -25, tip: 'Teasing makes friends feel small. Respect their soft sides and make adaptations together!' }
     ]
   },
   {
-    zone: 'Page Right: The Final Blend',
-    q: '🌈 The grand Rainbow Highway is almost connected, but the page boundary lines are extremely tricky and tight.',
+    zone: 'Dizzy Spin Wheel',
+    id: 'blobby',
+    q: '💧 Blobby the gooey drop shape wants to ride the spin-wheel, but he is so squishy that he keeps slipping off the plastic seats.',
     options: [
-      { t: 'Call out: "Red top, Blue bottom, Yellow center!" so all colors slide smoothly into place together.', correct: true, score: 25, tip: 'Superb coordination! Coordinating jobs cleanly guarantees the whole team succeeds at the goal.' },
-      { t: 'Everyone try to scribble over the final corner space at the exact same instant to claim the finish.', correct: false, score: -20, tip: 'Scribbling out your teammates causes clutter and messes up the alignment. Talk out a structured plan first!' }
+      { t: 'Hold hands to form a protective cuddle ring around Blobby so everyone spins together safely!', correct: true, score: 25, tip: 'Outstanding! Helping and protecting friends who have different abilities makes the group strong!' },
+      { t: 'Tell Blobby that squishy things are not allowed on fast rides.', correct: false, score: -20, tip: 'Excluding Blobby prevents him from feeling like a part of the pack. Cooperation solves safety hurdles!' }
     ]
   }
 ];
 
-// Canvas Sketch Rendering Variables
-const canvas = document.getElementById('crayonCanvas');
+const canvas = document.getElementById('playgroundCanvas');
 const ctx = canvas.getContext('2d');
-let drawProgressX = 0;
-let targetDrawProgressX = 0;
-let handOscillation = 0;
+let floatingOffset = 0;
+let unlockedGuests = [];
 
-// Game State Parameters
 let currentStage = 0;
-let cooperation = 50; 
+let belongingLevel = 40; 
 let audioEnabled = true;
 let actionLocked = false;
 let audioCtx = null;
@@ -273,7 +261,6 @@ function playTone(freq, duration, type='sine') {
   } catch(e){}
 }
 
-// Fade splash controller processing
 window.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     const splash = document.getElementById('splashScreen');
@@ -292,9 +279,9 @@ function switchView(id) {
 
 function startGame() {
   currentStage = 0;
-  cooperation = 50;
+  belongingLevel = 40;
   actionLocked = false;
-  drawProgressX = 20; targetDrawProgressX = 20;
+  unlockedGuests = [];
   switchView('gameScreen');
   renderStage();
 }
@@ -310,16 +297,13 @@ function renderStage() {
   
   document.getElementById('zoneName').textContent = currentData.zone;
   document.getElementById('stabilityNum').textContent = (currentStage * 25) + '%';
-  document.getElementById('meterFill').style.width = cooperation + '%';
-  document.getElementById('stageHeader').textContent = `✏️ Sector Progress ${currentStage + 1}: ${currentData.zone}`;
+  document.getElementById('meterFill').style.width = belongingLevel + '%';
+  document.getElementById('stageHeader').textContent = `🎈 Entrance Checkpoint ${currentStage + 1}: ${currentData.zone}`;
   document.getElementById('scenarioText').textContent = currentData.q;
   
   const fb = document.getElementById('feedbackEl');
   fb.textContent = '';
   fb.className = 'feedback-text';
-
-  // Drive visual sketchbook coloring lines down target limits
-  targetDrawProgressX = 20 + (currentStage * 105);
 
   const choicesBox = document.getElementById('choicesBox');
   choicesBox.innerHTML = '';
@@ -343,30 +327,33 @@ function evaluateChoice(btnElement, choiceObj) {
   document.querySelectorAll('.choice').forEach(b => b.disabled = true);
   const fb = document.getElementById('feedbackEl');
   
-  cooperation += choiceObj.score;
-  if(cooperation > 100) cooperation = 100;
-  if(cooperation < 0) cooperation = 0;
+  belongingLevel += choiceObj.score;
+  if(belongingLevel > 100) belongingLevel = 100;
+  if(belongingLevel < 0) belongingLevel = 0;
   
-  document.getElementById('meterFill').style.width = cooperation + '%';
+  document.getElementById('meterFill').style.width = belongingLevel + '%';
 
   if(choiceObj.correct) {
     btnElement.classList.add('correct');
-    fb.textContent = '🌟 Masterpiece Harmony! ' + choiceObj.tip;
+    fb.textContent = '🌟 Success! ' + choiceObj.tip;
     fb.className = 'feedback-text good';
-    playTone(440, 0.15); 
-    setTimeout(() => playTone(554.37, 0.2), 100); 
+    playTone(523.25, 0.15); // C5
+    setTimeout(() => playTone(659.25, 0.2), 100); // E5
     
+    // Unlock this character to roam happily on the live canvas playground
+    unlockedGuests.push(stages[currentStage].id);
+
     setTimeout(() => {
       currentStage++;
       renderStage();
     }, 2500);
   } else {
     btnElement.classList.add('wrong');
-    fb.textContent = '✏️ ' + choiceObj.tip;
+    fb.textContent = '⚡ Let\'s think: ' + choiceObj.tip;
     fb.className = 'feedback-text bad';
-    playTone(196, 0.4, 'triangle'); 
+    playTone(349.23, 0.35, 'triangle'); // F4 flat
     
-    if(cooperation <= 0) {
+    if(belongingLevel <= 0) {
       setTimeout(() => {
         handleEndGame(false);
       }, 2500);
@@ -386,19 +373,19 @@ function handleEndGame(isWin) {
   const desc = document.getElementById('endDesc');
   
   if(isWin) {
-    title.textContent = 'Masterpiece Complete! 🎨';
-    stars.textContent = '🖍️🌈🌟';
-    desc.textContent = 'Splendid job! By using fine communication and taking care of every teammate\'s color tip, your sketchbook highway came out flawless!';
+    title.textContent = 'Awesome Party Captain! 🎉';
+    stars.textContent = '⚡🧼📐🌊';
+    desc.textContent = 'Brilliant! By making everyone feel appreciated and including all unique traits, you built the ultimate inclusive playground party!';
     spawnConfetti();
   } else {
-    title.textContent = 'Box Reset Time';
-    stars.textContent = '📦';
-    desc.textContent = 'The crayon tips grew too blunt and broken to finish. Remember, true cooperation requires pooling together and sharing resources. Let\'s try drawing again!';
+    title.textContent = 'Try Welcoming Again';
+    stars.textContent = '❤️';
+    desc.textContent = 'Some shapes felt left out and left the sandbox. Remember, accepting differences is how we build strong playgrounds. Let\'s try again!';
   }
 }
 
 function spawnConfetti() {
-  const colors = ['#ef4444', '#3b82f6', '#eab308', '#22c55e', '#a855f7'];
+  const colors = ['#f43f5e', '#3b82f6', '#10b981', '#eab308', '#a855f7'];
   for(let i=0; i<40; i++) {
     const d = document.createElement('div');
     d.className = 'confetti';
@@ -410,70 +397,245 @@ function spawnConfetti() {
   }
 }
 
-// Sketchbook Interactive Crayon Graphics Renderer Engine Loop
+function drawZiggy(x, y, scale, bob) {
+  ctx.save();
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 6;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(x - 10, y - 20 + bob);
+  ctx.lineTo(x + 5, y - 5 + bob);
+  ctx.lineTo(x - 5, y + bob);
+  ctx.lineTo(x + 10, y + 15 + bob);
+  ctx.stroke();
+  
+  // Cute facial details
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath();
+  ctx.arc(x - 3, y - 4 + bob, 2.5, 0, Math.PI*2);
+  ctx.arc(x + 3, y - 4 + bob, 2.5, 0, Math.PI*2);
+  ctx.fill();
+  
+  // Smile
+  ctx.beginPath();
+  ctx.arc(x, y + bob, 3, 0, Math.PI);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawPips(x, y, scale, bob) {
+  ctx.save();
+  ctx.fillStyle = '#a855f7';
+  ctx.strokeStyle = '#0f172a';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(x, y - 20 + bob);
+  ctx.lineTo(x + 20, y + 15 + bob);
+  ctx.lineTo(x - 20, y + 15 + bob);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Polka dot markings on the body
+  ctx.fillStyle = '#fdf4ff';
+  ctx.beginPath();
+  ctx.arc(x - 8, y + 5 + bob, 3.5, 0, Math.PI*2);
+  ctx.arc(x + 8, y + 5 + bob, 3.5, 0, Math.PI*2);
+  ctx.arc(x, y - 5 + bob, 3.5, 0, Math.PI*2);
+  ctx.fill();
+
+  // Smiley eyes
+  ctx.fillStyle = '#0f172a';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('^', x - 8, y + bob);
+  ctx.fillText('^', x + 1, y + bob);
+  ctx.restore();
+}
+
+function drawFuzz(x, y, scale, bob) {
+  ctx.save();
+  const radius = 18;
+  const hairCount = 14;
+  
+  // Outer fuzzy spikes/hairs
+  ctx.strokeStyle = '#10b981';
+  ctx.lineWidth = 3;
+  for (let i = 0; i < hairCount; i++) {
+    let angle = (i / hairCount) * Math.PI * 2 + handOscillation;
+    let startX = x + Math.cos(angle) * radius;
+    let startY = y + Math.sin(angle) * radius + bob;
+    let endX = x + Math.cos(angle) * (radius + 8);
+    let endY = y + Math.sin(angle) * (radius + 8) + bob;
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+  }
+
+  // Inner body
+  ctx.fillStyle = '#d1fae5';
+  ctx.beginPath();
+  ctx.arc(x, y + bob, radius, 0, Math.PI*2);
+  ctx.fill();
+  ctx.stroke();
+
+  // Googly big eyes
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(x - 5, y - 2 + bob, 5, 0, Math.PI*2);
+  ctx.arc(x + 5, y - 2 + bob, 5, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath();
+  ctx.arc(x - 5, y - 2 + bob, 2.5, 0, Math.PI*2);
+  ctx.arc(x + 5, y - 2 + bob, 2.5, 0, Math.PI*2);
+  ctx.fill();
+
+  // Wobbly mouth
+  ctx.strokeStyle = '#0f172a';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x - 4, y + 6 + bob);
+  ctx.quadraticCurveTo(x, y + 8 + bob, x + 4, y + 6 + bob);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawBlobby(x, y, scale, bob) {
+  ctx.save();
+  ctx.fillStyle = '#06b6d4';
+  ctx.strokeStyle = '#0f172a';
+  ctx.lineWidth = 4;
+  ctx.lineJoin = 'round';
+  
+  // Drawing organic jelly drops
+  ctx.beginPath();
+  ctx.moveTo(x, y - 22 + bob);
+  // Bezier squish values
+  ctx.bezierCurveTo(x + 18, y - 10 + bob, x + 22, y + 16 + bob, x, y + 20 + bob);
+  ctx.bezierCurveTo(x - 22, y + 16 + bob, x - 18, y - 10 + bob, x, y - 22 + bob);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Sparkly big eyes
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(x - 4, y + bob, 4, 0, Math.PI*2);
+  ctx.arc(x + 4, y + bob, 4, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath();
+  ctx.arc(x - 4, y + bob, 2, 0, Math.PI*2);
+  ctx.arc(x + 4, y + bob, 2, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+let handOscillation = 0;
+
 function loop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  handOscillation += 0.08;
+  handOscillation += 0.05;
 
-  // Render a clean cream notebook paper sheet structure background layout
-  ctx.fillStyle = '#fcfbf7';
+  // Drawing cozy playground backyard landscape
+  ctx.fillStyle = '#f0fdf4'; // Light green meadow
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Render notebook ruling guidelines
-  ctx.strokeStyle = '#e5e7eb';
-  ctx.lineWidth = 1;
-  for(let i = 40; i < canvas.height; i += 30) {
-    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
-  }
+  // Soft sky clouds background
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(100, 80, 20, 0, Math.PI*2);
+  ctx.arc(130, 80, 30, 0, Math.PI*2);
+  ctx.arc(160, 80, 20, 0, Math.PI*2);
+  ctx.fill();
 
-  // Left side red margins separator accent border rule
-  ctx.strokeStyle = '#fca5a5';
-  ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(40, 0); ctx.lineTo(40, canvas.height); ctx.stroke();
+  // Cozy sun
+  ctx.fillStyle = '#fef08a';
+  ctx.beginPath();
+  ctx.arc(400, 60, 24, 0, Math.PI*2);
+  ctx.fill();
 
-  // Rainbow Highway Texture Track drawing sequence engine blocks
-  let drawY = 220;
-  drawProgressX += (targetDrawProgressX - drawProgressX) * 0.05;
-
-  if (drawProgressX > 20) {
-    ctx.save();
-    ctx.lineWidth = 14;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    
-    // Simulating hand-scribbled wobbly drawing line styles
-    const generateWobblePath = (offsetY, strokeColor) => {
-      ctx.strokeStyle = strokeColor;
-      ctx.beginPath();
-      ctx.moveTo(40, drawY + offsetY);
-      for (let px = 40; px <= drawProgressX + 20; px += 15) {
-        let w = Math.sin((px * 0.08) + handOscillation) * 3;
-        ctx.lineTo(px, drawY + offsetY + w);
-      }
-      ctx.stroke();
-    };
-
-    // Beautiful primary layers intersecting perfectly to mimic collaborative wax drawing
-    generateWobblePath(-16, 'rgba(239, 68, 68, 0.85)');  // Red crayon scribble line
-    generateWobblePath(0, 'rgba(234, 179, 8, 0.85)');   // Yellow crayon scribble line
-    generateWobblePath(16, 'rgba(59, 130, 246, 0.85)');  // Blue crayon scribble line
-    ctx.restore();
-  }
-
-  // Active Drawing Crew visualization rendering positions mapping nodes
-  ctx.save();
-  ctx.font = '32px Arial';
-  ctx.textAlign = 'center';
+  // Playground slide visual structure
+  ctx.strokeStyle = '#cbd5e1';
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(60, 320);
+  ctx.lineTo(60, 200); // Ladder tower
+  ctx.stroke();
   
-  let bobbing = Math.sin(handOscillation) * 4;
-  let activeDrawTargetX = drawProgressX + 30;
+  ctx.strokeStyle = '#fb7185'; // Red slide curve
+  ctx.lineWidth = 8;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(60, 200);
+  ctx.bezierCurveTo(90, 200, 110, 320, 160, 320);
+  ctx.stroke();
 
-  // Display the crayon stack packed close together representing physical unity actions
-  ctx.fillText('🖍️', activeDrawTargetX, drawY - 14 + bobbing);
-  ctx.fillText('✏️', activeDrawTargetX - 25, drawY + 8 - bobbing);
-  ctx.fillText('🌈', activeDrawTargetX + 25, drawY + 2 + bobbing);
+  // Playground sandbox borders
+  ctx.fillStyle = '#fef3c7';
+  ctx.fillRect(220, 260, 120, 60);
+  ctx.strokeStyle = '#d97706';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(220, 260, 120, 60);
+
+  // Dianz spin-wheel
+  let wheelCenter = { x: 380, y: 260 };
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.arc(wheelCenter.x, wheelCenter.y, 40, 0, Math.PI*2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(wheelCenter.x - 40, wheelCenter.y);
+  ctx.lineTo(wheelCenter.x + 40, wheelCenter.y);
+  ctx.moveTo(wheelCenter.x, wheelCenter.y - 40);
+  ctx.lineTo(wheelCenter.x, wheelCenter.y + 40);
+  ctx.stroke();
+
+  // Drawing basic circle & square hosts welcoming newcomers
+  let bob1 = Math.sin(handOscillation) * 4;
   
-  ctx.restore();
+  // Standard happy Circle Host at slide
+  ctx.fillStyle = '#60a5fa';
+  ctx.strokeStyle = '#0f172a';
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.arc(90, 290 + bob1, 14, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath(); ctx.arc(86, 287 + bob1, 2, 0, Math.PI*2); ctx.arc(94, 287 + bob1, 2, 0, Math.PI*2); ctx.fill();
+
+  // Standard Square Host at sandbox
+  ctx.fillStyle = '#34d399';
+  ctx.fillRect(205, 275 - bob1, 24, 24);
+  ctx.strokeRect(205, 275 - bob1, 24, 24);
+
+  // Roam and animate unique guest shapes as player unlocks them
+  let bob2 = Math.sin(handOscillation + 2) * 5;
+
+  unlockedGuests.forEach(guest => {
+    switch(guest) {
+      case 'ziggy':
+        // Ziggy bounces happily at slide obstacle path
+        drawZiggy(140, 260, 1, bob2);
+        break;
+      case 'pips':
+        // Pips sits on tower spire in sandbox
+        drawPips(280, 220, 1, bob1);
+        break;
+      case 'fuzz':
+        // Fuzz rolls safely on grass meadow
+        drawFuzz(180, 160, 1, bob2);
+        break;
+      case 'blobby':
+        // Blobby spins on dizzy wheel
+        let angle = handOscillation * 0.5;
+        let bx = wheelCenter.x + Math.cos(angle) * 30;
+        let by = wheelCenter.y + Math.sin(angle) * 30;
+        drawBlobby(bx, by, 1, 0);
+        break;
+    }
+  });
 
   requestAnimationFrame(loop);
 }
