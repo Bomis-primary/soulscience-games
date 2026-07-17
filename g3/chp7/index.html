@@ -3,153 +3,601 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Timmy's Mountain Climb</title>
+<title>Manners Marathon: Champion Edition</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--bg1:#fef7e8;--bg2:#e3f2fd;--card:#fff;--text:#24324a;--good:#2e7d32;--bad:#c62828;--accent:#ffb300;--primary:#ef6c00;--secondary:#0288d1;--border:rgba(36,50,74,.12);--shadow:0 14px 30px rgba(36,50,74,.14)}
-body{font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--text);min-height:100vh;overflow-x:hidden}
-.screen{display:none;min-height:100vh;padding:16px}.screen.active{display:flex;align-items:center;justify-content:center}
-#splashScreen{position:fixed;inset:0;background:#fff;z-index:9999}.splash-box{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px}
-#splashScreen img{width:min(76vw,420px);height:auto;animation:float 1.8s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-.wrap{width:min(1180px,100%)} .card{background:rgba(255,255,255,.96);border-radius:28px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow)}
-.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:center}.title{font-size:clamp(34px,5vw,60px);color:var(--primary);line-height:1.03;margin-bottom:12px}.lead{font-size:clamp(18px,2.4vw,24px);line-height:1.45;color:#355070;margin-bottom:16px;max-width:54ch}
-.pills{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.pill{background:#fff8e1;border:1px solid var(--border);border-radius:999px;padding:10px 14px;font-weight:800}
-.btn-row{display:flex;flex-wrap:wrap;gap:10px}.btn{border:none;border-radius:16px;padding:14px 20px;font-size:18px;font-weight:800;cursor:pointer;min-height:46px}.primary{background:var(--accent);box-shadow:0 5px 0 #d28f00;color:#3d2f00}.ghost{background:#eef2f7;color:var(--text);box-shadow:0 5px 0 #cbd5e1}
-.mountain{position:relative;min-height:330px;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#d7f0ff,#fff8d6)}
-.sun{position:absolute;right:18px;top:18px;width:74px;height:74px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff7a6,#ffc107);box-shadow:0 0 40px rgba(255,193,7,.55)}
-.cloud{position:absolute;background:rgba(255,255,255,.95);border-radius:999px}.cloud:before,.cloud:after{content:'';position:absolute;background:inherit;border-radius:999px}
-.cloud.a{left:26px;top:34px;width:108px;height:40px}.cloud.a:before{width:42px;height:42px;left:12px;top:-18px}.cloud.a:after{width:52px;height:52px;right:10px;top:-24px}
-.cloud.b{right:26px;top:96px;width:128px;height:46px}.cloud.b:before{width:46px;height:46px;left:18px;top:-18px}.cloud.b:after{width:58px;height:58px;right:18px;top:-28px}
-.trail{position:absolute;left:28px;right:28px;bottom:20px;top:112px;clip-path:polygon(0 100%,100% 100%,55% 0,45% 0);background:linear-gradient(180deg,#8d6e63,#5d4037);opacity:.9;border-radius:30px}
-.step{position:absolute;left:50%;transform:translateX(-50%);width:min(86%,640px);height:38px;border-radius:999px;background:linear-gradient(180deg,#90caf9,#42a5f5);border:2px solid rgba(255,255,255,.6);box-shadow:0 8px 18px rgba(0,0,0,.10)}
-.step.s1{bottom:34px}.step.s2{bottom:86px}.step.s3{bottom:142px}.step.s4{bottom:198px}.step.s5{bottom:256px}
-.tortoise{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);font-size:70px;filter:drop-shadow(0 10px 12px rgba(0,0,0,.14));transition:bottom .55s ease,left .55s ease}
-.note{position:absolute;left:18px;right:18px;bottom:16px;background:rgba(255,255,255,.88);border:1px solid var(--border);border-radius:18px;padding:12px 14px;font-size:16px;line-height:1.45;color:#4d5d70}
-.layout{display:grid;grid-template-columns:1.08fr .92fr;gap:16px;margin-top:16px}.box{background:rgba(255,255,255,.96);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow);padding:18px}
-.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}.hud-box{background:#fff;border:1px solid var(--border);border-radius:18px;padding:12px;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.06)}
-.hud-label{display:block;font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:.06em}.hud-val{display:block;margin-top:2px;font-size:22px;font-weight:900}
-.scenario{min-height:148px;background:#fff8e1;border-radius:22px;padding:16px 18px;margin-bottom:14px;display:grid;gap:10px}.scenario h2{font-size:clamp(24px,3vw,34px);color:var(--primary)}.scenario p{font-size:clamp(18px,2.2vw,22px);line-height:1.45;color:#355070}
-.choices{display:grid;gap:10px}.choice{border:none;border-radius:18px;padding:14px 16px;text-align:left;background:#f3f7fb;border:1px solid var(--border);font-size:18px;font-weight:700;min-height:52px}
-.choice.correct{background:#e8f5e9;border-color:#81c784}.choice.wrong{background:#ffebee;border-color:#ef9a9a}
-.status{min-height:28px;margin-top:12px;font-size:18px;font-weight:800}.good{color:var(--good)}.bad{color:var(--bad)}
-.progress-wrap{margin-top:14px;background:#eef2ff;border-radius:999px;height:18px;overflow:hidden;border:1px solid var(--border)}.progress{height:100%;width:0;background:linear-gradient(90deg,var(--secondary),#7c4dff);transition:width .3s ease}
-.tips{display:grid;gap:10px}.tip{background:#f8fafc;border:1px solid var(--border);border-radius:16px;padding:12px 14px;line-height:1.45;color:#4d5d70}
-.final-title{text-align:center;font-size:clamp(30px,5vw,54px);color:var(--good);margin-bottom:10px}.stars{text-align:center;font-size:52px;margin:10px 0 16px}.final-text{text-align:center;font-size:20px;line-height:1.45;margin-bottom:18px}
-.confetti{position:fixed;top:-20px;width:14px;height:14px;z-index:999;animation:fall 2.8s linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
-@media (max-width: 960px){.hero,.layout{grid-template-columns:1fr}.hud{grid-template-columns:repeat(2,1fr)}}
-@media (max-width: 560px){.screen{padding:10px}.card,.box{padding:14px;border-radius:22px}.btn{width:100%}.btn-row{flex-direction:column}.choice{font-size:17px}}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif; }
+:root {
+  --bg-gradient: linear-gradient(135deg, #eff6ff 0%, #faf5ff 100%);
+  --panel-bg: rgba(255, 255, 255, 0.92);
+  --text-dark: #0f172a;
+  --text-muted: #475569;
+  --primary: #f97316;
+  --primary-hover: #ea580c;
+  --secondary: #0ea5e9;
+  --accent: #f59e0b;
+  --good: #10b981;
+  --bad: #ef4444;
+  --shadow: 0 20px 35px rgba(249, 115, 22, 0.12);
+  --card-radius: 32px;
+}
+
+body { background: var(--bg-gradient); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
+
+button { border: none; font: inherit; cursor: pointer; transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+button:hover { transform: translateY(-4px) scale(1.01); }
+button:active { transform: translateY(1px); }
+
+.screen { display: none; min-height: 100vh; padding: 24px; place-items: center; }
+.screen.active { display: grid; animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.97) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+.wrap { width: min(1100px, 100%); margin: 0 auto; }
+.card { background: var(--panel-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 4px solid #ffffff; border-radius: var(--card-radius); box-shadow: var(--shadow); padding: 40px; }
+
+/* Studio Intro Splash Layout */
+#splashScreen { position: fixed; inset: 0; z-index: 9999; background: #ffffff; display: grid; place-items: center; transition: opacity 0.5s ease, visibility 0.5s; }
+.splash-box { text-align: center; }
+.studio-logo { max-width: 240px; height: auto; animation: logoBounce 2s infinite alternate ease-in-out; display: block; margin: 0 auto 24px auto; border-radius: 24px; }
+.splash-text { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: 0.5px; }
+@keyframes logoBounce { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-16px) scale(1.04); } }
+
+/* Menus & Hero Layout Design */
+.hero { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: center; }
+.title { font-size: clamp(38px, 6vw, 62px); color: var(--primary); line-height: 1.1; margin-bottom: 18px; font-weight: 900; text-shadow: 3px 3px 0px #fff, 4px 4px 15px rgba(0,0,0,0.05); }
+.lead { font-size: 20px; line-height: 1.6; color: #334155; margin-bottom: 28px; }
+.pills { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.pill { background: #fff7ed; color: var(--primary); font-weight: 800; padding: 8px 18px; border-radius: 999px; font-size: 14px; border: 2px solid rgba(249, 115, 22, 0.1); }
+
+.btn-row { display: flex; flex-wrap: wrap; gap: 16px; }
+.btn { padding: 18px 36px; font-size: 20px; font-weight: 800; border-radius: 24px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+.btn.primary { background: linear-gradient(135deg, var(--accent) 0%, #f59e0b 100%); color: #451a03; box-shadow: 0 12px 24px rgba(245, 158, 11, 0.35); border-bottom: 4px solid #d97706; }
+.btn.ghost { background: #f8fafc; color: var(--text-dark); border: 2px solid #e2e8f0; border-bottom: 4px solid #cbd5e1; }
+
+/* Game Dashboard Setup Layout */
+.layout { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 28px; margin-top: 24px; }
+.box { background: #ffffff; border-radius: var(--card-radius); padding: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); border: 2px solid #f1f5f9; }
+
+.canvas-holder { background: #bae6fd; border-radius: var(--card-radius); padding: 4px; position: relative; box-shadow: 0 12px 30px rgba(14, 165, 233, 0.15), inset 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; overflow: hidden; border: 4px solid #fff; }
+canvas { width: 100%; height: 180px; display: block; border-radius: calc(var(--card-radius) - 6px); }
+
+.hud { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+.hud-box { background: #fff; padding: 14px; border-radius: 24px; text-align: center; border: 2px solid #f1f5f9; box-shadow: 0 4px 15px rgba(0,0,0,0.01); transition: transform 0.3s ease; }
+.hud-box:hover { transform: translateY(-2px); }
+.hud-label { font-size: 12px; text-transform: uppercase; color: var(--text-muted); font-weight: 800; letter-spacing: 0.8px; }
+.hud-val { font-size: 26px; font-weight: 900; color: var(--text-dark); display: block; margin-top: 4px; }
+
+.scenario { min-height: 120px; background: #fffbeb; border-radius: 24px; padding: 24px; margin-bottom: 20px; border: 2px solid #fef3c7; border-left: 8px solid var(--primary); display: flex; flex-direction: column; justify-content: center; }
+.scenario h2 { font-size: 16px; color: var(--primary); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
+.scenario p { font-size: 22px; font-weight: 800; line-height: 1.4; color: #1e293b; }
+
+.choices { display: grid; gap: 14px; }
+.choice { width: 100%; border: 2px solid #e2e8f0; border-radius: 22px; padding: 18px 24px; text-align: left; background: #f8fafc; font-size: 18px; font-weight: 800; color: var(--text-dark); border-bottom: 5px solid #e2e8f0; }
+.choice:hover:not(:disabled) { background: #f0fdf4; border-color: var(--secondary); border-bottom-color: #0284c7; transform: translateX(6px); }
+.choice.correct { background: #d1fae5; border-color: var(--good); border-bottom-color: #059669; color: #065f46; animation: dynamicPop 0.3s ease forwards; }
+.choice.wrong { background: #fee2e2; border-color: var(--bad); border-bottom-color: #dc2626; color: #991b1b; }
+
+@keyframes dynamicPop { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+.status { min-height: 40px; margin-top: 16px; font-weight: 800; font-size: 18px; text-align: center; display: flex; align-items: center; justify-content: center; border-radius: 16px; padding: 6px; }
+.status.good { color: #047857; background: #ecfdf5; animation: bounce 0.4s ease; }
+.status.bad { color: #b91c1c; background: #fef2f2; animation: shake 0.4s ease; }
+
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+.progress-wrap { margin-top: 20px; background: #e2e8f0; border-radius: 999px; height: 16px; overflow: hidden; pading: 2px; }
+.progress { height: 100%; width: 0%; background: linear-gradient(90deg, #38bdf8, #0ea5e9); border-radius: 999px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+.tips { display: flex; flex-direction: column; gap: 12px; }
+.tip { background: #f8fafc; border-radius: 20px; padding: 16px; font-size: 15px; color: #475569; border: 2px solid #f1f5f9; border-left: 5px solid var(--secondary); line-height: 1.5; font-weight: 600; }
+
+/* End Screen Summary Design */
+.final-title { font-size: 46px; color: var(--primary); font-weight: 900; margin-bottom: 12px; text-shadow: 2px 2px 0px #fff; }
+.stars { font-size: 72px; margin: 20px 0; animation: logoBounce 1.5s infinite alternate ease-in-out; filter: drop-shadow(0 10px 15px rgba(245,158,11,0.2)); }
+.final-text { font-size: 20px; color: var(--text-muted); margin-bottom: 28px; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+.confetti { position: fixed; top: -20px; width: 14px; height: 14px; z-index: 9999; border-radius: 50%; animation: fall 3s linear forwards; }
+@keyframes fall { to { transform: translateY(105vh) rotate(720deg); opacity: 0; } }
+
+@media (max-width: 960px) { .hero, .layout { grid-template-columns: 1fr; } .hero { text-align: center; } .pills, .btn-row { justify-content: center; } }
+@media (max-width: 560px) { .hud { grid-template-columns: repeat(2, 1fr); } .btn-row { flex-direction: column; } }
 </style>
 </head>
 <body>
+
+<!-- Splash Screen / Studio Branding -->
 <section id="splashScreen" class="screen active">
-<div class="splash-box">
-<img src="./assets/innovine-logo.jpg" alt="Innovine logo" />
-<div style="font-size:clamp(18px,2.6vw,28px);font-weight:800;color:#ef6c00">Loading Timmy's Mountain Climb...</div>
-</div>
+  <div class="splash-box">
+    <img src="asset/innovine-logo.png" alt="Innovine logo" class="studio-logo" onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='block';" />
+    <div id="fallbackLogo" style="display:none; font-size:100px; margin-bottom:20px; animation: logoBounce 2s infinite alternate ease-in-out;">🏃‍♂️✨</div>
+    <div class="splash-text">Innovine Studios Presenting...</div>
+  </div>
 </section>
+
+<!-- Main Start Screen -->
 <section id="startScreen" class="screen">
-<div class="wrap card">
-<div class="hero">
-<div>
-<div class="pills"><div class="pill">Grade 3</div><div class="pill">Chapter 7: Determination</div><div class="pill">Adventure game</div></div>
-<h1 class="title">Timmy's Mountain Climb</h1>
-<p class="lead">Help Timmy the tortoise reach the mountain top by making determined choices and never giving up.</p>
-<div class="btn-row">
-<button class="btn primary" onclick="startGame()">Start Game</button>
-<button class="btn ghost" onclick="toggleSound()" id="soundBtn">Sound: On</button>
-</div>
-</div>
-<div class="mountain" aria-hidden="true">
-<div class="sun"></div><div class="cloud a"></div><div class="cloud b"></div><div class="trail"></div>
-<div class="step s1"></div><div class="step s2"></div><div class="step s3"></div><div class="step s4"></div><div class="step s5"></div>
-<div class="tortoise" id="previewTortoise">🐢</div>
-<div class="note">Determination means trying again, staying focused, and moving forward step by step.</div>
-</div>
-</div>
-<div class="layout">
-<div class="box"><h2 style="margin-bottom:10px;color:#ef6c00">How to play</h2><div class="tips"><div class="tip">Read each challenge.</div><div class="tip">Choose the determined action.</div><div class="tip">Each correct answer moves Timmy higher.</div></div></div>
-<div class="box"><h2 style="margin-bottom:10px;color:#ef6c00">Chapter focus</h2><div class="tips"><div class="tip">Never give up.</div><div class="tip">Learn from mistakes.</div><div class="tip">Keep going toward the goal.</div></div></div>
-</div>
-</div>
+  <div class="wrap card">
+    <div class="hero">
+      <div>
+        <div class="pills">
+          <div class="pill">🌟 Grade 2 Module</div>
+          <div class="pill">🏃‍♂️ Character Training</div>
+          <div class="pill">✨ Positive Behaviour</div>
+        </div>
+        <h1 class="title">Manners Marathon</h1>
+        <p class="lead">Sprint through the marathon racecourse checkpoints by identifying positive manners and kind values!</p>
+        <div class="btn-row">
+          <button class="btn primary" onclick="startGame()">Start Marathon! 🏁</button>
+          <button class="btn ghost" onclick="toggleSound()" id="soundBtn">Audio FX: On 🔊</button>
+        </div>
+      </div>
+      <div style="background: linear-gradient(135deg, #ffedd5, #fee2e2); border-radius: var(--card-radius); padding: 40px; text-align: center; font-size: 130px; box-shadow: inset 0 6px 15px rgba(0,0,0,0.02); border: 4px solid #fff;">
+        🏃‍♂️🏆
+      </div>
+    </div>
+    
+    <div class="layout">
+      <div class="box">
+        <h3 style="color:var(--primary); margin-bottom:14px; font-size:20px; font-weight:900;">🎮 Runner Playbook</h3>
+        <div class="tips">
+          <div class="tip">🧠 Read each checkpoint situation carefully.</div>
+          <div class="tip">⚡ Selecting the correct manner fuels your runner with a burst of running speed.</div>
+          <div class="tip">🎁 Every 3 consecutive steps triggers a high-reward Marathon Bonus Question!</div>
+        </div>
+      </div>
+      <div class="box">
+        <h3 style="color:var(--secondary); margin-bottom:14px; font-size:20px; font-weight:900;">🎯 Marathon Targets</h3>
+        <div class="tips">
+          <div class="tip">🗣️ Practice magic phrases like Please, Thank You, and Sorry.</div>
+          <div class="tip">🤝 Cooperate beautifully with class peers and helper friends.</div>
+          <div class="tip">🎖️ Build trust at home and school through true honesty.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
+
+<!-- Active Interactive Gameplay View Screen -->
 <section id="gameScreen" class="screen">
-<div class="wrap">
-<div class="hud">
-<div class="hud-box"><span class="hud-label">Score</span><span class="hud-val" id="scoreNum">0</span></div>
-<div class="hud-box"><span class="hud-label">Stage</span><span class="hud-val" id="roundNum">1</span></div>
-<div class="hud-box"><span class="hud-label">Lives</span><span class="hud-val" id="livesNum">3</span></div>
-<div class="hud-box"><span class="hud-label">Steps</span><span class="hud-val" id="stepsNum">0</span></div>
-</div>
-<div class="layout">
-<div class="box">
-<div class="scenario"><h2>Challenge</h2><p id="scenarioText"></p></div>
-<div class="choices" id="choices"></div>
-<div class="status" id="statusText"></div>
-<div class="progress-wrap"><div class="progress" id="progressBar"></div></div>
-</div>
-<div class="box">
-<h2 style="margin-bottom:10px;color:#ef6c00">Determination tips</h2>
-<div class="tips"><div class="tip">Keep trying even if the path is steep.</div><div class="tip">Mistakes are part of learning.</div><div class="tip">Small steps lead to big success.</div><div class="tip">Believe in yourself.</div></div>
-</div>
-</div>
-</div>
+  <div class="wrap">
+    <div class="hud">
+      <div class="hud-box"><span class="hud-label">Quest Score</span><span class="hud-val" id="scoreNum">0</span></div>
+      <div class="hud-box"><span class="hud-label">Race Lap</span><span class="hud-val" id="roundNum">1</span></div>
+      <div class="hud-box"><span class="hud-label">Energy Hearts</span><span class="hud-val" id="livesNum" style="color:#ef4444;">❤️ ❤️ ❤️</span></div>
+      <div class="hud-box"><span class="hud-label">Steps Taken</span><span class="hud-val" id="stepsNum">0</span></div>
+    </div>
+
+    <!-- Interactive Track Canvas Component Window Area -->
+    <div class="canvas-holder">
+      <canvas id="marathonCanvas" width="850" height="180"></canvas>
+    </div>
+
+    <div class="layout">
+      <div class="box">
+        <div class="scenario">
+          <h2 id="checkpointHeader">Checkpoint</h2>
+          <p id="scenarioText">Loading next track challenge...</p>
+        </div>
+        <div class="choices" id="choices"></div>
+        <div class="status" id="statusText"></div>
+        <div class="progress-wrap"><div class="progress" id="progressBar"></div></div>
+      </div>
+
+      <div class="box" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <h3 style="color:var(--primary); margin-bottom:14px; font-size:18px; font-weight:900;">💡 Pro Runner Tips</h3>
+          <div class="tips">
+            <div class="tip">Polite runners build a warm community where everyone finishes with a smile.</div>
+            <div class="tip">Honesty is a superpower that helps resolve accidents or broken rules smoothly!</div>
+          </div>
+        </div>
+        <div style="font-size: 60px; text-align: center; margin-top: 20px; opacity: 0.9; animation: logoBounce 2s infinite alternate ease-in-out;">🏅🌈</div>
+      </div>
+    </div>
+  </div>
 </section>
+
+<!-- End / Complete Screen Summary Wrap View -->
 <section id="endScreen" class="screen">
-<div class="wrap card">
-<div class="final-title" id="finalTitle">Great climb!</div>
-<div class="stars" id="finalStars">🌟🌟🌟</div>
-<div class="final-text" id="finalText">Timmy reached the top because he kept going.</div>
-<div style="text-align:center;font-size:20px;margin-bottom:14px;">Final Score: <strong id="finalScore">0</strong>/12</div>
-<div class="btn-row" style="justify-content:center"><button class="btn primary" onclick="startGame()">Play Again</button></div>
-</div>
+  <div class="wrap card" style="text-align: center; max-width: 580px;">
+    <div class="final-title" id="finalTitle">Marathon Complete!</div>
+    <div class="stars" id="finalStars">🌟🌟🌟</div>
+    <div class="final-text" id="finalText">Excellent behavior choices observed! You are certified as a Manners Champion.</div>
+    <div style="font-size: 26px; font-weight: 800; margin-bottom: 28px; color: var(--text-dark);">
+      Final Total Score: <span id="finalScore" style="color:var(--primary); font-size:36px; font-weight:900;">0</span> Points
+    </div>
+    <div class="btn-row" style="justify-content:center;">
+      <button class="btn primary" onclick="startGame()">Race Again 🔄</button>
+    </div>
+  </div>
 </section>
+
+<!-- Invisible Audio Sound Assets -->
 <audio id="correctSound" preload="auto" src="./assets/correct.mp3"></audio>
 <audio id="wrongSound" preload="auto" src="./assets/wrong.mp3"></audio>
 <audio id="clapSound" preload="auto" src="./assets/clapping.mp3"></audio>
+
 <script>
-const scenarios=[
-{q:'Timmy slips on the steep path.',options:['Try again and keep climbing.','Sit down forever.','Tell everyone the dream is impossible.'],answer:'Try again and keep climbing.',tip:'Determined people keep going after a slip.'},
-{q:'The mountain looks very high.',options:['Break the journey into small steps.','Give up immediately.','Turn back and stop dreaming.'],answer:'Break the journey into small steps.',tip:'Small steps make hard goals easier.'},
-{q:'A friend laughs at Timmy.',options:['Stay focused on the goal.','Stop because of the laugh.','Argue and leave the mountain.'],answer:'Stay focused on the goal.',tip:'Determination keeps attention on the goal.'},
-{q:'Timmy feels tired.',options:['Rest briefly, then continue.','Quit the climb.','Sleep forever on the path.'],answer:'Rest briefly, then continue.',tip:'Good determination includes smart effort.'},
-{q:'A rocky path blocks the way.',options:['Find a safe way around it.','Sit and complain.','Say the mountain is too hard.'],answer:'Find a safe way around it.',tip:'Determined minds solve problems.'},
-{q:'Timmy makes a mistake.',options:['Learn and try again.','Hide and never try.','Blame the mountain.'],answer:'Learn and try again.',tip:'Mistakes help us grow stronger.'},
-{q:'The path becomes narrow.',options:['Move carefully step by step.','Run blindly.','Stop for good.'],answer:'Move carefully step by step.',tip:'Careful effort is still determined effort.'},
-{q:'The owl gives advice.',options:['Listen and keep going.','Ignore the advice.','Say help is useless.'],answer:'Listen and keep going.',tip:'Good advice can build confidence.'},
-{q:'Timmy is near the top.',options:['Finish the climb with patience.','Give up because it is close.','Go back down.'],answer:'Finish the climb with patience.',tip:'The last steps are important too.'},
-{q:'The goal seems far away.',options:['Believe in yourself.','Think you cannot do it.','Stop trying now.'],answer:'Believe in yourself.',tip:'Self-belief powers determination.'},
-{q:'The mountain trek takes time.',options:['Keep working day by day.','Expect success without effort.','Refuse to continue.'],answer:'Keep working day by day.',tip:'Determination grows with steady effort.'},
-{q:'Timmy wants to inspire others.',options:['Show courage by reaching the top.','Quit to stay safe.','Say dreams do not matter.'],answer:'Show courage by reaching the top.',tip:'A determined person can inspire others.'}
+const scenarios = [
+  {q:'🤝 A friend shares crayons with you during drawing time.',options:['Say thank you.','Take them and run away.','Hide them from others.'],answer:'Say thank you.',tip:'Gratitude is good manners.'},
+  {q:'📚 Someone drops their heavy books in the hallway.',options:['Help pick them up.','Laugh at them.','Walk away.'],answer:'Help pick them up.',tip:'Helping is positive behaviour.'},
+  {q:'🏃‍♂️ You arrive late to the classroom recess line.',options:['Join politely at the end.','Push to the front.','Shout at others.'],answer:'Join politely at the end.',tip:'Following rules is respectful.'},
+  {q:'✏️ You accidentally break a classmate\'s pencil.',options:['Say sorry and offer yours.','Blame someone else.','Pretend it never happened.'],answer:'Say sorry and offer yours.',tip:'Honesty helps build trust.'},
+  {q:'👩‍🏫 The teacher is explaining a fun new game.',options:['Listen quietly.','Talk over the teacher.','Leave the room loudly.'],answer:'Listen quietly.',tip:'Listening is part of good behaviour.'},
+  {q:'🗑️ You see a crumpled scrap paper on the floor.',options:['Pick it up and throw it away.','Kick it around.','Leave it there.'],answer:'Pick it up and throw it away.',tip:'Small helpful actions matter.'},
+  {q:'🧸 A younger child is looking lost on the playground.',options:['Show kindness and help.','Ignore the child.','Make fun of them.'],answer:'Show kindness and help.',tip:'Kindness makes the world brighter.'},
+  {q:'🎁 Someone surprises you with a nice birthday gift.',options:['Say thank you and smile.','Take it without a word.','Throw it away.'],answer:'Say thank you and smile.',tip:'Politeness shows respect.'},
+  {q:'😢 Your best friend is feeling sad today.',options:['Speak kindly and comfort them.','Laugh at them.','Be rude.'],answer:'Speak kindly and comfort them.',tip:'Kind words can help a lot.'},
+  {q:'🧩 You want to use a toy that another child has.',options:['Ask politely and wait.','Grab it quickly.','Snatch it away.'],answer:'Ask politely and wait.',tip:'Good manners include patience.'},
+  {q:'🎨 The class needs everyone to work together cleanly.',options:['Help and cooperate.','Refuse to join.','Cause trouble.'],answer:'Help and cooperate.',tip:'Positive behaviour helps the group.'},
+  {q:'📢 You feel very upset and want to shout out loud.',options:['Use a calm voice.','Yell at everyone.','Break things.'],answer:'Use a calm voice.',tip:'Self-control is part of character.'}
 ];
 
-const rewards=[
-{q:'What does determination mean?',options:['Not giving up.','Never trying.','Complaining a lot.'],answer:'Not giving up.'},
-{q:'What should you do after failure?',options:['Learn and try again.','Stop forever.','Blame everyone.'],answer:'Learn and try again.'},
-{q:'What helps when a goal feels hard?',options:['Small steps.','No effort.','Avoiding the goal.'],answer:'Small steps.'},
-{q:'A determined person has a ________ attitude.',options:['Never-give-up.','Lazy.','Careless.'],answer:'Never-give-up.'}
+const rewards = [
+  {q:'🌟 What does positive behaviour mean?',options:['Being helpful, kind, and respectful.','Being rude to others.','Ignoring rules.'],answer:'Being helpful, kind, and respectful.'},
+  {q:'🙌 What should you say when someone opens a door for you?',options:['Thank you!','No way.','Go away.'],answer:'Thank you!'},
+  {q:'🚦 Which action shows excellent playground manners?',options:['Waiting your turn for slides.','Cutting the line.','Taking things away.'],answer:'Waiting your turn for slides.'},
+  {q:'🩹 What should you do after making a mistake?',options:['Say sorry.','Blame others.','Laugh.'],answer:'Say sorry.'}
 ];
 
-const splash=document.getElementById('splashScreen');
-let soundOn=true,current=0,score=0,lives=3,steps=0,lock=false,shuffled=[],usedReward=[];
-const correctSound=document.getElementById('correctSound');
-const wrongSound=document.getElementById('wrongSound');
-const clapSound=document.getElementById('clapSound');
-function show(id){['startScreen','gameScreen','endScreen'].forEach(x=>document.getElementById(x).classList.remove('active'));document.getElementById(id).classList.add('active')}
-function toggleSound(){soundOn=!soundOn;document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off'}
-function play(a){if(!soundOn)return;a.currentTime=0;a.play().catch(()=>{})}
-function hideSplash(){splash.classList.remove('active');show('startScreen')}
-window.addEventListener('load',()=>setTimeout(hideSplash,2200));
-function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function updateHud(){document.getElementById('scoreNum').textContent=score;document.getElementById('roundNum').textContent=current+1;document.getElementById('livesNum').textContent=lives;document.getElementById('stepsNum').textContent=steps;document.getElementById('progressBar').style.width=((current)/scenarios.length*100)+'%';moveTortoise()}
-function moveTortoise(){const gameTort=document.getElementById('previewTortoise');const bottoms=['28px','82px','136px','190px','244px','298px'];gameTort.style.bottom=bottoms[Math.min(steps,5)];}
-function startGame(){current=0;score=0;lives=3;steps=0;lock=false;usedReward=[];shuffled=shuffle(scenarios);show('gameScreen');loadRound()}
-function loadRound(){if(current>=shuffled.length){endGame();return}lock=false;const s=shuffled[current];document.getElementById('scenarioText').textContent=s.q;document.getElementById('statusText').textContent='';const choices=document.getElementById('choices');choices.innerHTML='';shuffle(s.options).forEach(opt=>{const b=document.createElement('button');b.className='choice';b.textContent=opt;b.onclick=()=>pick(b,opt,s);choices.appendChild(b)});updateHud()}
-function pick(button,opt,s){if(lock)return;lock=true;[...document.querySelectorAll('.choice')].forEach(b=>b.disabled=true);if(opt===s.answer){score+=10;steps+=1;button.classList.add('correct');document.getElementById('statusText').textContent='Correct! ' + s.tip;document.getElementById('statusText').className='status good';play(correctSound);updateHud();if(steps%3===0){setTimeout(showReward,600);return}setTimeout(nextRound,1000)}else{lives-=1;button.classList.add('wrong');document.getElementById('statusText').textContent='Keep going. ' + s.tip;document.getElementById('statusText').className='status bad';play(wrongSound);updateHud();if(lives<=0){setTimeout(()=>endGame(false),900);return}setTimeout(nextRound,1100)}}
-function nextRound(){current+=1;loadRound()}
-function showReward(){const available=rewards.map((_,i)=>i).filter(i=>!usedReward.includes(i));const idx=available.length?available[Math.floor(Math.random()*available.length)]:Math.floor(Math.random()*rewards.length);if(!usedReward.includes(idx))usedReward.push(idx);const q=rewards[idx];document.getElementById('scenarioText').textContent='Reward Question';document.getElementById('statusText').textContent=q.q;document.getElementById('statusText').className='status';const choices=document.getElementById('choices');choices.innerHTML='';shuffle(q.options).forEach(opt=>{const b=document.createElement('button');b.className='choice';b.textContent=opt;b.onclick=()=>{if(lock)return;lock=true;[...document.querySelectorAll('.choice')].forEach(x=>x.disabled=true);if(opt===q.answer){score+=5;steps+=1;document.getElementById('statusText').textContent='Correct! Keep believing in yourself.';document.getElementById('statusText').className='status good';play(correctSound)}else{document.getElementById('statusText').textContent='Good try! Right answer: ' + q.answer;document.getElementById('statusText').className='status bad';play(wrongSound)}updateHud();setTimeout(()=>{current+=1;loadRound()},1200)};choices.appendChild(b)})}
-function burst(){const colors=['#ff5252','#ffca28','#66bb6a','#42a5f5','#ab47bc','#ef6c00'];for(let i=0;i<36;i++){const d=document.createElement('div');d.className='confetti';d.style.left=Math.random()*100+'vw';d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.animationDelay=Math.random()*0.4+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3200)}}
-function endGame(win=true){show('endScreen');document.getElementById('finalScore').textContent=score;const title=document.getElementById('finalTitle');const text=document.getElementById('finalText');const stars=document.getElementById('finalStars');if(score>=80){title.textContent='Mountain Champion!';text.textContent='Timmy reached the top because he never gave up.';stars.textContent='🌟🌟🌟';burst();play(clapSound)}else if(score>=50){title.textContent='Strong Climber!';text.textContent='You showed determination and made great progress.';stars.textContent='🌟🌟';burst()}else{title.textContent='Keep Climbing!';text.textContent='Try again and remember that small steps lead to success.';stars.textContent='🌟'}}
+// Interactive Track Canvas Engine Variables
+const canvas = document.getElementById('marathonCanvas');
+const ctx = canvas.getContext('2d');
+let runnerPos = 40;
+let targetRunnerPos = 40;
+let runnerState = 'idle'; // 'idle', 'running', 'stumble'
+let bobAngle = 0;
+let trackParticles = [];
+let cloudX1 = 100, cloudX2 = 500; // Parallax background environment values
+
+let audioCtx = null, soundOn = true, current = 0, score = 0, lives = 3, steps = 0, lock = false, shuffled = [], usedReward = [];
+const correctSound = document.getElementById('correctSound');
+const wrongSound = document.getElementById('wrongSound');
+const clapSound = document.getElementById('clapSound');
+
+function show(id){
+  ['startScreen','gameScreen','endScreen'].forEach(x => document.getElementById(x).classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function toggleSound(){
+  soundOn = !soundOn;
+  document.getElementById('soundBtn').textContent = soundOn ? 'Audio FX: On 🔊' : 'Audio FX: Off 🔇';
+}
+
+function playTone(f, d, type='triangle'){
+  if(!soundOn) return;
+  try {
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = type; o.frequency.value = f; o.connect(g); g.connect(audioCtx.destination);
+    g.gain.value = 0.05; o.start(); g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + d); o.stop(audioCtx.currentTime + d);
+  } catch(e){}
+}
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splashScreen');
+    splash.style.opacity = '0';
+    splash.style.visibility = 'hidden';
+    show('startScreen');
+  }, 1800);
+});
+
+function shuffle(arr){
+  const a = [...arr];
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function updateHud(){
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('roundNum').textContent = current + 1;
+  document.getElementById('stepsNum').textContent = steps;
+  document.getElementById('progressBar').style.width = ((current) / scenarios.length * 100) + '%';
+  
+  let heartsText = '';
+  for(let i=0; i<3; i++) heartsText += (i < lives) ? '❤️ ' : '🖤 ';
+  document.getElementById('livesNum').textContent = heartsText;
+
+  // Calculate proportional target pixel positions safely along dynamic course length
+  const progressRatio = Math.min(steps / scenarios.length, 1);
+  targetRunnerPos = 60 + progressRatio * (canvas.width - 180);
+}
+
+function startGame(){
+  current = 0; score = 0; lives = 3; steps = 0; lock = false; usedReward = [];
+  shuffled = shuffle(scenarios);
+  show('gameScreen');
+  updateHud();
+  runnerPos = 60; targetRunnerPos = 60;
+  loadRound();
+}
+
+function loadRound(){
+  if(current >= shuffled.length || lives <= 0){
+    endGame(lives > 0);
+    return;
+  }
+  lock = false;
+  runnerState = 'idle';
+  const s = shuffled[current];
+  document.getElementById('checkpointHeader').textContent = `🏅 Checkpoint ${current + 1}`;
+  document.getElementById('scenarioText').textContent = s.q;
+  document.getElementById('statusText').textContent = '';
+  document.getElementById('statusText').className = 'status';
+
+  const choices = document.getElementById('choices');
+  choices.innerHTML = '';
+  shuffle(s.options).forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'choice';
+    b.textContent = opt;
+    b.onclick = () => pick(b, opt, s);
+    choices.appendChild(b);
+  });
+  updateHud();
+}
+
+function pick(button, opt, s){
+  if(lock) return;
+  lock = true;
+  document.querySelectorAll('.choice').forEach(b => b.disabled = true);
+  const statusEl = document.getElementById('statusText');
+
+  if(opt === s.answer){
+    score += 10;
+    steps += 1;
+    runnerState = 'running';
+    button.classList.add('correct');
+    statusEl.textContent = '⚡ Brilliant Choice! ' + s.tip;
+    statusEl.className = 'status good';
+    
+    // Trigger gorgeous high-density canvas visual bursts
+    const particleColors = ['#ffca28', '#10b981', '#60a5fa', '#f472b6', '#a78bfa'];
+    for(let i=0; i<20; i++) {
+      trackParticles.push({
+        x: runnerPos, y: 125,
+        vx: (Math.random() - 0.7) * 7 - 2, vy: (Math.random() - 0.6) * 6 - 3,
+        color: particleColors[Math.floor(Math.random()*particleColors.length)], 
+        radius: Math.random() * 5 + 3, alpha: 1
+      });
+    }
+
+    try { correctSound.play().catch(() => playTone(587.33, 0.15)); } catch(e){ playTone(587.33, 0.15); }
+    updateHud();
+
+    if(steps % 3 === 0){
+      setTimeout(showReward, 1300);
+      return;
+    }
+    setTimeout(nextRound, 1500);
+  } else {
+    lives -= 1;
+    runnerState = 'stumble';
+    button.classList.add('wrong');
+    statusEl.textContent = '⚠️ Stumble! Let\'s think about safety next time. ' + s.tip;
+    statusEl.className = 'status bad';
+    
+    try { wrongSound.play().catch(() => playTone(220, 0.3, 'sawtooth')); } catch(e){ playTone(220, 0.3, 'sawtooth'); }
+    updateHud();
+
+    if(lives <= 0){
+      setTimeout(() => endGame(false), 1500);
+      return;
+    }
+    setTimeout(nextRound, 1700);
+  }
+}
+
+function nextRound(){
+  current += 1;
+  loadRound();
+}
+
+function showReward(){
+  lock = false;
+  runnerState = 'idle';
+  const available = rewards.map((_,i)=>i).filter(i=>!usedReward.includes(i));
+  const idx = available.length ? available[Math.floor(Math.random()*available.length)] : Math.floor(Math.random()*rewards.length);
+  if(!usedReward.includes(idx)) usedReward.push(idx);
+  
+  const q = rewards[idx];
+  document.getElementById('checkpointHeader').textContent = '🎁 Marathon Bonus Zone!';
+  document.getElementById('scenarioText').textContent = q.q;
+  
+  const choices = document.getElementById('choices');
+  choices.innerHTML = '';
+  
+  shuffle(q.options).forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'choice';
+    b.textContent = opt;
+    b.onclick = () => {
+      if(lock) return;
+      lock = true;
+      document.querySelectorAll('.choice').forEach(x => x.disabled = true);
+      const statusEl = document.getElementById('statusText');
+
+      if(opt === q.answer){
+        score += 15;
+        steps += 1;
+        runnerState = 'running';
+        statusEl.textContent = '🌈 Outstanding Manners Mastered! +15 Pts';
+        statusEl.className = 'status good';
+        try { correctSound.play().catch(()=>playTone(659.25, 0.15)); } catch(e){}
+      } else {
+        statusEl.textContent = 'Good try! Perfect Solution: ' + q.answer;
+        statusEl.className = 'status bad';
+        runnerState = 'stumble';
+        try { wrongSound.play().catch(()=>playTone(180, 0.3, 'sawtooth')); } catch(e){}
+      }
+      updateHud();
+      setTimeout(() => { current += 1; loadRound(); }, 1600);
+    };
+    choices.appendChild(b);
+  });
+}
+
+function burst(){
+  const colors = ['#f97316','#eab308','#10b981','#0ea5e9','#a855f7'];
+  for(let i=0; i<40; i++){
+    const d = document.createElement('div');
+    d.className = 'confetti';
+    d.style.left = Math.random() * 100 + 'vw';
+    d.style.background = colors[Math.floor(Math.random() * colors.length)];
+    d.style.animationDelay = Math.random() * 0.5 + 's';
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), 3000);
+  }
+}
+
+function endGame(win = true){
+  show('endScreen');
+  document.getElementById('finalScore').textContent = score;
+  const title = document.getElementById('finalTitle');
+  const text = document.getElementById('finalText');
+  const stars = document.getElementById('finalStars');
+
+  if(score >= 80 && win){
+    title.textContent = 'Manners Champion! 🏆';
+    text.textContent = 'Sensational race! You demonstrated flawless etiquette choices and rules respect across all zones.';
+    stars.textContent = '🌟🌟🌟';
+    burst();
+    try { clapSound.play().catch(() => {}); } catch(e){}
+  } else if(score >= 40 && win){
+    title.textContent = 'Great Finish Line! 🥈';
+    text.textContent = 'Wonderful effort! You selected many helpful, polite choices throughout your tracks.';
+    stars.textContent = '🌟🌟';
+    burst();
+  } else {
+    title.textContent = 'Keep Practising! 📑';
+    text.textContent = 'Remember to use key words like please, sorry, and thank you. Try running the lap again!';
+    stars.textContent = '🌟';
+  }
+}
+
+// 2D Canvas Graphics Rich Environment Animation Loop
+function updateCanvasLoop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Smooth lerping character positioning translation matrices
+  runnerPos += (targetRunnerPos - runnerPos) * 0.07;
+  bobAngle += 0.22;
+
+  // Render Atmosphere sky skyboxes
+  let skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  skyGradient.addColorStop(0, '#bae6fd');
+  skyGradient.addColorStop(0.6, '#e0f2fe');
+  skyGradient.addColorStop(1, '#f0fdf4');
+  ctx.fillStyle = skyGradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Animate and draw scenic backdrop clouds
+  cloudX1 = (cloudX1 - 0.25) < -80 ? canvas.width : cloudX1 - 0.25;
+  cloudX2 = (cloudX2 - 0.15) < -80 ? canvas.width : cloudX2 - 0.15;
+  
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+  // Cloud 1
+  ctx.beginPath(); ctx.arc(cloudX1, 35, 18, 0, Math.PI*2); ctx.arc(cloudX1+15, 30, 22, 0, Math.PI*2); ctx.arc(cloudX1+32, 35, 16, 0, Math.PI*2); ctx.fill();
+  // Cloud 2
+  ctx.beginPath(); ctx.arc(cloudX2, 45, 14, 0, Math.PI*2); ctx.arc(cloudX2+12, 40, 18, 0, Math.PI*2); ctx.arc(cloudX2+26, 45, 12, 0, Math.PI*2); ctx.fill();
+
+  // Draw natural grass hills base layers
+  ctx.fillStyle = '#4ade80';
+  ctx.fillRect(0, 95, canvas.width, canvas.height - 95);
+  ctx.fillStyle = '#22c55e';
+  ctx.fillRect(0, 95, canvas.width, 4);
+
+  // Draw modern running athletic sports track textures
+  ctx.fillStyle = '#ea580c'; // Warm brick-red track tone
+  ctx.fillRect(0, 105, canvas.width, 55);
+  ctx.fillStyle = '#c2410c'; // Track depths edge accents
+  ctx.fillRect(0, 105, canvas.width, 3);
+  ctx.fillRect(0, 160, canvas.width, 3);
+  
+  // Track white corridor lane line strokes
+  ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([20, 15]);
+  ctx.beginPath(); ctx.moveTo(0, 132); ctx.lineTo(canvas.width, 132); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw dynamic milestone decorations (Marathon Pennant Flags)
+  for(let m=1; m<=4; m++) {
+    let flagX = (canvas.width / 5) * m;
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillRect(flagX, 85, 3, 20);
+    ctx.beginPath();
+    ctx.moveTo(flagX, 85); ctx.lineTo(flagX + 16, 90); ctx.lineTo(flagX, 95);
+    ctx.fillStyle = '#ef4444'; ctx.fill();
+  }
+
+  // Draw Finish structural gate target indicators
+  let finishX = canvas.width - 100;
+  ctx.fillStyle = '#334155';
+  ctx.fillRect(finishX, 75, 8, 85);
+  ctx.fillRect(finishX + 50, 75, 8, 85);
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillRect(finishX - 10, 70, 78, 16);
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('FINISH LINE', finishX - 3, 82);
+
+  // Render and update speed dust particles safely
+  trackParticles.forEach((p, index) => {
+    p.x += p.vx; p.y += p.vy; p.alpha -= 0.025;
+    if(p.alpha <= 0) { trackParticles.splice(index, 1); return; }
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.alpha;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2); ctx.fill();
+  });
+  ctx.globalAlpha = 1.0;
+
+  // Render dynamic avatar characters based on sprint states
+  let runnerEmoji = '🏃‍♂️';
+  let heightBob = Math.sin(bobAngle) * 5;
+
+  if (runnerState === 'running') {
+    runnerEmoji = '🏃‍♂️';
+    heightBob = Math.sin(bobAngle * 2.5) * 8;
+    
+    // Additional sprint rainbow line trail effect on correct answers
+    ctx.font = '28px Arial';
+    ctx.fillText('✨✨', runnerPos - 45, 125 + heightBob);
+  } else if (runnerState === 'stumble') {
+    runnerEmoji = '🚶‍♂️';
+    heightBob = 2;
+    ctx.font = '26px Arial';
+    ctx.fillText('💫', runnerPos + 12, 100);
+  }
+
+  // Transform canvas matrix horizontally locally to flip the emoji to face forward (Right)
+  ctx.save();
+  ctx.translate(runnerPos, 128 + heightBob);
+  ctx.scale(-1, 1); // Flips horizontally clean without distortion loops
+  ctx.font = '46px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  
+  // Cast simple smooth baseline shadows below character bounds
+  ctx.fillStyle = 'rgba(0,0,0,0.18)';
+  ctx.beginPath();
+  ctx.ellipse(0, 22 - heightBob, 16, 5, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.fillText(runnerEmoji, 0, 0);
+  ctx.restore();
+
+  requestAnimationFrame(updateCanvasLoop);
+}
+
+// Fire up graphic drawing loop automatically
+requestAnimationFrame(updateCanvasLoop);
 </script>
 </body>
 </html>
