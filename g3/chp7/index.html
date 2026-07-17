@@ -36,7 +36,7 @@ button:active { transform: translateY(1px); }
 /* Studio Intro Splash Layout */
 #splashScreen { position: fixed; inset: 0; z-index: 9999; background: #ffffff; display: grid; place-items: center; transition: opacity 0.5s ease, visibility 0.5s; }
 .splash-box { text-align: center; }
-.studio-logo { max-width: 280px; height: auto; animation: logoBounce 2s infinite alternate ease-in-out; display: block; margin: 0 auto 24px auto; }
+.studio-logo { max-width: 320px; width: 90%; height: auto; animation: logoBounce 2s infinite alternate ease-in-out; display: block; margin: 0 auto 24px auto; }
 .splash-text { font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: 0.5px; opacity: 0.8; }
 @keyframes logoBounce { 0% { transform: translateY(0); } 100% { transform: translateY(-12px); } }
 
@@ -93,9 +93,9 @@ canvas { width: 100%; height: 100%; display: block; }
 <!-- Studio Branding Opener Splash Screen -->
 <section id="splashScreen">
   <div class="splash-box">
-    <!-- Using provided image file safely with interactive alt-fallback text validation -->
-    <img src="asset/innovine-logo.png" alt="Innovine Solutions Logo" class="studio-logo" onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='block';" />
-    <div id="fallbackLogo" style="display:none; font-size:72px; margin-bottom:20px;">🏔️✨</div>
+    <!-- Updated path to look straight into the standard runtime folder for the file -->
+    <img src="innovine-logo.png" alt="Innovine Solutions Logo" class="studio-logo" id="innovineLogoImg" onerror="handleLogoError();" />
+    <div id="fallbackLogo" style="display:none; font-size:80px; margin-bottom:20px;">⛰️✨</div>
     <div class="splash-text">Innovine Solutions</div>
   </div>
 </section>
@@ -168,6 +168,12 @@ canvas { width: 100%; height: 100%; display: block; }
 </section>
 
 <script>
+// Safety checker if the asset image fails to display instantly
+function handleLogoError() {
+  document.getElementById('innovineLogoImg').style.display = 'none';
+  document.getElementById('fallbackLogo').style.display = 'block';
+}
+
 // Grade 3 specific Determination Framework Scenarios Array Data
 const stages = [
   {
@@ -248,7 +254,7 @@ window.addEventListener('DOMContentLoaded', () => {
       splash.style.display = 'none';
       switchView('startScreen');
     }, 500);
-  }, 2200);
+  }, 2500);
 });
 
 function switchView(id) {
@@ -287,7 +293,6 @@ function renderStage() {
   fb.className = 'feedback-text';
 
   // Calculate coordinates mapping for path points on mountain mapping structure
-  const totalStages = stages.length;
   targetTimmyX = 100 + (currentStage * 65);
   targetTimmyY = 340 - (currentStage * 75);
 
@@ -295,7 +300,6 @@ function renderStage() {
   const choicesBox = document.getElementById('choicesBox');
   choicesBox.innerHTML = '';
   
-  // Render randomized button alternatives to build dynamic replay value
   const formattedOptions = [...currentData.options];
   if(Math.random() > 0.5) formattedOptions.reverse();
 
@@ -325,8 +329,8 @@ function evaluateChoice(btnElement, choiceObj) {
     btnElement.classList.add('correct');
     fb.textContent = '✨ Excellent Choice! ' + choiceObj.tip;
     fb.className = 'feedback-text good';
-    playTone(523.25, 0.15); // C5 notes
-    setTimeout(() => playTone(659.25, 0.2), 150); // E5 notes
+    playTone(523.25, 0.15); 
+    setTimeout(() => playTone(659.25, 0.2), 150); 
     
     setTimeout(() => {
       currentStage++;
@@ -336,14 +340,13 @@ function evaluateChoice(btnElement, choiceObj) {
     btnElement.classList.add('wrong');
     fb.textContent = '🏃‍♂️ ' + choiceObj.tip;
     fb.className = 'feedback-text bad';
-    playTone(293.66, 0.3, 'sawtooth'); // D4 notes
+    playTone(293.66, 0.3, 'sawtooth'); 
     
     if(determination <= 0) {
       setTimeout(() => {
         handleEndGame(false);
       }, 2000);
     } else {
-      // Allow determined student to retry alternate option path securely
       setTimeout(() => {
         actionLocked = false;
         document.querySelectorAll('.choice:not(.wrong)').forEach(b => b.disabled = false);
@@ -388,7 +391,6 @@ function loop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   bobbingValue += 0.08;
 
-  // Draw Skyline Gradient values safely
   let sky = ctx.createLinearGradient(0,0,0, canvas.height);
   sky.addColorStop(0, '#bae6fd');
   sky.addColorStop(0.5, '#e0f2fe');
@@ -396,11 +398,9 @@ function loop() {
   ctx.fillStyle = sky;
   ctx.fillRect(0,0, canvas.width, canvas.height);
 
-  // Draw Sun element
   ctx.fillStyle = '#fef08a';
   ctx.beginPath(); ctx.arc(400, 50, 25, 0, Math.PI*2); ctx.fill();
 
-  // Draw Mount Slope Outline Vector
   ctx.fillStyle = '#cbd5e1';
   ctx.beginPath();
   ctx.moveTo(0, 400);
@@ -413,13 +413,11 @@ function loop() {
   ctx.lineTo(460, 400);
   ctx.fill();
 
-  // Forest & Evergreen ground paths cover accent layers
   ctx.fillStyle = '#22c55e';
   ctx.beginPath();
   ctx.moveTo(0,400); ctx.lineTo(100, 350); ctx.lineTo(180, 400);
   ctx.fill();
 
-  // Snowy cap visual textures indicators near the summit peaks
   ctx.fillStyle = '#f8fafc';
   ctx.beginPath();
   ctx.moveTo(340, 120);
@@ -429,7 +427,6 @@ function loop() {
   ctx.lineTo(460, 150);
   ctx.fill();
 
-  // Highlight Guide Flags at structural intervals
   stages.forEach((st, i) => {
     let fx = 100 + (i * 65);
     let fy = 340 - (i * 75);
@@ -442,19 +439,15 @@ function loop() {
     ctx.fill();
   });
 
-  // Interpolate Smooth Avatar movement transformations coordinates safely
   timmyX += (targetTimmyX - timmyX) * 0.05;
   timmyY += (targetTimmyY - timmyY) * 0.05;
 
-  // Apply character height adjustments dynamically
   let calculatedBob = Math.sin(bobbingValue) * 3;
 
-  // Render Character Avatar via high performance text emoji strings
   ctx.save();
   ctx.font = '36px Arial';
   ctx.textAlign = 'center';
   
-  // Render soft grounding shadow beneath avatar feet tracking layers
   ctx.fillStyle = 'rgba(0,0,0,0.1)';
   ctx.beginPath();
   ctx.ellipse(timmyX, timmyY + 12, 12, 4, 0, 0, Math.PI*2);
@@ -466,7 +459,6 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
-// Instantiate automated render tracking operations loop securely
 requestAnimationFrame(loop);
 </script>
 </body>
