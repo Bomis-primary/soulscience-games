@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Kindness Catcher</title>
 
@@ -13,358 +13,250 @@ content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <style>
 
 *{
-    box-sizing:border-box;
+box-sizing:border-box;
 }
 
-
-:root{
-
-    --blue:#5f8fe7;
-    --green:#4caf72;
-    --yellow:#ffd166;
-    --red:#e76f51;
-    --dark:#243b53;
-    --soft:#f5faff;
-
-}
-
-
-html,
 body{
 
-    margin:0;
+margin:0;
 
-    padding:0;
+font-family:
+Arial,
+sans-serif;
 
-    width:100%;
+background:
+linear-gradient(
+180deg,
+#eaf7ff,
+#fff8e8
+);
 
-    min-height:100%;
+color:#243b53;
 
-    overflow-x:hidden;
-
-    font-family:
-    "Trebuchet MS",
-    "Segoe UI",
-    Arial,
-    sans-serif;
-
-    background:
-    linear-gradient(
-        180deg,
-        #eaf7ff,
-        #fff9ed
-    );
-
-    color:var(--dark);
+overflow-x:hidden;
 
 }
-
 
 
 button{
 
-    font-family:inherit;
+border:none;
 
-    cursor:pointer;
+cursor:pointer;
 
-    border:none;
+font-family:inherit;
 
 }
 
 
 
-/* ============================
-   SPLASH SCREEN
-============================ */
-
+/* SPLASH */
 
 #splashScreen{
 
-    position:fixed;
+position:fixed;
 
-    inset:0;
+inset:0;
 
-    background:#ffffff;
+background:white;
 
-    z-index:9999;
+display:flex;
 
-    display:flex;
+align-items:center;
 
-    justify-content:center;
+justify-content:center;
 
-    align-items:center;
+z-index:9999;
 
 }
 
 
 #splashScreen img{
 
-    width:min(
-        80vw,
-        420px
-    );
-
-    height:auto;
-
-    animation:
-    logoFloat
-    2s
-    infinite
-    ease-in-out;
-
-}
-
-
-@keyframes logoFloat{
-
-    50%{
-
-        transform:
-        translateY(-12px);
-
-    }
+width:min(80vw,420px);
 
 }
 
 
 
-
-
-/* ============================
-   SCREENS
-============================ */
+/* SCREENS */
 
 
 .screen{
 
-    display:none;
+display:none;
 
-    min-height:100vh;
+min-height:100vh;
 
-    padding:16px;
+padding:16px;
+
+align-items:center;
+
+justify-content:center;
 
 }
 
 
 .screen.active{
 
-    display:flex;
+display:flex;
 
 }
 
 
 
+.card,
+.panel{
 
+background:white;
 
-/* ============================
-   START SCREEN
-============================ */
+border-radius:25px;
 
+padding:22px;
 
-.container{
+box-shadow:
 
-    width:min(
-        1100px,
-        100%
-    );
-
-    margin:auto;
-
-    background:white;
-
-    border-radius:28px;
-
-    padding:25px;
-
-    box-shadow:
-
-    0 15px 35px
-    rgba(
-        40,
-        60,
-        90,
-        .15
-    );
+0 10px 25px
+rgba(0,0,0,.12);
 
 }
 
+
+
+/* START */
+
+
+.start-card{
+
+width:min(900px,100%);
+
+text-align:center;
+
+}
 
 
 h1{
 
-    text-align:center;
+font-size:
+clamp(
+32px,
+5vw,
+52px
+);
 
-    font-size:
-    clamp(
-        32px,
-        5vw,
-        52px
-    );
-
-    color:#7b2cbf;
-
-    margin:
-    0 0 15px;
+color:#7b2cbf;
 
 }
-
 
 
 .subtitle{
 
-    text-align:center;
+font-size:20px;
 
-    font-size:
-    clamp(
-        17px,
-        3vw,
-        23px
-    );
-
-    line-height:1.5;
+line-height:1.5;
 
 }
 
 
 
-.info-row{
+.badges{
 
-    display:flex;
+display:flex;
 
-    justify-content:center;
+justify-content:center;
 
-    flex-wrap:wrap;
+gap:12px;
 
-    gap:12px;
+flex-wrap:wrap;
 
-    margin:
-    20px 0;
+margin:20px 0;
+
+}
+
+
+.badge{
+
+background:#fff3cd;
+
+padding:12px 18px;
+
+border-radius:50px;
+
+font-weight:bold;
 
 }
 
 
 
-.info{
+.main-btn{
 
-    background:#fff3cd;
+padding:
 
-    padding:
-    12px
-    18px;
+15px 35px;
 
-    border-radius:50px;
+border-radius:20px;
 
-    font-weight:700;
+background:#ffca28;
 
-}
+font-size:20px;
 
+font-weight:bold;
 
-
-.start-btn{
-
-    display:block;
-
-    margin:
-    20px
-    auto;
-
-    padding:
-    15px
-    35px;
-
-    border-radius:20px;
-
-    background:
-
-    linear-gradient(
-        135deg,
-        #ffca28,
-        #ffa000
-    );
-
-    font-size:20px;
-
-    font-weight:800;
-
-    color:#4a3500;
-
-    box-shadow:
-    0 5px 0 #d68d00;
+box-shadow:
+0 5px 0 #d69e00;
 
 }
 
 
 
-
-
-
-
-/* ============================
-   GAME SCREEN
-============================ */
-
-
-#gameScreen{
-
-    display:none;
-
-    flex-direction:column;
-
-}
+/* GAME */
 
 
 #gameScreen.active{
 
-    display:block;
+display:block;
 
 }
 
 
+.game-wrapper{
+
+max-width:1200px;
+
+margin:auto;
+
+}
 
 
 .hud{
 
-    max-width:1100px;
+display:grid;
 
-    margin:
-    0
-    auto
-    15px;
+grid-template-columns:
+repeat(5,1fr);
 
-    display:grid;
+gap:10px;
 
-    grid-template-columns:
-    repeat(
-        5,
-        1fr
-    );
-
-    gap:10px;
+margin-bottom:15px;
 
 }
 
 
+.hud-box{
 
-.hud-card{
+background:white;
 
-    background:white;
+padding:12px;
 
-    border-radius:18px;
+border-radius:18px;
 
-    padding:12px;
+text-align:center;
 
-    text-align:center;
+font-weight:bold;
 
-    font-weight:800;
-
-    box-shadow:
-    0 8px 18px
-    rgba(
-        0,
-        0,
-        0,
-        .08
-    );
+box-shadow:
+0 5px 15px
+rgba(0,0,0,.1);
 
 }
 
@@ -372,90 +264,54 @@ h1{
 
 .game-layout{
 
-    max-width:1100px;
+display:grid;
 
-    margin:auto;
+grid-template-columns:
+1.2fr .8fr;
 
-    display:grid;
-
-    grid-template-columns:
-
-    1.2fr
-    .8fr;
-
-    gap:18px;
+gap:18px;
 
 }
-
-
-
-.panel{
-
-    background:white;
-
-    border-radius:25px;
-
-    padding:18px;
-
-    box-shadow:
-
-    0 10px 25px
-    rgba(
-        0,
-        0,
-        0,
-        .08
-    );
-
-}
-
 
 
 
 canvas{
 
-    width:100%;
+width:100%;
 
-    max-width:600px;
+max-width:600px;
 
-    aspect-ratio:1;
+aspect-ratio:1;
 
-    display:block;
+display:block;
 
-    margin:auto;
+margin:auto;
 
-    background:
+background:
 
-    linear-gradient(
-        180deg,
-        #dff6ff,
-        #f0ffe8
-    );
+linear-gradient(
+180deg,
+#dff6ff,
+#f1ffe8
+);
 
-    border-radius:25px;
+border:
 
-    border:
-    5px solid
-    #90caf9;
+5px solid #90caf9;
+
+border-radius:25px;
 
 }
 
 
 
 
-
-/* ============================
-   INSTRUCTIONS
-============================ */
+/* INFO */
 
 
-.panel h2{
+.info h2{
 
-    margin-top:0;
-
-    color:#ef476f;
-
-    font-size:30px;
+color:#ef476f;
 
 }
 
@@ -463,284 +319,226 @@ canvas{
 
 .tip{
 
-    margin:
-    12px
-    0;
+background:#f7f0ff;
 
-    padding:
-    12px;
+border-left:
 
-    border-radius:15px;
+7px solid #9c6ade;
 
-    background:#f7f2ff;
+padding:12px;
 
-    border-left:
-    7px solid
-    #9c6ade;
+border-radius:15px;
 
-    font-size:17px;
-
-    line-height:1.4;
+margin:12px 0;
 
 }
 
 
 
-
-
-/* ============================
-   CONTROLS
-============================ */
+/* CONTROLS */
 
 
 .controls{
 
-    margin-top:15px;
+display:grid;
 
-    display:grid;
+grid-template-columns:
+repeat(3,60px);
 
-    grid-template-columns:
-    repeat(
-        3,
-        60px
-    );
+justify-content:center;
 
-    justify-content:center;
+gap:8px;
 
-    gap:8px;
+margin-top:18px;
 
 }
 
 
-.control-btn{
+.control{
 
-    width:60px;
+height:60px;
 
-    height:60px;
+width:60px;
 
-    border-radius:18px;
+border-radius:18px;
 
-    background:#ffd166;
+background:#ffd166;
 
-    font-size:25px;
+font-size:24px;
 
 }
-
 
 
 .empty{
 
-    visibility:hidden;
+visibility:hidden;
 
 }
 
 
 
+/* QUIZ */
 
 
+.overlay{
 
+position:fixed;
 
-/* ============================
-   QUIZ
-============================ */
+inset:0;
 
+background:
+rgba(0,0,0,.65);
 
-#quizOverlay{
+display:none;
 
-    position:fixed;
+align-items:center;
 
-    inset:0;
+justify-content:center;
 
-    background:
-    rgba(
-        0,
-        0,
-        0,
-        .65
-    );
+padding:15px;
 
-    z-index:2000;
-
-    display:none;
-
-    justify-content:center;
-
-    align-items:center;
-
-    padding:16px;
+z-index:3000;
 
 }
 
 
 
-#quizOverlay.active{
+.overlay.active{
 
-    display:flex;
-
-}
-
-
-
-.quiz-box{
-
-    width:min(
-        700px,
-        100%
-    );
-
-    background:white;
-
-    border-radius:25px;
-
-    padding:25px;
+display:flex;
 
 }
 
 
+.quiz{
 
-.quiz-box h2{
+width:min(700px,100%);
 
-    color:#7b2cbf;
+background:white;
+
+border-radius:25px;
+
+padding:25px;
 
 }
 
+
+.quiz h2{
+
+color:#7b2cbf;
+
+}
 
 
 .option{
 
-    width:100%;
+width:100%;
 
-    margin:
-    8px
-    0;
+padding:14px;
 
-    padding:
-    14px;
+margin:8px 0;
 
-    border-radius:15px;
+border-radius:15px;
 
-    background:#eef6ff;
+background:#eef7ff;
 
-    text-align:left;
+font-size:17px;
 
-    font-weight:700;
+font-weight:bold;
 
-    font-size:17px;
+text-align:left;
 
 }
-
 
 
 .option.correct{
 
-    background:#dcfce7;
+background:#dcfce7;
 
 }
-
 
 
 .option.wrong{
 
-    background:#fee2e2;
+background:#fee2e2;
 
 }
-
 
 
 .feedback{
 
-    min-height:30px;
+min-height:30px;
 
-    margin-top:10px;
-
-    font-weight:700;
+font-weight:bold;
 
 }
 
 
 
+/* END */
 
 
-/* ============================
-   END SCREEN
-============================ */
+.end-card{
 
+text-align:center;
 
-.final{
-
-    text-align:center;
+width:min(800px,100%);
 
 }
 
 
+.end-card h2{
 
-.final h2{
+font-size:42px;
 
-    color:#2e7d32;
-
-    font-size:42px;
-
-}
-
-
-
-.final-score{
-
-    font-size:22px;
-
-    margin:15px;
+color:#2e7d32;
 
 }
 
 
+.score{
 
-.play-again{
+font-size:22px;
 
-    padding:
-    15px
-    30px;
-
-    border-radius:18px;
-
-    background:#5f8fe7;
-
-    color:white;
-
-    font-size:20px;
+margin:15px;
 
 }
 
 
+.restart{
+
+padding:
+
+15px 30px;
+
+background:#5f8fe7;
+
+color:white;
+
+border-radius:18px;
+
+font-size:20px;
+
+}
 
 
-/* ============================
-   MOBILE
-============================ */
 
 
 @media(max-width:900px){
 
-
 .game-layout{
 
-    grid-template-columns:
-    1fr;
+grid-template-columns:1fr;
 
 }
-
 
 
 .hud{
 
-    grid-template-columns:
-    repeat(
-        2,
-        1fr
-    );
+grid-template-columns:
+repeat(2,1fr);
 
 }
-
-
 
 }
 
@@ -748,57 +546,19 @@ canvas{
 
 @media(max-width:600px){
 
-
 .screen{
 
-    padding:10px;
+padding:10px;
 
 }
 
 
-
-.container,
+.card,
 .panel{
 
-    padding:14px;
-
-    border-radius:20px;
+padding:14px;
 
 }
-
-
-
-h1{
-
-    font-size:28px;
-
-}
-
-
-
-canvas{
-
-    border-width:4px;
-
-}
-
-
-
-.hud-card{
-
-    font-size:14px;
-
-}
-
-
-
-.tip{
-
-    font-size:15px;
-
-}
-
-
 
 }
 
@@ -810,40 +570,23 @@ canvas{
 <body>
 
 
-<!-- ============================
-     INNOVINE SPLASH
-============================ -->
-
-
-<div
-id="splashScreen"
->
+<div id="splashScreen">
 
 <img
-id="innovineLogo"
-src="https://bomis-primary.github.io/soulscience-games/g4/chp3/assets/innovine-logo.png"
-alt="Innovine Logo"
-onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/Bomis-primary/soulscience-games/main/g4/chp3/assets/innovine-logo.png';"
->
+
+src="https://bomis-primary.github.io/soulscience-games/g4/chp3/%20assets/innovine-logo.png"
+
+onerror="this.src='https://raw.githubusercontent.com/Bomis-primary/soulscience-games/main/g4/chp3/%20assets/innovine-logo.png'"
+
+alt="Innovine Logo">
 
 </div>
 
 
 
+<div id="startScreen" class="screen active">
 
-
-<!-- ============================
-     START SCREEN
-============================ -->
-
-
-<div
-id="startScreen"
-class="screen active"
->
-
-
-<div class="container">
+<div class="card start-card">
 
 
 <h1>
@@ -853,40 +596,31 @@ class="screen active"
 
 <p class="subtitle">
 
-Catch positive actions,
-avoid hurtful choices,
-and build a kinder world!
+Catch kind actions and avoid hurtful choices.
 
 </p>
 
 
+<div class="badges">
 
-<div class="info-row">
-
-
-<div class="info">
+<div class="badge">
 💚 Catch kindness
 </div>
 
 
-<div class="info">
+<div class="badge">
 ⭐ Earn rewards
 </div>
 
 
-<div class="info">
-🧠 Answer reflection questions
+<div class="badge">
+🧠 Reflect
+</div>
+
 </div>
 
 
-</div>
-
-
-
-<button
-class="start-btn"
-onclick="startGame()"
->
+<button class="main-btn" onclick="startGame()">
 
 ▶ Start Game
 
@@ -895,69 +629,50 @@ onclick="startGame()"
 
 </div>
 
-
 </div>
 
 
+<!-- GAME SCREEN -->
+
+<div id="gameScreen" class="screen">
 
 
-
-<!-- ============================
-     GAME SCREEN
-============================ -->
-
-
-<div
-id="gameScreen"
-class="screen"
->
+<div class="game-wrapper">
 
 
 <div class="hud">
 
-
-<div class="hud-card">
+<div class="hud-box">
 Level:
-<span id="level">
-1
-</span>
+<span id="level">1</span>
 </div>
 
 
-<div class="hud-card">
+<div class="hud-box">
 Score:
-<span id="score">
-0
-</span>
+<span id="score">0</span>
 </div>
 
 
-<div class="hud-card">
+<div class="hud-box">
 Lives:
-<span id="lives">
-3
-</span>
+<span id="lives">3</span>
 </div>
 
 
-<div class="hud-card">
+<div class="hud-box">
 Quiz Stars:
-<span id="quizStars">
-0
-</span>
+<span id="quizStars">0</span>
 </div>
 
 
-<div class="hud-card">
-Level Progress:
-<span id="progress">
-0
-</span>
+<div class="hud-box">
+Progress:
+<span id="progress">0</span>
 </div>
 
 
 </div>
-
 
 
 
@@ -970,8 +685,8 @@ Level Progress:
 <canvas
 id="gameCanvas"
 width="600"
-height="600"
-></canvas>
+height="600">
+</canvas>
 
 
 
@@ -981,51 +696,38 @@ height="600"
 <div class="empty"></div>
 
 
-<button
-class="control-btn"
-id="upBtn"
->
-⬆️
-</button>
+<div class="empty"></div>
 
 
 <div class="empty"></div>
 
 
 <button
-class="control-btn"
-id="leftBtn"
->
+class="control"
+id="leftBtn">
 ⬅️
 </button>
 
 
 <button
-class="control-btn"
-id="downBtn"
->
-⬇️
-</button>
-
-
-<button
-class="control-btn"
-id="rightBtn"
->
+class="control"
+id="rightBtn">
 ➡️
 </button>
 
 
-</div>
+<div class="empty"></div>
 
 
 </div>
 
 
+</div>
 
 
 
-<div class="panel">
+
+<div class="panel info">
 
 
 <h2>
@@ -1044,16 +746,12 @@ How to Play
 
 
 <div class="tip">
-⭐ Every few catches unlock a reflection question.
+⭐ Every 3 kindness actions unlocks a question.
 </div>
 
 
 <div class="tip">
-🌱 Kindness grows through daily choices.
-</div>
-
-
-
+🌱 Small choices create a kinder world.
 </div>
 
 
@@ -1063,17 +761,22 @@ How to Play
 </div>
 
 
+</div>
+
+
+</div>
 
 
 
-<!-- QUIZ OVERLAY -->
-
-<div
-id="quizOverlay"
->
 
 
-<div class="quiz-box">
+<!-- QUIZ -->
+
+
+<div id="quizOverlay" class="overlay">
+
+
+<div class="quiz">
 
 
 <h2>
@@ -1087,191 +790,188 @@ Kindness Reflection
 <div id="options"></div>
 
 
-<div
-id="feedback"
-class="feedback"
-></div>
+<div id="feedback" class="feedback"></div>
 
 
 </div>
 
 
 </div>
+
+
+
+
+
+<!-- END -->
+
+
+<div id="endScreen" class="screen">
+
+
+<div class="card end-card">
+
+
+<h2 id="finalTitle">
+Great Job!
+</h2>
+
+
+<div id="finalScore" class="score"></div>
+
+
+<div id="finalQuiz" class="score"></div>
+
+
+<p id="finalMessage"></p>
+
+
+
+<button
+class="restart"
+onclick="playAgain()">
+
+Play Again
+
+</button>
+
+
+</div>
+
+
+</div>
+
 
 
 
 
 <script>
 
-/* =========================================
-   KINDNESS CATCHER GAME ENGINE
-========================================= */
-
 
 const canvas =
-document.getElementById(
-    "gameCanvas"
-);
+document.getElementById("gameCanvas");
 
 
 const ctx =
-canvas.getContext(
-    "2d"
-);
+canvas.getContext("2d");
 
 
 
-/* =========================================
-   GAME VARIABLES
-========================================= */
+let running=false;
+
+let animationId;
 
 
-let gameRunning =
-false;
+let level=1;
+
+let score=0;
+
+let lives=3;
+
+let quizStars=0;
+
+let kindnessCount=0;
+
+let progress=0;
+
+let speed=2;
 
 
-let animationId =
-null;
+let objectTimer=0;
 
 
-let level =
-1;
+let basket={
 
+x:240,
 
-let score =
-0;
+y:535,
 
+width:120,
 
-let lives =
-3;
+height:35,
 
-
-let quizStars =
-0;
-
-
-let levelProgress =
-0;
-
-
-
-let basket =
-{
-
-    x:
-    250,
-
-    y:
-    540,
-
-    width:
-    120,
-
-    height:
-    35,
-
-    speed:
-    8
+speed:8
 
 };
 
 
 
-let keys =
-{
+let keys={
 
-    left:false,
+left:false,
 
-    right:false
+right:false
 
 };
 
 
 
-let objects =
-[];
+let objects=[];
+
+
+let usedQuestions=[];
+
+
+let quizLocked=false;
 
 
 
-let spawnTimer =
-0;
 
+const items=[
 
-
-let difficulty =
-1;
-
-
-
-/*
-   Objects
-
-   positive = catch
-   negative = avoid
-*/
-
-
-const kindnessObjects =
-[
 
 {
-    emoji:"💚",
-    label:"Helping",
-    good:true
+emoji:"💚",
+text:"Helping",
+good:true
 },
 
 {
-    emoji:"🤝",
-    label:"Sharing",
-    good:true
+emoji:"🤝",
+text:"Sharing",
+good:true
 },
 
 {
-    emoji:"👂",
-    label:"Listening",
-    good:true
+emoji:"👂",
+text:"Listening",
+good:true
 },
 
 {
-    emoji:"❤️",
-    label:"Kind Words",
-    good:true
+emoji:"❤️",
+text:"Kind Words",
+good:true
 },
 
 {
-    emoji:"🌱",
-    label:"Empathy",
-    good:true
+emoji:"🌱",
+text:"Empathy",
+good:true
 },
 
 {
-    emoji:"⭐",
-    label:"Including Others",
-    good:true
+emoji:"⭐",
+text:"Including",
+good:true
+},
+
+
+{
+emoji:"😠",
+text:"Teasing",
+good:false
 },
 
 {
-    emoji:"😠",
-    label:"Teasing",
-    good:false
+emoji:"🚫",
+text:"Ignoring",
+good:false
 },
 
 {
-    emoji:"🚫",
-    label:"Ignoring",
-    good:false
-},
-
-{
-    emoji:"💢",
-    label:"Hurting",
-    good:false
-},
-
-{
-    emoji:"🙄",
-    label:"Unfair Choice",
-    good:false
+emoji:"💢",
+text:"Hurting",
+good:false
 }
 
 ];
@@ -1279,82 +979,119 @@ const kindnessObjects =
 
 
 
-/* =========================================
-   START GAME
-========================================= */
+
+const questions=[
+
+
+{
+
+q:"A friend is upset. What should you do?",
+
+options:[
+"Listen and support them",
+"Ignore them",
+"Laugh at them"
+],
+
+answer:
+"Listen and support them"
+
+},
+
+
+
+{
+
+q:"Someone is left out. What can you do?",
+
+options:[
+"Invite them to join",
+"Walk away",
+"Make fun of them"
+],
+
+answer:
+"Invite them to join"
+
+},
+
+
+
+{
+
+q:"A friend makes a mistake. You should...",
+
+
+options:[
+"Encourage them",
+"Tease them",
+"Tell everyone"
+],
+
+answer:
+"Encourage them"
+
+},
+
+
+
+{
+
+q:"Sharing shows...",
+
+
+options:[
+"Generosity",
+"Selfishness",
+"Anger"
+],
+
+answer:
+"Generosity"
+
+}
+
+];
+
+
+
 
 
 function startGame(){
 
 
-    document
-    .getElementById(
-        "startScreen"
-    )
-    .classList
-    .remove(
-        "active"
-    );
+startScreen.classList.remove("active");
 
 
-    document
-    .getElementById(
-        "gameScreen"
-    )
-    .classList
-    .add(
-        "active"
-    );
+gameScreen.classList.add("active");
 
 
 
-    resetGame();
+level=1;
+
+score=0;
+
+lives=3;
+
+quizStars=0;
+
+kindnessCount=0;
+
+progress=0;
+
+speed=2;
+
+objects=[];
 
 
-    gameRunning =
-    true;
+
+running=true;
 
 
-    gameLoop();
-
-}
+updateHUD();
 
 
-
-
-function resetGame(){
-
-
-    level =
-    1;
-
-
-    score =
-    0;
-
-
-    lives =
-    3;
-
-
-    quizStars =
-    0;
-
-
-    levelProgress =
-    0;
-
-
-    difficulty =
-    1;
-
-
-    objects =
-    [];
-
-
-    updateHUD();
-
+loop();
 
 }
 
@@ -1362,100 +1099,102 @@ function resetGame(){
 
 
 
-/* =========================================
-   MAIN LOOP
-========================================= */
+function playAgain(){
 
 
-function gameLoop(){
+endScreen.classList.remove("active");
 
 
-    if(
-        !gameRunning
-    )
-    {
-        return;
-    }
-
-
-
-    update();
-
-
-    draw();
-
-
-
-    animationId =
-    requestAnimationFrame(
-        gameLoop
-    );
+startGame();
 
 }
 
 
 
 
-/* =========================================
-   UPDATE
-========================================= */
+
+function loop(){
+
+
+if(!running)
+return;
+
+
+update();
+
+
+draw();
+
+
+animationId=requestAnimationFrame(loop);
+
+
+}
+
+
+
 
 
 function update(){
 
 
-
-    moveBasket();
-
-
-
-    spawnTimer++;
+if(keys.left)
+basket.x-=basket.speed;
 
 
-
-    if(
-        spawnTimer >
-        70 - difficulty * 5
-    )
-    {
-
-        spawnObject();
-
-
-        spawnTimer =
-        0;
-
-    }
+if(keys.right)
+basket.x+=basket.speed;
 
 
 
-    objects
-    .forEach(
-        obj => {
+if(basket.x<0)
+basket.x=0;
 
 
-            obj.y +=
-            obj.speed;
+if(
+basket.x+basket.width>
+canvas.width
+)
 
-
-
-            checkCollision(
-                obj
-            );
-
-
-        }
-    );
+basket.x=
+canvas.width-basket.width;
 
 
 
-    objects =
-    objects.filter(
-        obj =>
-        obj.y <
-        canvas.height + 60
-    );
+objectTimer++;
 
+
+if(
+objectTimer >
+80-level*5
+){
+
+spawnObject();
+
+objectTimer=0;
+
+}
+
+
+
+objects.forEach(obj=>{
+
+
+obj.y+=obj.speed;
+
+
+checkCollision(obj);
+
+
+});
+
+
+
+objects=
+objects.filter(
+obj=>
+obj.y<650
+);
 
 
 
@@ -1464,164 +1203,97 @@ function update(){
 
 
 
-
-/* =========================================
-   SPAWN OBJECT
-========================================= */
 
 
 function spawnObject(){
 
 
-
-    const item =
-
-    kindnessObjects[
-        Math.floor(
-            Math.random()
-            *
-            kindnessObjects.length
-        )
-    ];
+let item=
+items[
+Math.floor(
+Math.random()*items.length
+)
+];
 
 
+objects.push({
 
-    objects.push(
+x:
+Math.random()*540,
 
-        {
+y:-40,
 
-            x:
-            Math.random()
-            *
-            (
-                canvas.width - 50
-            ),
+emoji:item.emoji,
 
-            y:
-            -50,
+text:item.text,
 
+good:item.good,
 
-            emoji:
-            item.emoji,
+speed:
+speed
 
-
-            label:
-            item.label,
-
-
-            good:
-            item.good,
-
-
-            speed:
-            2 +
-            difficulty *
-            0.45
-
-        }
-
-    );
+});
 
 
 }
 
 
 
-
-
-
-
-/* =========================================
-   DRAW
-========================================= */
 
 
 function draw(){
 
 
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+ctx.clearRect(
+0,
+0,
+600,
+600
+);
+
+
+ctx.fillStyle="#e8f8ff";
+
+ctx.fillRect(
+0,
+0,
+600,
+600
+);
 
 
 
-    drawBackground();
+drawBasket();
 
 
 
-    drawBasket();
+objects.forEach(
+obj=>{
+
+ctx.font="40px Arial";
+
+ctx.fillText(
+obj.emoji,
+obj.x,
+obj.y
+);
 
 
+ctx.font="14px Arial";
 
-    objects
-    .forEach(
-        obj =>
-        drawObject(
-            obj
-        )
-    );
+ctx.fillStyle="#243b53";
 
-
-}
+ctx.fillText(
+obj.text,
+obj.x,
+obj.y+20
+);
 
 
-
-
-
-function drawBackground(){
-
-
-    ctx.fillStyle =
-    "#e8f8ff";
-
-
-    ctx.fillRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
-
-    /*
-       simple clouds
-    */
-
-
-    ctx.fillStyle =
-    "rgba(255,255,255,.8)";
-
-
-
-    for(
-        let i=0;
-        i<5;
-        i++
-    ){
-
-        ctx.beginPath();
-
-
-        ctx.arc(
-            80+i*120,
-            70,
-            25,
-            0,
-            Math.PI*2
-        );
-
-
-        ctx.fill();
-
-    }
+});
 
 
 }
-
 
 
 
@@ -1629,39 +1301,42 @@ function drawBackground(){
 function drawBasket(){
 
 
-    ctx.fillStyle =
-    "#5f8fe7";
+ctx.fillStyle="#5f8fe7";
 
 
-    ctx.beginPath();
+ctx.beginPath();
+
+ctx.moveTo(
+basket.x+15,
+basket.y
+);
+
+ctx.lineTo(
+basket.x+basket.width-15,
+basket.y
+);
+
+ctx.quadraticCurveTo(
+basket.x+basket.width,
+basket.y,
+basket.x+basket.width,
+basket.y+15
+);
 
 
-    ctx.roundRect(
-        basket.x,
-        basket.y,
-        basket.width,
-        basket.height,
-        15
-    );
+ctx.lineTo(
+basket.x+basket.width,
+basket.y+20
+);
 
 
-    ctx.fill();
+ctx.lineTo(
+basket.x,
+basket.y+20
+);
 
 
-
-    ctx.fillStyle =
-    "#ffffff";
-
-
-    ctx.font =
-    "22px Arial";
-
-
-    ctx.fillText(
-        "💙",
-        basket.x+45,
-        basket.y+27
-    );
+ctx.fill();
 
 
 }
@@ -1670,217 +1345,79 @@ function drawBasket(){
 
 
 
-function drawObject(
-obj
+
+function checkCollision(obj){
+
+
+if(
+
+obj.x <
+basket.x+basket.width &&
+
+obj.x+40 >
+basket.x &&
+
+obj.y >
+basket.y-40
+
 ){
 
 
-    ctx.font =
-    "38px Arial";
-
-
-    ctx.fillText(
-        obj.emoji,
-        obj.x,
-        obj.y
-    );
+objects=
+objects.filter(
+x=>x!==obj
+);
 
 
 
-    ctx.font =
-    "13px Arial";
+if(obj.good){
 
 
-    ctx.fillStyle =
-    "#243b53";
+score+=10;
+
+progress++;
+
+kindnessCount++;
 
 
-    ctx.fillText(
-        obj.label,
-        obj.x-5,
-        obj.y+20
-    );
-
-
-}
-
-
-
-
-
-/* =========================================
-   BASKET MOVEMENT
-========================================= */
-
-
-function moveBasket(){
-
-
-
-    if(
-        keys.left
-    ){
-
-        basket.x -=
-        basket.speed;
-
-    }
-
-
-
-    if(
-        keys.right
-    ){
-
-        basket.x +=
-        basket.speed;
-
-    }
-
-
-
-    if(
-        basket.x < 0
-    ){
-
-        basket.x =
-        0;
-
-    }
-
-
-
-    if(
-        basket.x +
-        basket.width
-        >
-        canvas.width
-    ){
-
-        basket.x =
-        canvas.width -
-        basket.width;
-
-    }
-
-
-
-}
-
-
-
-
-
-/* =========================================
-   COLLISION
-========================================= */
-
-
-function checkCollision(
-obj
+if(
+kindnessCount%3===0
 ){
 
+openQuiz();
 
-    const hit =
-
-    obj.x <
-    basket.x +
-    basket.width &&
-
-    obj.x + 45 >
-    basket.x &&
-
-    obj.y <
-    basket.y +
-    basket.height &&
-
-    obj.y + 45 >
-    basket.y;
+}
 
 
 
-    if(
-        hit
-    ){
+if(progress>=8){
+
+nextLevel();
+
+}
 
 
-        objects =
-        objects.filter(
-            item =>
-            item !== obj
-        );
+}
+
+else{
 
 
-
-        if(
-            obj.good
-        ){
-
-            score +=
-            10;
+lives--;
 
 
-            levelProgress++;
+if(lives<=0){
+
+endGame(false);
+
+}
+
+}
 
 
-            quizStars++;
+updateHUD();
 
 
-
-            showFeedback(
-                "Great choice! 🌱"
-            );
-
-
-            if(
-                quizStars %
-                3 ===
-                0
-            ){
-
-                pauseForQuiz();
-
-            }
-
-
-            checkLevel();
-
-
-
-        }
-
-
-        else{
-
-
-            lives--;
-
-
-            showFeedback(
-                "That choice can hurt others."
-            );
-
-
-
-            if(
-                lives <= 0
-            ){
-
-                endGame();
-
-            }
-
-
-        }
-
-
-
-        updateHUD();
-
-
-    }
-
-
+}
 
 }
 
@@ -1888,103 +1425,167 @@ obj
 
 
 
+function nextLevel(){
 
 
-/* =========================================
-   LEVEL SYSTEM
-========================================= */
+level++;
+
+progress=0;
+
+speed+=0.4;
 
 
-function checkLevel(){
+if(level>9){
 
+endGame(true);
 
-    if(
-        levelProgress >=
-        8
-    ){
-
-        level++;
-
-
-        levelProgress =
-        0;
-
-
-        difficulty++;
-
-
-
-        if(
-            level >
-            9
-        ){
-
-            endGame(
-                true
-            );
-
-        }
-
-
-    }
+}
 
 
 }
 
 
 
-
-
-/* =========================================
-   HUD
-========================================= */
 
 
 function updateHUD(){
 
 
-document
-.getElementById(
-    "level"
+level.textContent=level;
+
+score.textContent=score;
+
+lives.textContent=lives;
+
+quizStars.textContent=quizStars;
+
+progress.textContent=progress;
+
+
+}
+
+
+
+
+
+function openQuiz(){
+
+
+running=false;
+
+
+let q=
+questions[
+Math.floor(
+Math.random()*questions.length
 )
-.textContent =
-level;
+];
+
+
+questionText.textContent=q.q;
+
+
+options.innerHTML="";
+
+
+q.options.forEach(option=>{
+
+
+let btn=
+document.createElement("button");
+
+
+btn.className="option";
+
+
+btn.textContent=option;
+
+
+btn.onclick=
+()=>answerQuiz(btn,option,q);
+
+
+options.appendChild(btn);
+
+
+});
+
+
+quizOverlay.classList.add("active");
+
+
+}
+
+function answerQuiz(btn,answer,q){
+
+
+if(quizLocked)
+return;
+
+
+
+if(answer===q.answer){
+
+
+quizLocked=true;
+
+
+quizStars++;
+
+score+=20;
+
+
+btn.classList.add("correct");
+
+
+feedback.textContent=
+"✅ Correct! Great thinking!";
 
 
 
 document
-.getElementById(
-    "score"
-)
-.textContent =
-score;
+.querySelectorAll(".option")
+.forEach(
+b=>b.disabled=true
+);
 
 
 
-document
-.getElementById(
-    "lives"
-)
-.textContent =
-lives;
+setTimeout(()=>{
+
+
+quizOverlay.classList.remove(
+"active"
+);
+
+
+running=true;
+
+
+loop();
+
+
+updateHUD();
 
 
 
-document
-.getElementById(
-    "quizStars"
-)
-.textContent =
-quizStars;
+},1200);
 
 
 
-document
-.getElementById(
-    "progress"
-)
-.textContent =
-levelProgress;
+}
+
+else{
+
+
+btn.classList.add("wrong");
+
+
+feedback.textContent=
+"Try again! Think about kindness.";
+
+
+}
 
 
 
@@ -1996,128 +1597,100 @@ levelProgress;
 
 
 
-/* =========================================
-   MOVEMENT CONTROLS
-========================================= */
+
+/* =========================
+   CONTROLS
+========================= */
 
 
-function moveLeft(){
+function holdLeft(){
 
-    keys.left =
-    true;
-
-}
-
-
-function moveRight(){
-
-    keys.right =
-    true;
+keys.left=true;
 
 }
 
+
+function holdRight(){
+
+keys.right=true;
+
+}
 
 
 function stopLeft(){
 
-    keys.left =
-    false;
+keys.left=false;
 
 }
-
 
 
 function stopRight(){
 
-    keys.right =
-    false;
+keys.right=false;
 
 }
 
 
 
-
-document
-.getElementById(
-    "leftBtn"
-)
-.addEventListener(
-    "touchstart",
-    moveLeft
+leftBtn.addEventListener(
+"mousedown",
+holdLeft
 );
 
 
-document
-.getElementById(
-    "leftBtn"
-)
-.addEventListener(
-    "touchend",
-    stopLeft
+leftBtn.addEventListener(
+"mouseup",
+stopLeft
 );
 
 
-
-document
-.getElementById(
-    "rightBtn"
-)
-.addEventListener(
-    "touchstart",
-    moveRight
+rightBtn.addEventListener(
+"mousedown",
+holdRight
 );
 
 
-document
-.getElementById(
-    "rightBtn"
-)
-.addEventListener(
-    "touchend",
-    stopRight
+rightBtn.addEventListener(
+"mouseup",
+stopRight
 );
 
 
 
-
-document
-.getElementById(
-    "leftBtn"
-)
-.addEventListener(
-    "mousedown",
-    moveLeft
+leftBtn.addEventListener(
+"touchstart",
+holdLeft
 );
 
 
-document
-.getElementById(
-    "leftBtn"
-)
-.addEventListener(
-    "mouseup",
-    stopLeft
+leftBtn.addEventListener(
+"touchend",
+stopLeft
+);
+
+
+leftBtn.addEventListener(
+"touchcancel",
+stopLeft
 );
 
 
 
-document
-.getElementById(
-    "rightBtn"
-)
-.addEventListener(
-    "mousedown",
-    moveRight
+rightBtn.addEventListener(
+"touchstart",
+holdRight
 );
 
 
-document
-.getElementById(
-    "rightBtn"
-)
-.addEventListener(
-    "mouseup",
-    stopRight
+rightBtn.addEventListener(
+"touchend",
+stopRight
+);
+
+
+rightBtn.addEventListener(
+"touchcancel",
+stopRight
 );
 
 
@@ -2129,26 +1702,15 @@ document.addEventListener(
 e=>{
 
 
-if(
-e.key==="ArrowLeft"
-){
-
+if(e.key==="ArrowLeft")
 keys.left=true;
 
-}
 
-
-if(
-e.key==="ArrowRight"
-){
-
+if(e.key==="ArrowRight")
 keys.right=true;
-
-}
 
 
 });
-
 
 
 
@@ -2157,579 +1719,31 @@ document.addEventListener(
 e=>{
 
 
-if(
-e.key==="ArrowLeft"
-){
-
+if(e.key==="ArrowLeft")
 keys.left=false;
 
-}
 
-
-if(
-e.key==="ArrowRight"
-){
-
+if(e.key==="ArrowRight")
 keys.right=false;
-
-}
 
 
 });
 
 
-/* =========================================
-   QUIZ SYSTEM
-========================================= */
 
 
-const questions = [
 
-{
 
-question:
-"What is a kind way to respond when a friend is upset?",
 
-options:
-[
-"Listen and support them",
-"Ignore them",
-"Make fun of their feelings"
-],
-
-answer:
-"Listen and support them",
-
-explanation:
-"Kindness means showing care and understanding."
-
-},
-
-
-{
-
-question:
-"You see someone sitting alone. What could you do?",
-
-options:
-[
-"Invite them to join",
-"Walk away without caring",
-"Laugh at them"
-],
-
-answer:
-"Invite them to join",
-
-explanation:
-"Including others helps people feel valued."
-
-},
-
-
-{
-
-question:
-"Someone makes a mistake. A kind response is to...",
-
-
-options:
-[
-"Encourage them to try again",
-"Tease them",
-"Tell everyone about it"
-],
-
-answer:
-"Encourage them to try again",
-
-explanation:
-"Supportive words help others grow."
-
-},
-
-
-{
-
-question:
-"Sharing your things shows...",
-
-options:
-[
-"Generosity",
-"Selfishness",
-"Unkindness"
-],
-
-answer:
-"Generosity",
-
-explanation:
-"Sharing is an important part of kindness."
-
-},
-
-
-{
-
-question:
-"Listening carefully to someone shows...",
-
-options:
-[
-"Respect",
-"Anger",
-"Disinterest"
-],
-
-answer:
-"Respect",
-
-explanation:
-"Good listeners show that others matter."
-
-},
-
-
-{
-
-question:
-"If someone has a different opinion, you should...",
-
-options:
-[
-"Respect their view",
-"Insult them",
-"Stop talking to them"
-],
-
-answer:
-"Respect their view",
-
-explanation:
-"Kind people respect differences."
-}
-
-];
-
-
-
-let usedQuestions=[];
-
-let quizLocked=false;
-
-
-
-function pauseForQuiz(){
-
-
-gameRunning=false;
-
-
-cancelAnimationFrame(
-animationId
-);
-
-
-showQuiz();
-
-
-}
-
-
-
-
-
-function showQuiz(){
-
-
-quizLocked=false;
-
-
-
-let available =
-questions
-.map(
-(_,index)=>index
-)
-.filter(
-index =>
-!usedQuestions.includes(index)
-);
-
-
-
-if(
-available.length===0
-){
-
-usedQuestions=[];
-
-
-available =
-questions
-.map(
-(_,index)=>index
-);
-
-}
-
-
-
-const selected =
-
-available[
-Math.floor(
-Math.random() *
-available.length
-)
-];
-
-
-
-usedQuestions.push(
-selected
-);
-
-
-
-const q =
-questions[selected];
-
-
-
-document
-.getElementById(
-"questionText"
-)
-.textContent =
-q.question;
-
-
-
-const optionsBox =
-document
-.getElementById(
-"options"
-);
-
-
-
-optionsBox.innerHTML="";
-
-
-
-document
-.getElementById(
-"feedback"
-)
-.textContent="";
-
-
-
-q.options
-.forEach(
-option=>{
-
-
-const button =
-document
-.createElement(
-"button"
-);
-
-
-
-button.className =
-"option";
-
-
-
-button.textContent =
-option;
-
-
-
-button.onclick =
-()=>checkAnswer(
-button,
-option,
-q
-);
-
-
-
-optionsBox
-.appendChild(
-button
-);
-
-
-
-}
-
-);
-
-
-
-document
-.getElementById(
-"quizOverlay"
-)
-.classList
-.add(
-"active"
-);
-
-
-}
-
-
-
-
-function checkAnswer(
-button,
-answer,
-question
-){
-
-
-if(
-quizLocked
-){
-
-return;
-
-}
-
-
-
-if(
-answer===
-question.answer
-){
-
-quizLocked=true;
-
-
-
-button
-.classList
-.add(
-"correct"
-);
-
-
-
-quizStars++;
-
-
-score += 20;
-
-
-
-document
-.getElementById(
-"feedback"
-)
-.textContent =
-"✅ Correct! "
-+
-question.explanation;
-
-
-
-document
-.querySelectorAll(
-".option"
-)
-.forEach(
-btn =>
-btn.disabled=true
-);
-
-
-
-setTimeout(
-()=>{
-
-
-document
-.getElementById(
-"quizOverlay"
-)
-.classList
-.remove(
-"active"
-);
-
-
-
-gameRunning=true;
-
-
-gameLoop();
-
-
-
-updateHUD();
-
-
-
-},
-1500
-);
-
-
-
-}
-
-else{
-
-
-button
-.classList
-.add(
-"wrong"
-);
-
-
-
-document
-.getElementById(
-"feedback"
-)
-.textContent =
-"Try again! Think about kindness."
-
-
-
-}
-
-}
-
-
-
-
-
-
-
-
-/* =========================================
-   FEEDBACK MESSAGE
-========================================= */
-
-
-function showFeedback(
-message
-){
-
-
-let old =
-document
-.getElementById(
-"gameMessage"
-);
-
-
-
-if(
-!old
-){
-
-old =
-document
-.createElement(
-"div"
-);
-
-
-old.id =
-"gameMessage";
-
-
-old.style.position =
-"fixed";
-
-
-old.style.top =
-"20px";
-
-
-old.style.left =
-"50%";
-
-
-old.style.transform =
-"translateX(-50%)";
-
-
-old.style.padding =
-"12px 25px";
-
-
-old.style.background =
-"#ffffff";
-
-
-old.style.borderRadius =
-"20px";
-
-
-old.style.fontWeight =
-"bold";
-
-
-old.style.zIndex =
-"3000";
-
-
-document.body
-.appendChild(
-old
-);
-
-}
-
-
-
-old.textContent =
-message;
-
-
-
-setTimeout(
-()=>{
-
-old.textContent="";
-
-},
-1200
-);
-
-
-}
-
-
-
-
-
-
-
-
-/* =========================================
+/* =========================
    END GAME
-========================================= */
+========================= */
 
 
-function endGame(
-completed=false
-){
+function endGame(completed){
 
 
-
-gameRunning=false;
-
+running=false;
 
 
 cancelAnimationFrame(
@@ -2738,98 +1752,54 @@ animationId
 
 
 
-document
-.getElementById(
-"gameScreen"
-)
-.classList
-.remove(
+gameScreen.classList.remove(
+"active"
+);
+
+
+endScreen.classList.add(
 "active"
 );
 
 
 
-document
-.getElementById(
-"endScreen"
-)
-.classList
-.add(
-"active"
-);
+finalScore.textContent=
+"Score: "+score;
 
 
 
-const finalText =
-document
-.getElementById(
-"finalTitle"
-);
+finalQuiz.textContent=
+"Quiz Stars: "+quizStars;
 
 
 
-const message =
-document
-.getElementById(
-"finalMessage"
-);
+if(completed){
 
 
-
-if(
-completed
-){
+finalTitle.textContent=
+"🌟 Amazing Kindness!";
 
 
-finalText.textContent =
-"🌟 Amazing Kindness!"
-
-
-message.textContent =
-"You completed all levels and showed how small kind actions create a better world.";
-
-
+finalMessage.textContent=
+"You completed all levels and showed kindness through your choices.";
 
 createConfetti();
 
 
-
 }
 
 else{
 
 
-finalText.textContent =
-"Keep Practising Kindness";
+finalTitle.textContent=
+"Keep Practising!";
 
 
-message.textContent =
-"Every kind action helps you grow. Try again and improve your score!";
+finalMessage.textContent=
+"Every kind action helps you grow. Try again!";
 
 
 }
-
-
-
-document
-.getElementById(
-"finalScore"
-)
-.textContent =
-"Score: "
-+
-score;
-
-
-
-document
-.getElementById(
-"finalQuiz"
-)
-.textContent =
-"Quiz Stars: "
-+
-quizStars;
 
 
 
@@ -2841,76 +1811,71 @@ quizStars;
 
 
 
-/* =========================================
+/* =========================
    CONFETTI
-========================================= */
+========================= */
 
 
 function createConfetti(){
 
 
-const colours =
-[
+const colors=[
+
 "#ff595e",
+
 "#ffca3a",
+
 "#8ac926",
+
 "#1982c4",
+
 "#6a4c93"
+
 ];
 
 
 
 for(
 let i=0;
-i<80;
+i<60;
 i++
 ){
 
 
-const piece =
-document
-.createElement(
+let piece=
+document.createElement(
 "div"
 );
 
 
 
-piece.style.position =
+piece.style.position=
 "fixed";
 
 
-piece.style.top =
-"-20px";
+piece.style.top="-20px";
 
 
-piece.style.left =
-Math.random()*100
-+
-"vw";
+piece.style.left=
+Math.random()*100+"vw";
 
 
-
-piece.style.width =
-"10px";
+piece.style.width="10px";
 
 
-piece.style.height =
-"16px";
+piece.style.height="15px";
 
 
-piece.style.background =
-colours[
+piece.style.background=
+colors[
 Math.floor(
-Math.random()
-*
-colours.length
+Math.random()*colors.length
 )
 ];
 
 
 
-piece.style.zIndex =
-"5000";
+piece.style.zIndex="5000";
 
 
 
@@ -2925,18 +1890,16 @@ transform:
 
 {
 transform:
-"translateY(110vh) rotate(720deg)"
+"translateY(100vh) rotate(720deg)"
 }
 
 ],
 
 {
 
-duration:
-2500,
+duration:2500,
 
-easing:
-"linear"
+easing:"linear"
 
 }
 
@@ -2944,39 +1907,24 @@ easing:
 
 
 
-document
-.body
-.appendChild(
+document.body.appendChild(
 piece
 );
 
 
 
 setTimeout(
+
 ()=>piece.remove(),
+
 2600
+
 );
 
 
 }
 
 
-}
-
-
-
-
-
-
-
-/* =========================================
-   PLAY AGAIN
-========================================= */
-
-
-function playAgain(){
-
-startGame();
 
 }
 
@@ -2984,38 +1932,26 @@ startGame();
 
 
 
-/* =========================================
+
+
+/* =========================
    SPLASH TIMER
-========================================= */
+========================= */
 
 
-setTimeout(
-
-()=>{
+setTimeout(()=>{
 
 
-document
-.getElementById(
-"splashScreen"
-)
-.style.display=
+splashScreen.style.display=
 "none";
 
-},
 
-5000
+},5000);
 
-);
 
 
 </script>
-<div class="final-score">
-<span id="finalScore"></span>
-</div>
 
-<div class="final-score">
-<span id="finalQuiz"></span>
-</div>
 
 </body>
 
