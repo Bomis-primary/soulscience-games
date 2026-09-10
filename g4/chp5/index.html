@@ -2,228 +2,1131 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f7f5ff" />
   <title>Equality Detectives</title>
   <style>
     :root{
-      --bg1:#eef7ff; --bg2:#fff8ef; --card:#ffffff; --text:#20303b; --muted:#5b6975;
-      --primary:#2f8f83; --primary2:#256e67; --good:#2e7d32; --bad:#bf4b63; --gold:#f2b705;
-      --border:rgba(32,48,59,.12); --shadow:0 12px 30px rgba(32,48,59,.12);
+      --ink:#26334a;
+      --muted:#667085;
+      --purple:#6f61d9;
+      --purple-dark:#5147b8;
+      --teal:#4aaea5;
+      --mint:#dff7f2;
+      --cream:#fff6df;
+      --peach:#ffe5d8;
+      --lavender:#eeeaff;
+      --sky:#e4f3ff;
+      --good:#2e9b66;
+      --bad:#d95a66;
+      --gold:#f0b83f;
+      --white:#ffffff;
+      --line:rgba(38,51,74,.12);
+      --shadow:0 14px 40px rgba(60,66,100,.14);
     }
-    *{box-sizing:border-box} html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:linear-gradient(180deg,var(--bg1),var(--bg2));overflow-x:hidden}
-    button{font:inherit;cursor:pointer} .screen{display:none;min-height:100vh}.screen.active{display:grid}.center{place-items:center;padding:16px}
-    .wrap{width:min(1120px,calc(100% - 20px));margin:0 auto} .card{background:var(--card);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow)}
-    #splashScreen{position:fixed;inset:0;z-index:1000;background:#fff;place-items:center;padding:16px} #splashScreen .box{display:grid;gap:14px;justify-items:center;text-align:center}
-    #splashScreen img{width:min(340px,72vw);height:auto;filter:drop-shadow(0 10px 20px rgba(0,0,0,.12))} .splash-text{font-size:clamp(18px,2.6vw,28px);font-weight:800;color:var(--primary2)}
-    .hero{padding:22px 0 18px}.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:center;padding:18px}
-    h1,h2{margin:0;line-height:1.05} h1{font-size:clamp(34px,5vw,60px);color:var(--primary2)} h2{font-size:clamp(24px,3vw,36px)}
-    .lead{font-size:clamp(18px,2.3vw,23px);color:var(--muted);line-height:1.5;margin:14px 0 18px;max-width:56ch}
-    .pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.pill{padding:10px 14px;border-radius:999px;background:#edf8f6;border:1px solid var(--border);font-weight:700}
-    .actions{display:flex;flex-wrap:wrap;gap:10px}.btn{border:none;border-radius:16px;padding:14px 20px;font-weight:800;min-height:46px}.primary{background:var(--primary);color:#fff}.ghost{background:#f2f5f8;color:var(--text);border:1px solid var(--border)}
-    .art{min-height:320px;position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(180deg,#dbf0ff,#fff4d9)}
-    .cloud{position:absolute;background:rgba(255,255,255,.92);border-radius:999px}.cloud:before,.cloud:after{content:'';position:absolute;background:inherit;border-radius:999px}
-    .cloud.one{width:110px;height:42px;top:34px;left:30px}.cloud.one:before{width:42px;height:42px;left:12px;top:-18px}.cloud.one:after{width:54px;height:54px;right:12px;top:-26px}
-    .cloud.two{width:130px;height:48px;top:92px;right:24px}.cloud.two:before{width:46px;height:46px;left:18px;top:-18px}.cloud.two:after{width:58px;height:58px;right:18px;top:-28px}
-    .detective{position:absolute;left:50%;top:50%;transform:translate(-50%,-48%);font-size:92px;filter:drop-shadow(0 10px 14px rgba(0,0,0,.12))}
-    .note{position:absolute;left:22px;bottom:20px;right:22px;background:rgba(255,255,255,.88);border:1px solid var(--border);border-radius:18px;padding:12px 14px;font-size:16px;line-height:1.45;color:var(--muted)}
-    .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;padding:0 0 22px}.panel{padding:18px}
-    .hud{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px}.hud-box{padding:12px;border-radius:18px;background:#fff;border:1px solid var(--border);text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.06)}
-    .hud-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.hud-val{display:block;font-size:22px;font-weight:800;margin-top:2px}
-    canvas{width:100%;aspect-ratio:4/5;border-radius:24px;background:linear-gradient(180deg,#f7fbff,#fffef5);border:1px solid var(--border);display:block;touch-action:manipulation}
-    .controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}.ctrl{border:none;border-radius:999px;padding:12px 16px;min-width:120px;background:#eef7f5;font-weight:800;border:1px solid var(--border)}
-    .tips{display:grid;gap:10px;margin-top:14px}.tip{background:#f7fafc;border:1px solid var(--border);border-radius:16px;padding:12px 14px;color:var(--muted);line-height:1.45}
-    .overlay{position:fixed;inset:0;z-index:900;background:rgba(20,30,40,.58);display:none;place-items:center;padding:16px;backdrop-filter:blur(8px)} .overlay.active{display:grid}
-    .dialog{width:min(760px,100%);padding:20px;border-radius:26px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow)}
-    .dialog p{color:var(--muted);line-height:1.5}.options{display:grid;gap:10px;margin-top:14px}.option{border:none;text-align:left;background:#f4f8fb;border:1px solid var(--border);border-radius:16px;padding:12px 14px;font-weight:700;min-height:46px}
-    .feedback{min-height:28px;margin-top:12px;font-weight:800}.good{color:var(--good)}.bad{color:var(--bad)}
-    .result-stars{font-size:44px;margin:10px 0 12px;text-align:center}.result{text-align:center;color:var(--muted);font-size:19px;line-height:1.5}
-    #endScreen .card{padding:22px;width:min(760px,100%)} .maze-hint{font-size:14px;color:var(--muted);text-align:center;margin-top:8px}
-    .case-box{background:#f7fafc;border:1px solid var(--border);border-radius:18px;padding:12px 14px;margin-top:12px;line-height:1.45}
-    @media (max-width:980px){.hero-grid,.layout{grid-template-columns:1fr}.hud{grid-template-columns:repeat(2,1fr)}} @media (max-width:640px){.panel,.card{border-radius:22px;padding:14px}.ctrl{width:100%}.controls{flex-direction:column}}
+
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#f7f5ff;overflow:hidden}
+    button{font:inherit}
+    button:focus-visible{outline:4px solid rgba(111,97,217,.28);outline-offset:3px}
+
+    .screen{
+      position:fixed;
+      inset:0;
+      display:none;
+      width:100%;
+      min-height:100vh;
+      min-height:100dvh;
+    }
+    .screen.active{display:flex}
+
+    /* SPLASH: logo only, plain white, 5 seconds */
+    #splashScreen{
+      z-index:1000;
+      align-items:center;
+      justify-content:center;
+      background:#fff;
+      padding:24px;
+    }
+    #splashScreen img{
+      width:min(360px,74vw);
+      max-height:46vh;
+      object-fit:contain;
+    }
+
+    /* START */
+    #startScreen{
+      align-items:center;
+      justify-content:center;
+      padding:clamp(12px,2.2vw,24px);
+      background:
+        radial-gradient(circle at 12% 20%, rgba(223,247,242,.95) 0 11%, transparent 11.4%),
+        radial-gradient(circle at 88% 16%, rgba(255,229,216,.95) 0 12%, transparent 12.4%),
+        radial-gradient(circle at 84% 86%, rgba(228,243,255,.95) 0 13%, transparent 13.4%),
+        linear-gradient(135deg,#fbfaff,#fff9ec);
+    }
+    .start-card{
+      width:min(1040px,100%);
+      max-height:calc(100dvh - 24px);
+      display:grid;
+      grid-template-columns:1.04fr .96fr;
+      gap:clamp(16px,3vw,34px);
+      align-items:center;
+      background:rgba(255,255,255,.94);
+      border:1px solid var(--line);
+      border-radius:30px;
+      box-shadow:var(--shadow);
+      padding:clamp(20px,4vw,46px);
+      overflow:hidden;
+    }
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 13px;
+      border-radius:999px;
+      background:var(--lavender);
+      color:var(--purple-dark);
+      font-weight:800;
+      font-size:clamp(12px,1.4vw,15px);
+      margin-bottom:12px;
+    }
+    h1,h2,p{margin-top:0}
+    h1{
+      margin-bottom:12px;
+      color:var(--purple-dark);
+      font-size:clamp(34px,5.6vw,68px);
+      line-height:.98;
+      letter-spacing:-.035em;
+    }
+    .start-copy{
+      max-width:590px;
+      margin-bottom:18px;
+      color:var(--muted);
+      font-size:clamp(16px,1.9vw,21px);
+      line-height:1.45;
+    }
+    .rules{
+      display:grid;
+      gap:9px;
+      margin:0 0 20px;
+    }
+    .rule{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      color:#4f5b70;
+      font-weight:700;
+      font-size:clamp(14px,1.6vw,17px);
+      line-height:1.34;
+    }
+    .rule-badge{
+      flex:0 0 auto;
+      width:26px;
+      height:26px;
+      display:grid;
+      place-items:center;
+      border-radius:9px;
+      background:var(--mint);
+      color:#287d75;
+      font-size:14px;
+    }
+    .start-actions{display:flex;flex-wrap:wrap;gap:10px}
+    .btn{
+      min-height:50px;
+      border:none;
+      border-radius:16px;
+      padding:13px 20px;
+      font-weight:900;
+      cursor:pointer;
+      transition:transform .15s ease, box-shadow .15s ease;
+      touch-action:manipulation;
+    }
+    .btn:active{transform:scale(.98)}
+    .btn-primary{background:var(--purple);color:#fff;box-shadow:0 8px 18px rgba(111,97,217,.26)}
+    .btn-soft{background:#f2f1f8;color:var(--ink);border:1px solid var(--line)}
+
+    .detective-art{
+      min-height:370px;
+      position:relative;
+      overflow:hidden;
+      border-radius:28px;
+      background:linear-gradient(180deg,#e6f5ff 0 52%,#fff1cf 52% 100%);
+      border:1px solid var(--line);
+    }
+    .sun{
+      position:absolute;
+      right:28px;top:28px;
+      width:74px;height:74px;
+      border-radius:50%;
+      background:#ffd974;
+      box-shadow:0 0 0 12px rgba(255,217,116,.2);
+    }
+    .building{position:absolute;bottom:58px;border-radius:12px 12px 0 0;border:4px solid rgba(54,70,90,.08)}
+    .b1{left:18px;width:112px;height:158px;background:#f8b7a5}
+    .b2{left:124px;width:128px;height:210px;background:#b7dfd8}
+    .b3{right:18px;width:126px;height:182px;background:#c9c2f4}
+    .windows{
+      position:absolute;inset:18px;
+      background:repeating-linear-gradient(90deg,rgba(255,255,255,.78) 0 18px,transparent 18px 38px),
+                 repeating-linear-gradient(0deg,rgba(255,255,255,.78) 0 18px,transparent 18px 42px);
+      opacity:.82;
+    }
+    .road{position:absolute;left:0;right:0;bottom:0;height:70px;background:#7d8798}
+    .road:after{content:"";position:absolute;left:8%;right:8%;top:34px;border-top:5px dashed rgba(255,255,255,.8)}
+    .detective-figure{
+      position:absolute;
+      left:50%;top:50%;
+      transform:translate(-50%,-50%);
+      width:168px;height:168px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:rgba(255,255,255,.88);
+      border:6px solid rgba(111,97,217,.16);
+      box-shadow:0 14px 30px rgba(38,51,74,.14);
+      font-size:92px;
+      z-index:5;
+    }
+    .art-tag{
+      position:absolute;
+      left:18px;right:18px;bottom:18px;
+      z-index:6;
+      padding:11px 14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.9);
+      border:1px solid var(--line);
+      text-align:center;
+      font-weight:800;
+      color:#566178;
+      font-size:clamp(13px,1.4vw,16px);
+    }
+
+    /* GAME */
+    #gameScreen{
+      flex-direction:column;
+      background:linear-gradient(160deg,#f8f7ff,#fff9eb);
+      padding:clamp(8px,1.8vw,18px);
+    }
+    .game-shell{
+      width:min(1100px,100%);
+      height:100%;
+      margin:auto;
+      display:grid;
+      grid-template-rows:auto minmax(0,1fr);
+      gap:10px;
+    }
+    .hud{
+      min-height:64px;
+      display:grid;
+      grid-template-columns:1fr auto auto;
+      gap:10px;
+      align-items:center;
+      background:rgba(255,255,255,.96);
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow:0 8px 22px rgba(60,66,100,.08);
+      padding:10px 14px;
+    }
+    .progress-wrap{min-width:0}
+    .progress-label{
+      display:flex;justify-content:space-between;gap:10px;
+      font-weight:900;font-size:14px;color:#58647a;margin-bottom:6px;
+    }
+    .bar{height:10px;border-radius:999px;background:#eceaf5;overflow:hidden}
+    .bar-fill{height:100%;width:10%;border-radius:inherit;background:linear-gradient(90deg,var(--purple),var(--teal));transition:width .3s ease}
+    .hud-chip{
+      min-width:104px;
+      min-height:43px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      border-radius:14px;
+      padding:8px 12px;
+      background:#f7f6fb;
+      border:1px solid var(--line);
+      font-weight:900;
+      white-space:nowrap;
+    }
+    .hud-chip strong{color:var(--purple-dark);font-size:19px}
+
+    .case-card{
+      min-height:0;
+      display:grid;
+      grid-template-columns:minmax(250px,.83fr) minmax(0,1.17fr);
+      gap:clamp(12px,2vw,22px);
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      padding:clamp(14px,2.3vw,24px);
+      overflow:hidden;
+    }
+    .scene-panel{
+      position:relative;
+      min-height:0;
+      border-radius:22px;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      background:linear-gradient(180deg,#eaf6ff,#fff6da);
+      border:1px solid var(--line);
+      padding:clamp(16px,2vw,22px);
+    }
+    .case-number{
+      align-self:flex-start;
+      padding:7px 11px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid var(--line);
+      color:var(--purple-dark);
+      font-weight:900;
+      font-size:13px;
+      position:relative;z-index:2;
+    }
+    .scene-icon{
+      flex:1;
+      display:grid;
+      place-items:center;
+      min-height:128px;
+      font-size:clamp(78px,12vw,132px);
+      line-height:1;
+      filter:drop-shadow(0 10px 14px rgba(38,51,74,.10));
+      position:relative;z-index:2;
+    }
+    .scene-label{
+      position:relative;z-index:2;
+      background:rgba(255,255,255,.92);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:11px 12px;
+      text-align:center;
+      font-weight:900;
+      color:#526078;
+      font-size:clamp(13px,1.5vw,16px);
+    }
+    .scene-dot{position:absolute;border-radius:50%;opacity:.7}
+    .dot1{width:110px;height:110px;right:-24px;top:55px;background:#d9d1ff}
+    .dot2{width:90px;height:90px;left:-20px;bottom:80px;background:#d2f2eb}
+
+    .question-panel{
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      padding:2px 2px 2px 0;
+    }
+    .mini-title{
+      margin:0 0 6px;
+      color:var(--teal);
+      font-size:clamp(12px,1.4vw,15px);
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+    .scenario{
+      margin:0 0 9px;
+      font-size:clamp(17px,2vw,23px);
+      line-height:1.34;
+      font-weight:800;
+      color:#334057;
+    }
+    .prompt{
+      margin:0 0 12px;
+      color:var(--purple-dark);
+      font-size:clamp(19px,2.4vw,28px);
+      line-height:1.18;
+      font-weight:900;
+    }
+    .options{
+      display:grid;
+      gap:9px;
+      min-height:0;
+    }
+    .option{
+      width:100%;
+      min-height:54px;
+      display:flex;
+      align-items:center;
+      gap:11px;
+      border:2px solid #e7e4f1;
+      border-radius:16px;
+      padding:10px 13px;
+      background:#fbfaff;
+      color:var(--ink);
+      text-align:left;
+      font-weight:800;
+      font-size:clamp(14px,1.55vw,17px);
+      line-height:1.28;
+      cursor:pointer;
+      transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease;
+      touch-action:manipulation;
+    }
+    .option:hover{border-color:#cfc8f4;background:#f7f5ff}
+    .option:active{transform:scale(.995)}
+    .option:disabled{cursor:default}
+    .letter{
+      flex:0 0 auto;
+      width:31px;height:31px;
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      background:#ebe8f8;
+      color:var(--purple-dark);
+      font-weight:900;
+    }
+    .option.correct{
+      border-color:var(--good);
+      background:#eaf8f1;
+      box-shadow:0 0 0 4px rgba(46,155,102,.11);
+    }
+    .option.correct .letter{background:var(--good);color:#fff}
+    .option.wrong{border-color:var(--bad);background:#fff0f2}
+    .option.glow-correct{animation:correctGlow .75s ease-in-out 2}
+    @keyframes correctGlow{
+      0%,100%{box-shadow:0 0 0 3px rgba(46,155,102,.08)}
+      50%{box-shadow:0 0 0 8px rgba(46,155,102,.2),0 0 24px rgba(46,155,102,.23)}
+    }
+    .jiggle{animation:jiggle .33s ease}
+    @keyframes jiggle{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
+
+    .feedback{
+      min-height:34px;
+      margin-top:9px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:clamp(13px,1.45vw,16px);
+      font-weight:900;
+      line-height:1.3;
+    }
+    .feedback.good{color:var(--good)}
+    .feedback.bad{color:var(--bad)}
+    .feedback.info{color:#657086}
+    .feedback-icon{font-size:20px}
+
+    .sound-float{
+      position:fixed;
+      right:clamp(10px,1.8vw,18px);
+      bottom:clamp(10px,1.8vw,18px);
+      z-index:40;
+      width:48px;height:48px;
+      border-radius:50%;
+      border:1px solid var(--line);
+      background:#fff;
+      box-shadow:0 8px 20px rgba(60,66,100,.15);
+      cursor:pointer;
+      font-size:20px;
+    }
+
+    /* END */
+    #endScreen{
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background:linear-gradient(150deg,#f1eeff,#fff8e8);
+      overflow:hidden;
+    }
+    .end-card{
+      width:min(720px,100%);
+      max-height:calc(100dvh - 24px);
+      text-align:center;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:30px;
+      box-shadow:var(--shadow);
+      padding:clamp(24px,5vw,46px);
+      position:relative;
+      z-index:2;
+    }
+    .end-badge{
+      width:92px;height:92px;
+      margin:0 auto 14px;
+      display:grid;place-items:center;
+      border-radius:50%;
+      background:var(--lavender);
+      font-size:50px;
+    }
+    .end-card h2{
+      margin:0 0 9px;
+      color:var(--purple-dark);
+      font-size:clamp(30px,5vw,48px);
+      line-height:1.05;
+    }
+    .end-copy{
+      margin:0 auto 18px;
+      color:var(--muted);
+      font-size:clamp(15px,1.9vw,19px);
+      line-height:1.45;
+      max-width:560px;
+    }
+    .score-boxes{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin:0 auto 18px;
+      max-width:500px;
+    }
+    .score-box{
+      padding:13px;
+      border-radius:18px;
+      background:#f8f7fc;
+      border:1px solid var(--line);
+    }
+    .score-box span{display:block;color:var(--muted);font-size:13px;font-weight:800;margin-bottom:3px}
+    .score-box strong{display:block;color:var(--purple-dark);font-size:27px}
+    .end-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:10px}
+
+    #confettiLayer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+    .confetti-piece{
+      position:absolute;
+      top:-24px;
+      width:10px;height:18px;
+      border-radius:3px;
+      animation:fall linear forwards;
+    }
+    @keyframes fall{
+      from{transform:translate3d(0,-30px,0) rotate(0deg);opacity:1}
+      to{transform:translate3d(var(--drift),110dvh,0) rotate(720deg);opacity:.9}
+    }
+
+    /* CORRECT TICK */
+    .tick-pop{
+      position:fixed;
+      inset:0;
+      z-index:60;
+      pointer-events:none;
+      display:grid;
+      place-items:center;
+      opacity:0;
+    }
+    .tick-pop.show{animation:tickLayer .8s ease forwards}
+    .tick-circle{
+      width:104px;height:104px;
+      border-radius:50%;
+      display:grid;place-items:center;
+      background:var(--good);
+      color:#fff;
+      font-size:66px;
+      font-weight:900;
+      box-shadow:0 18px 45px rgba(46,155,102,.28);
+    }
+    @keyframes tickLayer{0%{opacity:0;transform:scale(.6)}25%{opacity:1;transform:scale(1.07)}65%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.86)}}
+
+    @media (max-width:820px){
+      .start-card{grid-template-columns:1fr;max-width:680px;padding:22px}
+      .detective-art{display:none}
+      .case-card{grid-template-columns:1fr;grid-template-rows:minmax(112px,.46fr) minmax(0,1.54fr)}
+      .scene-panel{min-height:112px;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto 1fr;align-items:center;gap:8px;padding:12px 14px}
+      .case-number{grid-column:1 / -1}
+      .scene-icon{min-height:0;font-size:68px;grid-column:1;grid-row:2}
+      .scene-label{grid-column:2;grid-row:2;text-align:left}
+      .hud{grid-template-columns:1fr auto}
+      .hud-chip:last-child{display:none}
+      .question-panel{justify-content:flex-start}
+    }
+
+    @media (max-width:520px){
+      #startScreen,#endScreen{padding:10px}
+      .start-card,.end-card{border-radius:22px;padding:18px}
+      h1{font-size:clamp(34px,12vw,52px)}
+      .start-copy{font-size:15px;margin-bottom:14px}
+      .rules{gap:7px;margin-bottom:16px}
+      .rule{font-size:13.5px}
+      .rule-badge{width:24px;height:24px}
+      .start-actions{display:grid;grid-template-columns:1fr 1fr}
+      .btn{min-height:48px;padding:11px 13px}
+      #gameScreen{padding:7px}
+      .game-shell{gap:7px}
+      .hud{min-height:55px;padding:8px 9px;border-radius:16px;gap:7px}
+      .progress-label{font-size:12px;margin-bottom:5px}
+      .hud-chip{min-width:82px;min-height:38px;padding:7px 9px;font-size:12px;border-radius:12px}
+      .hud-chip strong{font-size:16px}
+      .case-card{padding:9px;border-radius:20px;gap:9px;grid-template-rows:110px minmax(0,1fr)}
+      .scene-panel{border-radius:16px;padding:9px 10px;grid-template-columns:62px 1fr}
+      .case-number{font-size:11px;padding:5px 8px}
+      .scene-icon{font-size:53px}
+      .scene-label{font-size:12px;padding:8px 9px;border-radius:12px}
+      .mini-title{font-size:11px;margin-bottom:3px}
+      .scenario{font-size:14.4px;margin-bottom:5px;line-height:1.25}
+      .prompt{font-size:17px;margin-bottom:7px}
+      .options{gap:6px}
+      .option{min-height:47px;padding:7px 9px;border-radius:13px;font-size:12.8px;gap:8px;line-height:1.2}
+      .letter{width:27px;height:27px;border-radius:8px;font-size:12px}
+      .feedback{min-height:27px;margin-top:5px;font-size:12.2px}
+      .sound-float{width:42px;height:42px;font-size:17px}
+      .end-badge{width:76px;height:76px;font-size:42px}
+      .score-box strong{font-size:23px}
+    }
+
+    @media (max-height:690px) and (min-width:821px){
+      .start-card{padding:20px 28px}
+      .detective-art{min-height:300px}
+      .start-copy{margin-bottom:12px}
+      .rules{gap:6px;margin-bottom:14px}
+      .rule{font-size:14px}
+      .hud{min-height:54px}
+      .case-card{padding:13px}
+      .scenario{font-size:17px}
+      .prompt{font-size:21px;margin-bottom:8px}
+      .options{gap:6px}
+      .option{min-height:46px;padding:8px 11px;font-size:14px}
+      .feedback{margin-top:5px;min-height:28px;font-size:13px}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    }
   </style>
 </head>
 <body>
-  <section id="splashScreen" class="screen active">
-    <div class="box">
-      <img id="innovineLogo" src="./assets/innovine-logo.png" alt="Innovine logo" />
-      <div class="splash-text">Loading Equality Detectives...</div>
-    </div>
+
+  <section id="splashScreen" class="screen active" aria-label="Loading">
+    <img src="assets/innovine-logo.png" alt="Innovine" />
   </section>
 
   <section id="startScreen" class="screen">
-    <div class="wrap hero">
-      <div class="card hero-grid">
-        <div>
-          <div class="pill-row">
-            <div class="pill">Chapter 5: Social Equality</div>
-            <div class="pill">Detective game</div>
-            <div class="pill">Reward questions</div>
-          </div>
-          <h1>Equality Detectives</h1>
-          <p class="lead">Inspect scenes, find unfair treatment, and choose the most inclusive response. Solve cases, earn stars, and build a fair society.</p>
-          <div class="actions">
-            <button class="btn primary" onclick="startGame()">Start Game</button>
-            <button class="btn ghost" onclick="toggleSound()" id="soundBtn">Sound: On</button>
-          </div>
+    <div class="start-card">
+      <div>
+        <div class="eyebrow">🔎 Fairness Mission</div>
+        <h1>Equality Detectives</h1>
+        <p class="start-copy">Read each case, spot what is unfair, and choose the response that shows equality, respect and inclusion.</p>
+
+        <div class="rules">
+          <div class="rule"><span class="rule-badge">1</span><span>You will solve <strong>10 detective cases</strong>.</span></div>
+          <div class="rule"><span class="rule-badge">2</span><span>Tap the fairest response. You get <strong>2 attempts</strong> for each case.</span></div>
+          <div class="rule"><span class="rule-badge">3</span><span>Look for bias, exclusion, discrimination and unequal treatment.</span></div>
         </div>
-        <div class="art" aria-hidden="true">
-          <div class="cloud one"></div><div class="cloud two"></div>
-          <div class="detective">🕵️‍♀️</div>
-          <div class="note">Players learn to spot bias, discrimination, exclusion, and unfairness — then choose equal and respectful actions.</div>
+
+        <div class="start-actions">
+          <button class="btn btn-primary" id="startBtn" type="button">Start Game</button>
+          <button class="btn btn-soft" id="startSoundBtn" type="button">🔊 Sound On</button>
         </div>
       </div>
-      <div class="layout" style="margin-top:16px;">
-        <div class="card panel">
-          <h2>How it works</h2>
-          <div class="tips">
-            <div class="tip">1. Move through the city map to each case file.</div>
-            <div class="tip">2. Read the social situation and identify the unfair part.</div>
-            <div class="tip">3. Pick the best fair response and earn a star.</div>
-          </div>
-        </div>
-        <div class="card panel">
-          <h2>Chapter themes</h2>
-          <div class="tips">
-            <div class="tip">Diversity</div>
-            <div class="tip">Acceptance</div>
-            <div class="tip">Bias, discrimination, inclusion</div>
-          </div>
-        </div>
+
+      <div class="detective-art" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="building b1"><div class="windows"></div></div>
+        <div class="building b2"><div class="windows"></div></div>
+        <div class="building b3"><div class="windows"></div></div>
+        <div class="road"></div>
+        <div class="detective-figure">🕵️</div>
+        <div class="art-tag">Every person deserves respect, dignity and a fair chance.</div>
       </div>
     </div>
   </section>
 
   <section id="gameScreen" class="screen">
-    <div class="wrap layout" style="padding-top:18px;">
-      <div>
-        <div class="hud">
-          <div class="hud-box"><span class="hud-label">Case</span><span class="hud-val" id="caseNum">1</span></div>
-          <div class="hud-box"><span class="hud-label">Score</span><span class="hud-val" id="scoreNum">0</span></div>
-          <div class="hud-box"><span class="hud-label">Lives</span><span class="hud-val" id="livesNum">3</span></div>
-          <div class="hud-box"><span class="hud-label">Goal</span><span class="hud-val" id="goalNum">5</span></div>
-          <div class="hud-box"><span class="hud-label">Stars</span><span class="hud-val" id="starsNum">0</span></div>
-        </div>
-        <div class="card panel">
-          <canvas id="gameCanvas" width="480" height="600"></canvas>
-          <div class="controls">
-            <button class="ctrl" onclick="turn('left')">Turn Left</button>
-            <button class="ctrl" onclick="pauseResume()" id="pauseBtn">Pause</button>
-            <button class="ctrl" onclick="turn('right')">Turn Right</button>
+    <div class="game-shell">
+      <header class="hud">
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span id="progressText">Case 1 of 10</span>
+            <span id="attemptText">2 attempts left</span>
           </div>
-          <div class="maze-hint">Use arrow keys on desktop. On mobile, use the buttons above. Reach the next case file after solving the current one.</div>
+          <div class="bar" aria-hidden="true"><div class="bar-fill" id="barFill"></div></div>
         </div>
+        <div class="hud-chip">⭐ Score <strong id="scoreText">0</strong></div>
+        <div class="hud-chip">🏅 Best <strong id="bestText">0</strong></div>
+      </header>
+
+      <main class="case-card">
+        <section class="scene-panel" aria-label="Case scene">
+          <span class="scene-dot dot1"></span>
+          <span class="scene-dot dot2"></span>
+          <div class="case-number" id="caseBadge">CASE FILE 01</div>
+          <div class="scene-icon" id="sceneIcon" aria-hidden="true">🤝</div>
+          <div class="scene-label" id="sceneLabel">Everyone deserves a fair chance.</div>
+        </section>
+
+        <section class="question-panel">
+          <p class="mini-title">Detective Notes</p>
+          <p class="scenario" id="scenarioText"></p>
+          <h2 class="prompt" id="promptText">What is the fairest thing to do?</h2>
+          <div class="options" id="optionsBox"></div>
+          <div class="feedback info" id="feedback" aria-live="polite">
+            <span class="feedback-icon">🔎</span>
+            <span>Choose the most fair and respectful response.</span>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <button class="sound-float" id="gameSoundBtn" type="button" aria-label="Toggle sound">🔊</button>
+  </section>
+
+  <section id="endScreen" class="screen">
+    <div id="confettiLayer" aria-hidden="true"></div>
+    <div class="end-card">
+      <div class="end-badge">🏆</div>
+      <h2 id="endTitle">Equality Champion!</h2>
+      <p class="end-copy" id="endMessage">You spotted unfair treatment and chose respectful, inclusive actions.</p>
+
+      <div class="score-boxes">
+        <div class="score-box"><span>Cases solved correctly</span><strong id="finalScore">0 / 10</strong></div>
+        <div class="score-box"><span>Best score</span><strong id="finalBest">0 / 10</strong></div>
       </div>
-      <div class="card panel">
-        <h2>Case notes</h2>
-        <p id="caseInfo">Move to Case 1 and solve the situation.</p>
-        <div class="case-box" id="caseBox">Detective tip: Fairness means treating everyone with respect and giving equal chances.</div>
-        <div class="tips">
-          <div class="tip">Every 3 correct cases unlock a reward question.</div>
-          <div class="tip">Each level becomes a little faster and trickier.</div>
-          <div class="tip">Look for bias, exclusion, and unequal treatment.</div>
-        </div>
+
+      <div class="end-actions">
+        <button class="btn btn-primary" id="playAgainBtn" type="button">Play Again</button>
+        <button class="btn btn-soft" id="backBtn" type="button">Back to Start</button>
       </div>
     </div>
   </section>
 
-  <section id="endScreen" class="screen center">
-    <div class="card">
-      <h2 id="finalTitle" style="text-align:center;color:var(--primary2)">Great work!</h2>
-      <div class="result-stars" id="finalStars">🌟🌟</div>
-      <div class="result">Cases solved: <strong id="finalCases">0</strong> / 9</div>
-      <div class="result">Quiz stars earned: <strong id="finalQuizStars">0</strong></div>
-      <p class="result" id="finalMessage">You helped make the world fairer and kinder.</p>
-      <div class="actions" style="justify-content:center;margin-top:16px;">
-        <button class="btn primary" onclick="startGame()">Play Again</button>
-        <button class="btn ghost" onclick="showStart()">Back to Start</button>
-      </div>
-    </div>
-  </section>
-
-  <div id="questionOverlay" class="overlay" aria-hidden="true">
-    <div class="dialog card">
-      <h2>Reward Question</h2>
-      <p id="questionText"></p>
-      <div class="options" id="optionBox"></div>
-      <div class="feedback" id="questionFeedback"></div>
-    </div>
+  <div class="tick-pop" id="tickPop" aria-hidden="true">
+    <div class="tick-circle">✓</div>
   </div>
 
-  <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const grid = 30, cols = 16, rows = 16, cw = canvas.width / cols, ch = canvas.height / rows;
-    const levelTargets = [5,5,6,6,7,7,8,8,9];
-    const mapTemplates = [
-      ['################','#S....#......#..#','#.##.#.#.##.#.#..#','#....#.#....#.#..#','#.####.####.#.####','#......#....#....#','#.######.#######..#','#....#....#....#..#','#.##.#.##.#.##.#..#','#..#.#..#.#...#.#E#','#..#.##.#.###.#.#.#','#..#....#...#.#...#','#.###.###.#.#.###.#','#...#...#.#.#...#.#','#.#.###.#.#.###.#.#','################'],
-      ['################','#S...#.......#...#','#.##.#.###.#.#.#.#','#....#...#.#.#.#.#','#.#######.#.#.#.#.#','#.......#.#.#...#.#','#.#####.#.#.###.#.#','#.#...#.#.#...#.#.#','#.#.#.#.#.###.#.#.#','#...#.#.#...#.#.#E#','#.###.#.###.#.#.#.#','#...#.#...#.#.#.#.#','#.#.#.###.#.#.#.#.#','#.#...#...#...#...#','#.#######.#####.###','################'],
-      ['################','#S....#....#....##','#.##.#.##.#.##.#.#','#....#....#....#.#','#.####.######.#.#.#','#......#....#.#...#','#.######.##.#.#.###','#....#....#.#.#...#','#.##.#.##.#.#.###.#','#..#.#..#.#.#...#E#','#..#.##.#.#.###.#.#','#..#....#...#...#.#','#.###.###.#####.#.#','#...#...#.....#...#','#.#.###.#####.###.#','################']
-    ];
-    const clues = [
-      {case:'A child is left out of a game because of their language.', issue:'This is exclusion and unfair treatment.', answer:'Invite them in and make space for everyone.', options:['Invite them in and make space for everyone.','Laugh and keep them out.','Tell them to go away.']},
-      {case:'A teacher gives boys the sports equipment first every time.', issue:'This shows bias and unequal opportunity.', answer:'Give everyone a fair turn.', options:['Give everyone a fair turn.','Only boys should play first.','Ignore the girls.']},
-      {case:'Someone makes fun of a classmate’s disability.', issue:'This is discrimination and disrespect.', answer:'Stand up for the classmate and report it.', options:['Stand up for the classmate and report it.','Join the teasing.','Walk away and do nothing.']},
-      {case:'A new student from a different culture is not welcomed.', issue:'This is not inclusive.', answer:'Learn about them and welcome them kindly.', options:['Learn about them and welcome them kindly.','Keep them alone.','Say they do not belong.']},
-      {case:'Two children do the same work, but only one gets praise.', issue:'This is unfair.', answer:'Treat both children with equal respect.', options:['Treat both children with equal respect.','Praise only the same person always.','Ignore the other child.']},
-      {case:'A team chooses only the strongest student to speak.', issue:'This reduces equal participation.', answer:'Let everyone have a voice.', options:['Let everyone have a voice.','Only the strongest should speak.','Nobody else should talk.']},
-      {case:'Someone is judged because of their religion.', issue:'This is prejudice and discrimination.', answer:'Respect their beliefs and stop the unfair talk.', options:['Respect their beliefs and stop the unfair talk.','Repeat the unfair words.','Make fun of their beliefs.']},
-      {case:'A student with a disability is not given the same chance to join a trip.', issue:'This is unequal access.', answer:'Make the trip accessible for everyone.', options:['Make the trip accessible for everyone.','Leave them behind.','Say trips are only for some people.']},
-      {case:'Different friends want to join the same project.', issue:'This is a chance for inclusion.', answer:'Work together and divide roles fairly.', options:['Work together and divide roles fairly.','Choose only one friend.','Exclude the rest.']}
-    ];
-    const questions = [
-      {q:'What does social equality mean?', options:['Everyone is treated with fairness and respect','Only some people matter','People should be treated differently'], answer:'Everyone is treated with fairness and respect', tip:'Social equality means fairness for all.'},
-      {q:'Which action shows inclusion?', options:['Leaving someone out','Inviting everyone to play','Making fun of differences'], answer:'Inviting everyone to play', tip:'Inclusion makes people feel welcome.'},
-      {q:'What is discrimination?', options:['Treating others differently and unfairly','Sharing equally','Helping a friend'], answer:'Treating others differently and unfairly', tip:'Discrimination means unfair treatment.'},
-      {q:'Why is diversity important?', options:['It makes everyone exactly the same','It shows different strengths and cultures','It stops learning'], answer:'It shows different strengths and cultures', tip:'Diversity brings variety and strength.'},
-      {q:'What should you do when you see unfairness?', options:['Stand up and support the person','Laugh quietly','Join the unfair action'], answer:'Stand up and support the person', tip:'We should speak up against unfair treatment.'},
-      {q:'What is the best choice for a fair team?', options:['Everyone gets a role','Only one person does everything','No one helps'], answer:'Everyone gets a role', tip:'Teams work better when everyone contributes.'}
-    ];
+  <audio id="correctAudio" preload="auto" src="assets/correct.mp3"></audio>
+  <audio id="wrongAudio" preload="auto" src="assets/wrong.mp3"></audio>
+  <audio id="clapAudio" preload="auto" src="assets/freesound_community-claps-44774.mp3"></audio>
 
-    const splash = document.getElementById('splashScreen');
-    const logo = document.getElementById('innovineLogo');
-    const overlay = document.getElementById('questionOverlay');
-    let audioCtx = null, soundOn = true, splashHidden = false;
-    let gameActive = false, paused = false, usedQuestions = [];
-    let level = 1, score = 0, progress = 0, lives = 3, stars = 0, correctCaseCount = 0;
-    let player, direction, map, cases, exitPos, loopId, spawnId;
-    let cell = 30;
+<script>
+(() => {
+  'use strict';
 
-    function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-    function toggleSound(){ soundOn=!soundOn; document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off'; }
-    function play(kind){ if(!soundOn) return; if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume(); const tone=(f,d,t='triangle')=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=t;o.frequency.value=f;o.connect(g);g.connect(audioCtx.destination);g.gain.value=.05;o.start();g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+d);o.stop(audioCtx.currentTime+d)}; if(kind==='good'){tone(660,.14);setTimeout(()=>tone(830,.16),70)} else if(kind==='bad'){tone(220,.2,'sawtooth')} else if(kind==='win'){tone(523,.14);setTimeout(()=>tone(659,.14),80);setTimeout(()=>tone(784,.22),160)} }
-    function hideSplash(){ if(splashHidden) return; splashHidden=true; splash.classList.remove('active'); show('startScreen'); }
-    logo.addEventListener('error', hideSplash); window.addEventListener('load', ()=>setTimeout(hideSplash,2200));
+  const TOTAL_CASES = 10;
+  const SPLASH_MS = 5000;
 
-    function startGame(){ level=1; score=0; progress=0; lives=3; stars=0; correctCaseCount=0; usedQuestions=[]; paused=false; gameActive=true; document.getElementById('pauseBtn').textContent='Pause'; show('gameScreen'); setupLevel(); }
-    function showStart(){ stopLoops(); gameActive=false; show('startScreen'); }
-    function stopLoops(){ if(loopId) cancelAnimationFrame(loopId); if(spawnId) clearInterval(spawnId); loopId=spawnId=null; }
-    function setupLevel(){ stopLoops(); map = mapTemplates[(level-1)%mapTemplates.length].map(r=>r.split('')); cases=[]; findStartEnd(); buildCases(); updateHud(); direction={x:1,y:0}; player={x:1,y:1}; loopId=requestAnimationFrame(gameLoop); spawnId=setInterval(()=>{ if(gameActive&&!paused&&Math.random()<0.28) addDecoy(); }, 1500); }
-    function findStartEnd(){ for(let y=0;y<map.length;y++) for(let x=0;x<map[y].length;x++){ if(map[y][x]==='S') player={x,y}; if(map[y][x]==='E') exitPos={x,y}; } }
-    function buildCases(){ const needed=levelTargets[level-1]; const used=new Set([`${player.x},${player.y}`,`${exitPos.x},${exitPos.y}`]); while(cases.filter(c=>c.good).length<needed){ const x=Math.floor(Math.random()*cols), y=Math.floor(Math.random()*rows); if(!map[y]||!map[y][x]||map[y][x]==='#'||used.has(`${x},${y}`)) continue; const c=clues[Math.floor(Math.random()*clues.length)]; cases.push({x,y,good:true,clue:c}); used.add(`${x},${y}`); } }
-    function addDecoy(){ const free=[]; for(let y=0;y<rows;y++) for(let x=0;x<cols;x++) if(map[y][x]!== '#' && !(x===player.x&&y===player.y) && !(x===exitPos.x&&y===exitPos.y)) free.push({x,y}); const p=free[Math.floor(Math.random()*free.length)]; if(!p) return; cases.push({x:p.x,y:p.y,good:false,clue:{case:'A wrong turn appears.', issue:'A decoy is blocking the path.', answer:'Keep moving and stay focused.', options:['Keep moving and stay focused.','Quit the game.','Ignore the path entirely.']}, ttl:120}); }
-    function updateHud(){ document.getElementById('caseNum').textContent=level; document.getElementById('scoreNum').textContent=score; document.getElementById('livesNum').textContent=lives; document.getElementById('goalNum').textContent=levelTargets[level-1]; document.getElementById('starsNum').textContent=stars; document.getElementById('caseInfo').textContent='Solve Case ' + level + ': identify unfair treatment and choose the fair response.'; document.getElementById('caseBox').textContent='Detective tip: Look for exclusion, bias, discrimination, and unequal chances.'; }
-    function pauseResume(){ if(!gameActive) return; paused=!paused; document.getElementById('pauseBtn').textContent=paused?'Resume':'Pause'; }
-    function turn(dir){ if(!gameActive) return; const d=direction; direction = dir==='left' ? {x:-d.y,y:d.x} : {x:d.y,y:-d.x}; }
-    document.addEventListener('keydown', e=>{ if(e.key==='ArrowLeft') turn('left'); if(e.key==='ArrowRight') turn('right'); if(e.key===' ') {e.preventDefault(); pauseResume();} });
+  const cases = [
+    {
+      icon:'🗣️',
+      label:'Language differences should never exclude someone.',
+      scenario:'During a playground game, a new student is left out because they speak a different language at home.',
+      prompt:'What should the group do?',
+      options:[
+        {text:'Invite the student to join and help everyone understand the game.', correct:true},
+        {text:'Tell the student to watch until they speak the same way as everyone else.', correct:false},
+        {text:'Continue the game and pretend not to notice.', correct:false}
+      ],
+      explanation:'Inclusion means making space for everyone, even when people communicate differently.'
+    },
+    {
+      icon:'⚽',
+      label:'Fair opportunities should be available to everyone.',
+      scenario:'Every sports period, the boys are given the equipment first while the girls are asked to wait.',
+      prompt:'Which action is fair?',
+      options:[
+        {text:'Give all students equal turns to choose and use the equipment.', correct:true},
+        {text:'Keep the same rule because it has always been done that way.', correct:false},
+        {text:'Let only the fastest students use the equipment.', correct:false}
+      ],
+      explanation:'Equality means giving everyone a fair opportunity without bias.'
+    },
+    {
+      icon:'♿',
+      label:'Different needs may require thoughtful support.',
+      scenario:'A class trip is planned, but one student who uses a wheelchair is told they cannot come because the venue has steps.',
+      prompt:'What is the most inclusive response?',
+      options:[
+        {text:'Choose an accessible plan so the student can participate with the class.', correct:true},
+        {text:'Ask the student to stay at school while the class goes.', correct:false},
+        {text:'Say that trips cannot work for everyone.', correct:false}
+      ],
+      explanation:'Equal participation sometimes means removing barriers so everyone can take part.'
+    },
+    {
+      icon:'🌍',
+      label:'Different cultures make a community richer.',
+      scenario:'A new classmate brings food from their culture. A few students laugh because it looks unfamiliar.',
+      prompt:'What should a fairness detective do?',
+      options:[
+        {text:'Show respect and encourage others to learn about the classmate’s culture.', correct:true},
+        {text:'Join the laughter so nobody thinks you are different.', correct:false},
+        {text:'Tell the classmate to bring only familiar food next time.', correct:false}
+      ],
+      explanation:'Respecting cultural differences helps everyone feel accepted and valued.'
+    },
+    {
+      icon:'👏',
+      label:'Equal effort deserves equal recognition.',
+      scenario:'Two students do the same amount of work on a project, but only one student is praised every time.',
+      prompt:'What would make the situation fairer?',
+      options:[
+        {text:'Recognise both students for the work they contributed.', correct:true},
+        {text:'Praise only the student who usually gets praised.', correct:false},
+        {text:'Ignore both students so nobody complains.', correct:false}
+      ],
+      explanation:'Fairness includes recognising people’s contributions without favouritism.'
+    },
+    {
+      icon:'🎤',
+      label:'Everyone deserves a chance to be heard.',
+      scenario:'In a group activity, the same confident student is always chosen to speak while others never get a turn.',
+      prompt:'What is the best team decision?',
+      options:[
+        {text:'Rotate roles so different group members get a chance to speak.', correct:true},
+        {text:'Always choose the most confident speaker.', correct:false},
+        {text:'Let only the group leader decide who can speak.', correct:false}
+      ],
+      explanation:'Inclusive groups create opportunities for every member to participate.'
+    },
+    {
+      icon:'🕊️',
+      label:'Beliefs should be treated with dignity and respect.',
+      scenario:'A student is teased because their family follows a different religion from most classmates.',
+      prompt:'How should you respond?',
+      options:[
+        {text:'Stop the teasing and remind others to respect different beliefs.', correct:true},
+        {text:'Repeat the joke because everyone else is laughing.', correct:false},
+        {text:'Tell the student not to talk about their beliefs.', correct:false}
+      ],
+      explanation:'Judging or teasing someone because of religion is unfair and disrespectful.'
+    },
+    {
+      icon:'🧩',
+      label:'A fair team gives everyone a meaningful role.',
+      scenario:'A class project has four students, but one student wants to do everything and refuses to give the others a role.',
+      prompt:'Which choice shows equality?',
+      options:[
+        {text:'Divide the work fairly so everyone can contribute.', correct:true},
+        {text:'Let one student do everything because it may be quicker.', correct:false},
+        {text:'Give important work only to the highest-scoring student.', correct:false}
+      ],
+      explanation:'Equal participation means everyone gets a genuine chance to contribute.'
+    },
+    {
+      icon:'📚',
+      label:'Learning opportunities should not depend on stereotypes.',
+      scenario:'A student is told that a science club is not for them because people like them are not usually good at science.',
+      prompt:'What is the fair response?',
+      options:[
+        {text:'Encourage the student to join if they are interested.', correct:true},
+        {text:'Tell the student to choose an activity others expect them to do.', correct:false},
+        {text:'Keep club places only for students who fit the stereotype.', correct:false}
+      ],
+      explanation:'Stereotypes should not decide what opportunities a person receives.'
+    },
+    {
+      icon:'🪑',
+      label:'Shared spaces should include everyone.',
+      scenario:'At lunch, some students save an entire table and refuse to let a new student sit with them.',
+      prompt:'What would be inclusive?',
+      options:[
+        {text:'Make room and welcome the new student to sit with the group.', correct:true},
+        {text:'Tell the new student to find somewhere else.', correct:false},
+        {text:'Move the bags onto the empty seats so nobody can join.', correct:false}
+      ],
+      explanation:'Inclusion means helping others feel that they belong.'
+    },
+    {
+      icon:'🎨',
+      label:'People should be valued for effort, not assumptions.',
+      scenario:'Before seeing anyone’s artwork, a student says one classmate cannot be good at art because of where they come from.',
+      prompt:'What should you say?',
+      options:[
+        {text:'We should look at the work fairly instead of judging by background.', correct:true},
+        {text:'That must be true because backgrounds decide talent.', correct:false},
+        {text:'Only people from certain places can be creative.', correct:false}
+      ],
+      explanation:'Prejudice means forming an unfair judgement before knowing the person or facts.'
+    },
+    {
+      icon:'🏃',
+      label:'Rules should be fair and based on relevant needs.',
+      scenario:'A relay team refuses to consider a student because of their appearance, even though the student runs very well.',
+      prompt:'How should the team choose fairly?',
+      options:[
+        {text:'Use relevant skills and give everyone a fair chance to try out.', correct:true},
+        {text:'Choose only people who look a certain way.', correct:false},
+        {text:'Exclude anyone who seems different from the group.', correct:false}
+      ],
+      explanation:'Fair decisions should be based on relevant criteria, not prejudice.'
+    },
+    {
+      icon:'💬',
+      label:'Respectful language helps create equality.',
+      scenario:'During a discussion, one student keeps interrupting another and says their ideas do not matter.',
+      prompt:'What is the best response?',
+      options:[
+        {text:'Make sure each person gets time to speak and is listened to respectfully.', correct:true},
+        {text:'Let the loudest person control the whole discussion.', correct:false},
+        {text:'Tell the quieter student to stop sharing ideas.', correct:false}
+      ],
+      explanation:'Equality includes listening to people respectfully and valuing their voices.'
+    },
+    {
+      icon:'🤝',
+      label:'Friendship groups can be welcoming and fair.',
+      scenario:'A group says a child cannot join them because their clothes are not as expensive as everyone else’s.',
+      prompt:'What should happen instead?',
+      options:[
+        {text:'Welcome the child and judge people by how they behave, not what they own.', correct:true},
+        {text:'Keep the group only for children with expensive things.', correct:false},
+        {text:'Ask the child to buy new clothes before joining.', correct:false}
+      ],
+      explanation:'A person’s worth is not decided by money, clothes or possessions.'
+    },
+    {
+      icon:'🏫',
+      label:'School responsibilities should be shared fairly.',
+      scenario:'The same few students are always asked to clean up after an activity while others are never expected to help.',
+      prompt:'Which solution is fair?',
+      options:[
+        {text:'Share classroom responsibilities among students in a fair rotation.', correct:true},
+        {text:'Keep giving the job to the same students.', correct:false},
+        {text:'Make only the quietest students clean up.', correct:false}
+      ],
+      explanation:'Shared responsibilities should not be placed unfairly on the same people.'
+    }
+  ];
 
-    function move(){ const nx=player.x+direction.x, ny=player.y+direction.y; if(nx<0||ny<0||nx>=cols||ny>=rows||map[ny][nx]==='#'){ lives--; play('bad'); if(lives<=0) return endGame(false); resetPlayer(); return; } player={x:nx,y:ny}; }
-    function resetPlayer(){ player = {x:1,y:1}; direction={x:1,y:0}; }
-    function checkCases(){ for(let i=cases.length-1;i>=0;i--){ const c=cases[i]; if(c.ttl!==undefined){ c.ttl--; if(c.ttl<=0){ cases.splice(i,1); continue; } }
-        if(c.x===player.x && c.y===player.y){ cases.splice(i,1); if(c.good){ progress++; score++; correctCaseCount++; stars++; play('good'); if(correctCaseCount % 3 === 0){ paused=true; showQuestion(); updateHud(); return; } if(progress>=levelTargets[level-1]){ clearLevel(); return; } } else { lives--; play('bad'); if(lives<=0) return endGame(false); } updateHud(); } }
-      if(player.x===exitPos.x && player.y===exitPos.y && progress>=levelTargets[level-1]) clearLevel(); }
-    function clearLevel(){ if(level>=9) return endGame(true); level++; progress=0; cases=[]; resetPlayer(); setupLevel(); }
-    function gameLoop(){ if(!gameActive) return; if(!paused){ move(); checkCases(); } draw(); loopId=requestAnimationFrame(gameLoop); }
-    function draw(){ ctx.clearRect(0,0,canvas.width,canvas.height); drawMap(); drawCases(); drawPlayer(); drawExit(); if(paused){ ctx.fillStyle='rgba(20,25,35,.36)'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.fillStyle='#fff'; ctx.font='700 34px Arial'; ctx.textAlign='center'; ctx.fillText('Paused', canvas.width/2, canvas.height/2); } }
-    function drawMap(){ for(let y=0;y<rows;y++) for(let x=0;x<cols;x++){ ctx.fillStyle = map[y][x]==='#' ? ((x+y)%2===0 ? '#5a6d7f':'#42596c') : ((x+y)%2===0 ? '#f5fbff':'#eef8ff'); ctx.fillRect(x*cell,y*cell,cell,cell); if(map[y][x]==='S'){ ctx.fillStyle='#2f8f83'; ctx.fillRect(x*cell+6,y*cell+6,cell-12,cell-12); } } }
-    function drawExit(){ ctx.save(); ctx.fillStyle='#f2b705'; ctx.fillRect(exitPos.x*cell+4, exitPos.y*cell+4, cell-8, cell-8); ctx.fillStyle='#fff'; ctx.font='700 18px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('✓', exitPos.x*cell+cell/2, exitPos.y*cell+cell/2+1); ctx.restore(); }
-    function drawCases(){ cases.forEach(c=>{ ctx.save(); ctx.translate(c.x*cell+cell/2, c.y*cell+cell/2); ctx.fillStyle=c.good?'#4ecdc4':'#bf4b63'; ctx.beginPath(); ctx.arc(0,0,cell*0.34,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#fff'; ctx.font='18px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(c.good?'🔎':'!',0,1); ctx.restore(); }); }
-    function drawPlayer(){ ctx.save(); ctx.translate(player.x*cell+cell/2, player.y*cell+cell/2); ctx.fillStyle='#256e67'; ctx.beginPath(); ctx.arc(0,0,cell*0.36,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(-5,-4,3,0,Math.PI*2); ctx.arc(5,-4,3,0,Math.PI*2); ctx.fill(); ctx.restore(); }
-    function shuffle(a){ const arr=[...a]; for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
-    function showQuestion(){ const idxs = questions.map((_,i)=>i).filter(i=>!usedQuestions.includes(i)); const idx = idxs.length ? idxs[Math.floor(Math.random()*idxs.length)] : Math.floor(Math.random()*questions.length); if(!usedQuestions.includes(idx)) usedQuestions.push(idx); const q=questions[idx]; document.getElementById('questionText').textContent=q.q; const box=document.getElementById('optionBox'); box.innerHTML=''; document.getElementById('questionFeedback').textContent=''; document.getElementById('questionFeedback').className='feedback'; shuffle(q.options).forEach(opt=>{ const b=document.createElement('button'); b.className='option'; b.textContent=opt; b.onclick=()=>answerQuestion(opt,q); box.appendChild(b); }); overlay.classList.add('active'); overlay.setAttribute('aria-hidden','false'); }
-    function answerQuestion(selected,q){ const fb=document.getElementById('questionFeedback'); if(selected===q.answer){ stars++; fb.textContent='Correct! ' + q.tip; fb.className='feedback good'; play('good'); updateHud(); setTimeout(()=>{ overlay.classList.remove('active'); overlay.setAttribute('aria-hidden','true'); paused=false; document.getElementById('pauseBtn').textContent='Pause'; }, 1000); } else { fb.textContent='Try again. Think about fairness and inclusion.'; fb.className='feedback bad'; play('bad'); } }
-    function endGame(won){ gameActive=false; stopLoops(); show('endScreen'); document.getElementById('finalCases').textContent = won ? 9 : level; document.getElementById('finalQuizStars').textContent = stars; if(won || stars>=3){ document.getElementById('finalTitle').textContent='Equality champion!'; document.getElementById('finalStars').textContent='🌟🌟🌟'; document.getElementById('finalMessage').textContent='You spotted unfairness and chose justice, respect, and inclusion.'; play('win'); } else { document.getElementById('finalTitle').textContent='Keep detecting fairness'; document.getElementById('finalStars').textContent='🌟🌟'; document.getElementById('finalMessage').textContent='Try again and look more closely for bias and discrimination.'; } }
-    function resetAll(){ level=1; score=0; progress=0; lives=3; stars=0; correctCaseCount=0; usedQuestions=[]; resetPlayer(); }
-    window.addEventListener('load', ()=>{ resetPlayer(); draw(); setTimeout(hideSplash,2200); });
-  </script>
+  const $ = id => document.getElementById(id);
+  const screens = ['splashScreen','startScreen','gameScreen','endScreen'];
+
+  const state = {
+    sound:true,
+    queue:[],
+    index:0,
+    score:0,
+    attempts:0,
+    locked:false,
+    best:Number(localStorage.getItem('equalityDetectivesBest') || 0)
+  };
+
+  function showScreen(id){
+    screens.forEach(name => $(name).classList.toggle('active', name === id));
+  }
+
+  function shuffle(list){
+    const a = [...list];
+    for(let i=a.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  function stopAudio(audio){
+    try{ audio.pause(); audio.currentTime=0; }catch(e){}
+  }
+
+  function stopAllAudio(){
+    stopAudio($('correctAudio'));
+    stopAudio($('wrongAudio'));
+    stopAudio($('clapAudio'));
+  }
+
+  function playAudio(audio){
+    return new Promise(resolve => {
+      if(!state.sound || !audio){ resolve(); return; }
+      stopAudio(audio);
+      let resolved=false;
+      const done=()=>{
+        if(resolved) return;
+        resolved=true;
+        audio.removeEventListener('ended',done);
+        audio.removeEventListener('error',done);
+        resolve();
+      };
+      audio.addEventListener('ended',done,{once:true});
+      audio.addEventListener('error',done,{once:true});
+      const p=audio.play();
+      if(p && typeof p.catch==='function') p.catch(done);
+      setTimeout(done,3500);
+    });
+  }
+
+  async function playCorrectSequence(){
+    if(!state.sound) return;
+    await playAudio($('correctAudio'));
+    await playAudio($('clapAudio'));
+  }
+
+  function setSound(on){
+    state.sound=on;
+    $('startSoundBtn').textContent=on ? '🔊 Sound On' : '🔇 Sound Off';
+    $('gameSoundBtn').textContent=on ? '🔊' : '🔇';
+    $('gameSoundBtn').setAttribute('aria-label',on ? 'Turn sound off' : 'Turn sound on');
+    if(!on) stopAllAudio();
+  }
+
+  function toggleSound(){ setSound(!state.sound); }
+
+  function startGame(){
+    stopAllAudio();
+    state.queue = shuffle(cases).slice(0,TOTAL_CASES);
+    state.index = 0;
+    state.score = 0;
+    state.attempts = 0;
+    state.locked = false;
+    $('bestText').textContent = state.best;
+    showScreen('gameScreen');
+    renderCase();
+  }
+
+  function renderCase(){
+    state.locked=false;
+    state.attempts=0;
+
+    const item=state.queue[state.index];
+    const shownOptions=shuffle(item.options);
+
+    $('progressText').textContent=`Case ${state.index+1} of ${TOTAL_CASES}`;
+    $('attemptText').textContent='2 attempts left';
+    $('barFill').style.width=`${((state.index+1)/TOTAL_CASES)*100}%`;
+    $('scoreText').textContent=state.score;
+    $('bestText').textContent=state.best;
+    $('caseBadge').textContent=`CASE FILE ${String(state.index+1).padStart(2,'0')}`;
+    $('sceneIcon').textContent=item.icon;
+    $('sceneLabel').textContent=item.label;
+    $('scenarioText').textContent=item.scenario;
+    $('promptText').textContent=item.prompt;
+    $('feedback').className='feedback info';
+    $('feedback').innerHTML='<span class="feedback-icon">🔎</span><span>Choose the most fair and respectful response.</span>';
+
+    const box=$('optionsBox');
+    box.innerHTML='';
+    const letters=['A','B','C','D'];
+
+    shownOptions.forEach((opt,i)=>{
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='option';
+      button.dataset.correct=opt.correct ? 'true' : 'false';
+      button.innerHTML=`<span class="letter">${letters[i]}</span><span>${escapeHTML(opt.text)}</span>`;
+      button.addEventListener('click',()=>chooseOption(button,opt,item));
+      box.appendChild(button);
+    });
+  }
+
+  async function chooseOption(button,opt,item){
+    if(state.locked) return;
+    state.attempts++;
+
+    if(opt.correct){
+      state.locked=true;
+      state.score++;
+      $('scoreText').textContent=state.score;
+      button.classList.add('correct');
+      disableOptions();
+      $('attemptText').textContent=state.attempts===1 ? 'Solved on first try' : 'Solved on second try';
+      $('feedback').className='feedback good';
+      $('feedback').innerHTML=`<span class="feedback-icon">✓</span><span>${escapeHTML(item.explanation)}</span>`;
+      showTick();
+      await playCorrectSequence();
+      nextCase();
+      return;
+    }
+
+    button.classList.add('wrong','jiggle');
+    button.disabled=true;
+    await playAudio($('wrongAudio'));
+
+    if(state.attempts===1){
+      $('attemptText').textContent='1 attempt left';
+      $('feedback').className='feedback bad';
+      $('feedback').innerHTML='<span class="feedback-icon">↻</span><span>Try again. Look for the choice that includes and respects everyone.</span>';
+      return;
+    }
+
+    state.locked=true;
+    disableOptions();
+    revealCorrect();
+    $('attemptText').textContent='Correct answer shown';
+    $('feedback').className='feedback info';
+    $('feedback').innerHTML=`<span class="feedback-icon">💡</span><span>${escapeHTML(item.explanation)}</span>`;
+    setTimeout(nextCase,1900);
+  }
+
+  function disableOptions(){
+    document.querySelectorAll('#optionsBox .option').forEach(btn=>btn.disabled=true);
+  }
+
+  function revealCorrect(){
+    const correct=[...document.querySelectorAll('#optionsBox .option')].find(btn=>btn.dataset.correct==='true');
+    if(correct){
+      correct.classList.add('correct','glow-correct');
+    }
+  }
+
+  function showTick(){
+    const tick=$('tickPop');
+    tick.classList.remove('show');
+    void tick.offsetWidth;
+    tick.classList.add('show');
+  }
+
+  function nextCase(){
+    state.index++;
+    if(state.index>=TOTAL_CASES){
+      finishGame();
+    }else{
+      renderCase();
+    }
+  }
+
+  function finishGame(){
+    if(state.score>state.best){
+      state.best=state.score;
+      localStorage.setItem('equalityDetectivesBest',String(state.best));
+    }
+
+    $('finalScore').textContent=`${state.score} / ${TOTAL_CASES}`;
+    $('finalBest').textContent=`${state.best} / ${TOTAL_CASES}`;
+
+    if(state.score===TOTAL_CASES){
+      $('endTitle').textContent='Equality Champion!';
+      $('endMessage').textContent='Excellent detective work! You recognised unfair treatment and chose respectful, inclusive actions.';
+    }else if(state.score>=7){
+      $('endTitle').textContent='Great Detective Work!';
+      $('endMessage').textContent='You made many fair choices. Keep using respect, inclusion and equality in everyday life.';
+    }else{
+      $('endTitle').textContent='Keep Detecting Fairness!';
+      $('endMessage').textContent='Every case is practice. Play again and look closely for the response that gives everyone respect and a fair chance.';
+    }
+
+    showScreen('endScreen');
+    launchConfetti();
+  }
+
+  function launchConfetti(){
+    const layer=$('confettiLayer');
+    layer.innerHTML='';
+    const palette=['#6f61d9','#4aaea5','#f0b83f','#ef8e9b','#76b8e8','#8bcf9d'];
+    const amount=80;
+    for(let i=0;i<amount;i++){
+      const piece=document.createElement('span');
+      piece.className='confetti-piece';
+      piece.style.left=`${Math.random()*100}%`;
+      piece.style.background=palette[Math.floor(Math.random()*palette.length)];
+      piece.style.animationDuration=`${2.6+Math.random()*2.6}s`;
+      piece.style.animationDelay=`${Math.random()*.7}s`;
+      piece.style.setProperty('--drift',`${-100+Math.random()*200}px`);
+      piece.style.transform=`rotate(${Math.random()*180}deg)`;
+      layer.appendChild(piece);
+    }
+    setTimeout(()=>{ layer.innerHTML=''; },6000);
+  }
+
+  function escapeHTML(str){
+    return String(str)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#039;');
+  }
+
+  $('startBtn').addEventListener('click',startGame);
+  $('startSoundBtn').addEventListener('click',toggleSound);
+  $('gameSoundBtn').addEventListener('click',toggleSound);
+  $('playAgainBtn').addEventListener('click',startGame);
+  $('backBtn').addEventListener('click',()=>{
+    stopAllAudio();
+    showScreen('startScreen');
+  });
+
+  setSound(true);
+  $('bestText').textContent=state.best;
+
+  window.addEventListener('load',()=>{
+    setTimeout(()=>showScreen('startScreen'),SPLASH_MS);
+  });
+})();
+</script>
 </body>
 </html>
