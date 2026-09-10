@@ -1,189 +1,1704 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Donation Mission</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Grade 4 Chapter 6 - Donation Mission</title>
+
 <style>
-:root{--bg1:#eef8ff;--bg2:#fff8ef;--card:#fff;--text:#20303b;--muted:#5b6975;--primary:#2f8f83;--primary2:#246b63;--good:#2e7d32;--bad:#bf4b63;--gold:#f2b705;--border:rgba(32,48,59,.12);--shadow:0 12px 30px rgba(32,48,59,.12)}
-*{box-sizing:border-box} html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text);overflow-x:hidden}
-button{font:inherit;cursor:pointer} .screen{display:none;min-height:100vh}.screen.active{display:grid}.center{place-items:center;padding:16px}
-.wrap{width:min(1120px,calc(100% - 20px));margin:0 auto} .card{background:var(--card);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow)}
-#splashScreen{position:fixed;inset:0;z-index:1000;background:#fff;display:grid;place-items:center;padding:16px} #splashScreen .box{display:grid;gap:14px;justify-items:center;text-align:center}
-#splashScreen img{width:min(340px,72vw);height:auto;filter:drop-shadow(0 10px 20px rgba(0,0,0,.12))} .splash-text{font-size:clamp(18px,2.6vw,28px);font-weight:800;color:var(--primary2)}
-.hero{padding:22px 0 18px}.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:center;padding:18px}
-.layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;padding:0 0 22px}.panel{padding:18px}
-h1,h2{margin:0;line-height:1.05} h1{font-size:clamp(34px,5vw,60px);color:var(--primary2)} h2{font-size:clamp(24px,3vw,36px)}
-.lead{font-size:clamp(18px,2.3vw,23px);color:var(--muted);line-height:1.5;margin:14px 0 18px;max-width:56ch}
-.pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.pill{padding:10px 14px;border-radius:999px;background:#edf8f6;border:1px solid var(--border);font-weight:700}
-.actions{display:flex;flex-wrap:wrap;gap:10px}.btn{border:none;border-radius:16px;padding:14px 20px;font-weight:800;min-height:46px}.primary{background:var(--primary);color:#fff}.ghost{background:#f2f5f8;color:var(--text);border:1px solid var(--border)}
-.art{min-height:320px;position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(180deg,#dbf0ff,#fff4d9)}
-.cloud{position:absolute;background:rgba(255,255,255,.92);border-radius:999px}.cloud:before,.cloud:after{content:'';position:absolute;background:inherit;border-radius:999px}
-.cloud.one{width:110px;height:42px;top:34px;left:30px}.cloud.one:before{width:42px;height:42px;left:12px;top:-18px}.cloud.one:after{width:54px;height:54px;right:12px;top:-26px}
-.cloud.two{width:130px;height:48px;top:92px;right:24px}.cloud.two:before{width:46px;height:46px;left:18px;top:-18px}.cloud.two:after{width:58px;height:58px;right:18px;top:-28px}
-.truck{position:absolute;left:50%;top:50%;transform:translate(-50%,-48%);font-size:92px;filter:drop-shadow(0 10px 14px rgba(0,0,0,.12))}
-.note{position:absolute;left:22px;bottom:20px;right:22px;background:rgba(255,255,255,.88);border:1px solid var(--border);border-radius:18px;padding:12px 14px;font-size:16px;line-height:1.45;color:var(--muted)}
-.hud{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px}.hud-box{padding:12px;border-radius:18px;background:#fff;border:1px solid var(--border);text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.06)}
-.hud-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.hud-val{display:block;font-size:22px;font-weight:800;margin-top:2px}
-.bin-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.bin{border:1px solid var(--border);border-radius:18px;padding:12px;text-align:center;background:#f8fbfe;min-height:112px;display:grid;place-items:center;gap:8px;font-weight:800}
-.bin .emoji{font-size:34px}.bin small{display:block;color:var(--muted);font-weight:700;line-height:1.2}
-.tray{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.item{border:1px solid var(--border);border-radius:18px;padding:12px;background:#fff;display:flex;align-items:center;gap:12px;min-height:72px}
-.item .emoji{font-size:30px;min-width:36px;text-align:center}.item .txt{font-weight:700;line-height:1.2}.item.selected{outline:3px solid var(--primary)}
-canvas{width:100%;aspect-ratio:4/3;border-radius:24px;background:linear-gradient(180deg,#f7fbff,#fffef5);border:1px solid var(--border);display:block;touch-action:manipulation}
-.controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}.ctrl{border:none;border-radius:999px;padding:12px 16px;min-width:120px;background:#eef7f5;font-weight:800;border:1px solid var(--border)}
-.tips{display:grid;gap:10px;margin-top:14px}.tip{background:#f7fafc;border:1px solid var(--border);border-radius:16px;padding:12px 14px;color:var(--muted);line-height:1.45}
-.overlay{position:fixed;inset:0;z-index:900;background:rgba(20,30,40,.58);display:none;place-items:center;padding:16px;backdrop-filter:blur(8px)} .overlay.active{display:grid}
-.dialog{width:min(760px,100%);padding:20px;border-radius:26px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow)}
-.dialog p{color:var(--muted);line-height:1.5}.options{display:grid;gap:10px;margin-top:14px}.option{border:none;text-align:left;background:#f4f8fb;border:1px solid var(--border);border-radius:16px;padding:12px 14px;font-weight:700;min-height:46px}
-.feedback{min-height:28px;margin-top:12px;font-weight:800}.good{color:var(--good)}.bad{color:var(--bad)}
-.result-stars{font-size:44px;margin:10px 0 12px;text-align:center}.result{text-align:center;color:var(--muted);font-size:19px;line-height:1.5}
-#endScreen .card{padding:22px;width:min(760px,100%)} .maze-hint{font-size:14px;color:var(--muted);text-align:center;margin-top:8px}
-.banner{background:#edf8f6;border:1px solid var(--border);border-radius:18px;padding:12px 14px;line-height:1.45;color:var(--muted);margin-top:12px}
-@media (max-width:980px){.hero-grid,.layout{grid-template-columns:1fr}.hud{grid-template-columns:repeat(2,1fr)}.bin-row{grid-template-columns:repeat(2,1fr)}.tray{grid-template-columns:1fr}}
-@media (max-width:640px){.panel,.card{border-radius:22px;padding:14px}.ctrl{width:100%}.controls{flex-direction:column}}
+:root{
+--bg1:#eef8ff;
+--bg2:#fff7e8;
+--card:#ffffff;
+--text:#20303b;
+--muted:#5b6975;
+--primary:#2f8f83;
+--primaryDark:#246b63;
+--good:#2e7d32;
+--bad:#bf4b63;
+--gold:#f2b705;
+--border:rgba(32,48,59,.12);
+--shadow:0 12px 30px rgba(32,48,59,.12);
+}
+
+*{
+box-sizing:border-box;
+}
+
+html,body{
+margin:0;
+min-height:100%;
+font-family:Arial,Helvetica,sans-serif;
+background:linear-gradient(180deg,var(--bg1),var(--bg2));
+color:var(--text);
+overflow-x:hidden;
+}
+
+button{
+font-family:inherit;
+cursor:pointer;
+}
+
+.screen{
+display:none;
+min-height:100vh;
+}
+
+.screen.active{
+display:grid;
+}
+
+.center{
+place-items:center;
+padding:16px;
+}
+
+.wrap{
+width:min(1100px,calc(100% - 20px));
+margin:auto;
+}
+
+.card{
+background:var(--card);
+border-radius:28px;
+border:1px solid var(--border);
+box-shadow:var(--shadow);
+}
+
+
+/* SPLASH */
+
+#splashScreen{
+position:fixed;
+inset:0;
+z-index:999;
+background:#fff;
+display:grid;
+place-items:center;
+}
+
+.splash-box{
+display:grid;
+gap:18px;
+text-align:center;
+justify-items:center;
+}
+
+.splash-box img{
+width:min(330px,75vw);
+}
+
+.splash-text{
+font-size:24px;
+font-weight:800;
+color:var(--primaryDark);
+}
+
+
+/* START SCREEN */
+
+.hero{
+padding:22px 0;
+}
+
+.hero-card{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+padding:24px;
+align-items:center;
+}
+
+h1{
+font-size:clamp(34px,5vw,58px);
+margin:0;
+color:var(--primaryDark);
+}
+
+h2{
+margin:0 0 12px;
+font-size:32px;
+}
+
+.lead{
+font-size:20px;
+line-height:1.5;
+color:var(--muted);
+}
+
+.tags{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-bottom:15px;
+}
+
+.tag{
+background:#edf8f6;
+padding:10px 15px;
+border-radius:30px;
+font-weight:700;
+}
+
+.actions{
+display:flex;
+gap:12px;
+flex-wrap:wrap;
+}
+
+.btn{
+padding:14px 22px;
+border-radius:16px;
+border:none;
+font-weight:800;
+font-size:17px;
+}
+
+.primary{
+background:var(--primary);
+color:white;
+}
+
+.secondary{
+background:#f2f5f8;
+border:1px solid var(--border);
+}
+
+
+.art{
+height:320px;
+border-radius:24px;
+background:linear-gradient(#dff2ff,#fff4d9);
+position:relative;
+overflow:hidden;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.truck{
+font-size:100px;
+filter:drop-shadow(0 10px 15px rgba(0,0,0,.15));
+}
+
+.cloud{
+position:absolute;
+background:white;
+border-radius:50px;
+opacity:.9;
+}
+
+.cloud.one{
+width:120px;
+height:40px;
+top:40px;
+left:40px;
+}
+
+.cloud.two{
+width:140px;
+height:45px;
+top:100px;
+right:40px;
+}
+
+.note{
+position:absolute;
+bottom:20px;
+left:20px;
+right:20px;
+background:white;
+padding:12px;
+border-radius:16px;
+text-align:center;
+color:var(--muted);
+}
+
+
+/* INSTRUCTIONS */
+
+.info-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:18px;
+margin-top:18px;
+}
+
+.panel{
+padding:20px;
+}
+
+.tip{
+background:#f7fafc;
+border-radius:16px;
+padding:14px;
+margin:10px 0;
+color:var(--muted);
+}
+
+
+/* GAME */
+
+.game-layout{
+display:grid;
+grid-template-columns:1.1fr .9fr;
+gap:18px;
+padding:18px 0;
+}
+
+.hud{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:10px;
+margin-bottom:15px;
+}
+
+.hud-box{
+background:white;
+padding:12px;
+border-radius:18px;
+text-align:center;
+border:1px solid var(--border);
+}
+
+.hud-label{
+font-size:12px;
+color:var(--muted);
+display:block;
+}
+
+.hud-value{
+font-size:24px;
+font-weight:800;
+}
+
+
+.game-area{
+padding:20px;
+}
+
+canvas{
+width:100%;
+border-radius:24px;
+background:white;
+border:1px solid var(--border);
+touch-action:none;
+}
+
+
+.controls{
+display:flex;
+justify-content:center;
+gap:10px;
+margin-top:15px;
+flex-wrap:wrap;
+}
+
+.control{
+padding:12px 20px;
+border-radius:20px;
+border:1px solid var(--border);
+background:#edf8f6;
+font-weight:800;
+}
+
+
+/* ITEMS */
+
+.item-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+}
+
+.item-card{
+padding:15px;
+background:#fff;
+border-radius:18px;
+border:1px solid var(--border);
+display:flex;
+align-items:center;
+gap:12px;
+font-weight:700;
+}
+
+.item-card.selected{
+outline:4px solid var(--primary);
+}
+
+
+.bin-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+}
+
+.bin{
+padding:15px;
+background:#f7fafc;
+border-radius:18px;
+text-align:center;
+border:1px solid var(--border);
+font-weight:800;
+}
+
+.bin span{
+font-size:35px;
+display:block;
+}
+
+
+/* OVERLAY */
+
+.overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+display:none;
+place-items:center;
+z-index:900;
+}
+
+.overlay.active{
+display:grid;
+}
+
+.question-box{
+width:min(700px,90%);
+background:white;
+border-radius:25px;
+padding:25px;
+}
+
+.option{
+width:100%;
+padding:14px;
+margin-top:10px;
+border-radius:15px;
+border:1px solid var(--border);
+background:#f4f8fb;
+font-weight:700;
+text-align:left;
+}
+
+
+.good{
+color:var(--good);
+}
+
+.bad{
+color:var(--bad);
+}
+
+
+@media(max-width:900px){
+
+.hero-card,
+.game-layout,
+.info-grid{
+grid-template-columns:1fr;
+}
+
+.hud{
+grid-template-columns:repeat(2,1fr);
+}
+
+}
+
+@media(max-width:600px){
+
+.item-grid,
+.bin-grid{
+grid-template-columns:1fr;
+}
+
+.btn,
+.control{
+width:100%;
+}
+
+}
+
 </style>
 </head>
+
+
 <body>
-  <section id="splashScreen" class="screen active">
-    <div class="box">
-      <img id="innovineLogo" src="./assets/innovine-logo.png" alt="Innovine logo" />
-      <div class="splash-text">Loading Donation Mission...</div>
-    </div>
-  </section>
 
-  <section id="startScreen" class="screen">
-    <div class="wrap hero">
-      <div class="card hero-grid">
-        <div>
-          <div class="pill-row">
-            <div class="pill">Chapter 6: Generosity</div>
-            <div class="pill">Donation sorting game</div>
-            <div class="pill">Reward questions</div>
-          </div>
-          <h1>Donation Mission</h1>
-          <p class="lead">Sort helpful items into the right donation places, guide the truck, and learn how generosity can help others in simple, everyday ways.</p>
-          <div class="actions">
-            <button class="btn primary" onclick="startGame()">Start Game</button>
-            <button class="btn ghost" onclick="toggleSound()" id="soundBtn">Sound: On</button>
-          </div>
-        </div>
-        <div class="art" aria-hidden="true">
-          <div class="cloud one"></div>
-          <div class="cloud two"></div>
-          <div class="truck">🚚</div>
-          <div class="note">The game teaches students that generosity means sharing, helping, listening, and donating without expecting anything in return.</div>
-        </div>
-      </div>
-      <div class="layout" style="margin-top:16px;">
-        <div class="card panel">
-          <h2>How it works</h2>
-          <div class="tips">
-            <div class="tip">1. Select an item and choose the correct donation bin.</div>
-            <div class="tip">2. Answer short generosity questions after every 3 correct sorts.</div>
-            <div class="tip">3. Earn stars and help the community mission succeed.</div>
-          </div>
-        </div>
-        <div class="card panel">
-          <h2>Chapter ideas</h2>
-          <div class="tips">
-            <div class="tip">Share what you can.</div>
-            <div class="tip">Help people in need.</div>
-            <div class="tip">Small kind acts matter.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <section id="gameScreen" class="screen">
-    <div class="wrap layout" style="padding-top:18px;">
-      <div>
-        <div class="hud">
-          <div class="hud-box"><span class="hud-label">Level</span><span class="hud-val" id="levelNum">1</span></div>
-          <div class="hud-box"><span class="hud-label">Score</span><span class="hud-val" id="scoreNum">0</span></div>
-          <div class="hud-box"><span class="hud-label">Lives</span><span class="hud-val" id="livesNum">3</span></div>
-          <div class="hud-box"><span class="hud-label">Goal</span><span class="hud-val" id="goalNum">6</span></div>
-          <div class="hud-box"><span class="hud-label">Quiz Stars</span><span class="hud-val" id="quizStarsNum">0</span></div>
-        </div>
-        <div class="card panel">
-          <canvas id="gameCanvas" width="640" height="480"></canvas>
-          <div class="controls">
-            <button class="ctrl" onclick="pauseResume()" id="pauseBtn">Pause</button>
-            <button class="ctrl" onclick="selectNextItem()">Next Item</button>
-            <button class="ctrl" onclick="dropSelected()">Drop Item</button>
-          </div>
-          <div class="maze-hint">Use the buttons or click an item, then choose a bin. After every 3 correct sorts, a reward question appears.</div>
-        </div>
-      </div>
-      <div class="card panel">
-        <h2>Donation bins</h2>
-        <div class="banner" id="missionText">Donation Mission: sort helpful items to complete this level.</div>
-        <div class="bin-row" id="binRow"></div>
-        <h2 style="margin-top:14px;">Donation items</h2>
-        <div class="tray" id="tray"></div>
-        <div class="tips">
-          <div class="tip">Books, toys, clothes, food, and school supplies can help different people.</div>
-          <div class="tip">Wrong choices reduce lives, so think before you drop.</div>
-          <div class="tip">Generosity can be shown by giving, helping, and sharing.</div>
-        </div>
-      </div>
-    </div>
-  </section>
+<section id="splashScreen" class="screen active">
 
-  <section id="endScreen" class="screen center">
-    <div class="card">
-      <h2 id="finalTitle" style="text-align:center;color:var(--primary2)">Great job!</h2>
-      <div class="result-stars" id="finalStars">🌟🌟</div>
-      <div class="result">Correct sorts: <strong id="finalScore">0</strong></div>
-      <div class="result">Quiz stars earned: <strong id="finalQuizStars">0</strong></div>
-      <p class="result" id="finalMessage">You helped others through generous choices.</p>
-      <div class="actions" style="justify-content:center;margin-top:16px;">
-        <button class="btn primary" onclick="startGame()">Play Again</button>
-        <button class="btn ghost" onclick="showStart()">Back to Start</button>
-      </div>
-    </div>
-  </section>
+<div class="splash-box">
 
-  <div id="questionOverlay" class="overlay" aria-hidden="true">
-    <div class="dialog card">
-      <h2>Reward Question</h2>
-      <p id="questionText"></p>
-      <div class="options" id="optionBox"></div>
-      <div class="feedback" id="questionFeedback"></div>
-    </div>
-  </div>
+<img src="./assets/innovine-logo.png">
+
+<div class="splash-text">
+Loading Donation Mission...
+</div>
+
+</div>
+
+</section>
+
+
+
+<section id="startScreen" class="screen">
+
+
+<div class="wrap hero">
+
+
+<div class="card hero-card">
+
+
+<div>
+
+<div class="tags">
+
+<div class="tag">
+Grade 4
+</div>
+
+<div class="tag">
+Chapter 6: Generosity
+</div>
+
+<div class="tag">
+Donation Mission
+</div>
+
+</div>
+
+
+<h1>
+Donation Mission
+</h1>
+
+
+<p class="lead">
+Sort useful items, help the community, and learn how generosity creates a kinder world.
+</p>
+
+
+<div class="actions">
+
+<button class="btn primary" onclick="startGame()">
+Start Game
+</button>
+
+
+<button class="btn secondary" onclick="toggleSound()" id="soundBtn">
+Sound: On
+</button>
+
+</div>
+
+</div>
+
+
+
+<div class="art">
+
+<div class="cloud one"></div>
+
+<div class="cloud two"></div>
+
+<div class="truck">
+🚚
+</div>
+
+
+<div class="note">
+Donate useful things and understand the value of helping others.
+</div>
+
+
+</div>
+
+
+</div>
+
+
+<div class="info-grid">
+
+
+<div class="card panel">
+
+<h2>
+How to Play
+</h2>
+
+<div class="tip">
+1. Select the correct donation item.
+</div>
+
+<div class="tip">
+2. Choose the correct donation category.
+</div>
+
+<div class="tip">
+3. Answer generosity questions and earn stars.
+</div>
+
+
+</div>
+
+
+
+<div class="card panel">
+
+<h2>
+Learning Focus
+</h2>
+
+<div class="tip">
+Sharing resources with people in need.
+</div>
+
+<div class="tip">
+Understanding generosity.
+</div>
+
+<div class="tip">
+Making kind choices.
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</section>
+<section id="gameScreen" class="screen">
+
+<div class="wrap game-layout">
+
+
+<div>
+
+<div class="hud">
+
+<div class="hud-box">
+<span class="hud-label">Level</span>
+<span class="hud-value" id="level">1</span>
+</div>
+
+<div class="hud-box">
+<span class="hud-label">Score</span>
+<span class="hud-value" id="score">0</span>
+</div>
+
+<div class="hud-box">
+<span class="hud-label">Lives</span>
+<span class="hud-value" id="lives">3</span>
+</div>
+
+<div class="hud-box">
+<span class="hud-label">Goal</span>
+<span class="hud-value" id="goal">8</span>
+</div>
+
+<div class="hud-box">
+<span class="hud-label">Stars</span>
+<span class="hud-value" id="stars">0</span>
+</div>
+
+</div>
+
+
+<div class="card game-area">
+
+<canvas id="gameCanvas" width="600" height="380"></canvas>
+
+
+<div class="controls">
+
+<button class="control" onclick="selectPrevious()">
+Previous
+</button>
+
+<button class="control" onclick="pauseGame()" id="pauseBtn">
+Pause
+</button>
+
+<button class="control" onclick="selectNext()">
+Next
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div class="card panel">
+
+
+<h2>
+Donation Centre
+</h2>
+
+
+<div class="tip" id="message">
+Choose an item and place it in the correct donation box.
+</div>
+
+
+<h3>
+Donation Boxes
+</h3>
+
+
+<div class="bin-grid" id="bins">
+
+<div class="bin" onclick="chooseBin('clothes')">
+<span>👕</span>
+Clothes
+</div>
+
+
+<div class="bin" onclick="chooseBin('books')">
+<span>📚</span>
+Books
+</div>
+
+
+<div class="bin" onclick="chooseBin('toys')">
+<span>🧸</span>
+Toys
+</div>
+
+
+<div class="bin" onclick="chooseBin('food')">
+<span>🍎</span>
+Food
+</div>
+
+</div>
+
+
+
+<h3 style="margin-top:20px">
+Items
+</h3>
+
+
+<div class="item-grid" id="items">
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+</section>
+
+
+
+<section id="endScreen" class="screen center">
+
+
+<div class="card panel">
+
+<h1 style="text-align:center">
+Mission Complete!
+</h1>
+
+
+<div style="font-size:55px;text-align:center" id="finalStars">
+🌟🌟🌟
+</div>
+
+
+<p style="text-align:center;font-size:20px">
+Items donated:
+<strong id="finalScore">
+0
+</strong>
+</p>
+
+
+<p style="text-align:center;color:#5b6975">
+You showed generosity and kindness!
+</p>
+
+
+<div class="actions" style="justify-content:center">
+
+<button class="btn primary" onclick="startGame()">
+Play Again
+</button>
+
+
+<button class="btn secondary" onclick="showStart()">
+Back to Start
+</button>
+
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+
+<div class="overlay" id="questionOverlay">
+
+
+<div class="question-box">
+
+
+<h2>
+Generosity Challenge
+</h2>
+
+
+<p id="questionText"></p>
+
+
+<div id="options"></div>
+
+
+<p id="feedback"></p>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
 
 <script>
-const canvas=document.getElementById('gameCanvas'),ctx=canvas.getContext('2d');
-const bins=[{name:'Clothes',emoji:'👕',accepts:'clothes'},{name:'Books',emoji:'📚',accepts:'books'},{name:'Toys',emoji:'🧸',accepts:'toys'},{name:'Food',emoji:'🍎',accepts:'food'}];
-const itemPool=[{type:'clothes',label:'Old shirt',emoji:'👕'},{type:'books',label:'Story book',emoji:'📚'},{type:'toys',label:'Toy car',emoji:'🧸'},{type:'food',label:'Rice packet',emoji:'🍚'},{type:'clothes',label:'Warm scarf',emoji:'🧣'},{type:'books',label:'Notebook',emoji:'📓'},{type:'toys',label:'Soft ball',emoji:'⚽'},{type:'food',label:'Fruit box',emoji:'🍌'},{type:'clothes',label:'Jacket',emoji:'🧥'},{type:'books',label:'Picture book',emoji:'📘'},{type:'toys',label:'Puzzle',emoji:'🧩'},{type:'food',label:'Biscuits',emoji:'🍪'}];
-const questions=[{q:'What does generosity mean?',options:['Giving and helping without expecting anything back','Keeping everything for yourself','Being rude to others'],answer:'Giving and helping without expecting anything back',tip:'Generosity is selfless giving.'},{q:'Which action shows generosity?',options:['Sharing a snack with a friend','Hiding extra food','Ignoring someone who needs help'],answer:'Sharing a snack with a friend',tip:'Sharing is a generous action.'},{q:'Why is donation helpful?',options:['It can support people in need','It wastes useful things','It makes no difference'],answer:'It can support people in need',tip:'Donations help others live better.'},{q:'What should you do if a classmate forgot lunch?',options:['Offer to share food','Laugh at them','Take their lunch'],answer:'Offer to share food',tip:'Helping someone in need shows kindness.'},{q:'Which is a generous habit?',options:['Listening to a sad friend','Walking away and saying nothing','Keeping all supplies hidden'],answer:'Listening to a sad friend',tip:'Listening kindly can help a lot.'},{q:'Who can be generous?',options:['Only rich people','Anyone','Only adults'],answer:'Anyone',tip:'The chapter says anyone can practise generosity.'}];
-let audioCtx=null,soundOn=true,splashHidden=false,gameActive=false,paused=false,usedQuestions=[];let level=1,score=0,lives=3,quizStars=0,correctInRow=0,goal=6,selectedItemIndex=0,selectedBinIndex=0,activeItems=[],loopId=null,spawnTimer=null;
-const splash=document.getElementById('splashScreen'),logo=document.getElementById('innovineLogo'),overlay=document.getElementById('questionOverlay');
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
-function toggleSound(){soundOn=!soundOn;document.getElementById('soundBtn').textContent=soundOn?'Sound: On':'Sound: Off'}
-function play(kind){if(!soundOn)return;if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const tone=(f,d,t='triangle')=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=t;o.frequency.value=f;o.connect(g);g.connect(audioCtx.destination);g.gain.value=.05;o.start();g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+d);o.stop(audioCtx.currentTime+d)};if(kind==='good'){tone(660,.14);setTimeout(()=>tone(830,.16),70)}else if(kind==='bad'){tone(220,.2,'sawtooth')}else if(kind==='win'){tone(523,.14);setTimeout(()=>tone(659,.14),80);setTimeout(()=>tone(784,.22),160)}}
-function hideSplash(){if(splashHidden)return;splashHidden=true;splash.classList.remove('active');show('startScreen')} logo.addEventListener('error',hideSplash); window.addEventListener('load',()=>setTimeout(hideSplash,2200));
-function stopLoops(){if(loopId)cancelAnimationFrame(loopId);if(spawnTimer)clearInterval(spawnTimer);loopId=spawnTimer=null}
-function startGame(){level=1;score=0;lives=3;quizStars=0;correctInRow=0;usedQuestions=[];selectedItemIndex=0;selectedBinIndex=0;paused=false;gameActive=true;document.getElementById('pauseBtn').textContent='Pause';show('gameScreen');setupLevel()}
-function showStart(){stopLoops();gameActive=false;show('startScreen')}
-function setupLevel(){stopLoops();activeItems=[];goal=6+Math.min(3,level-1);renderBins();spawnItems();updateHud();renderTray();draw();loopId=requestAnimationFrame(gameLoop);spawnTimer=setInterval(()=>{if(gameActive&&!paused&&Math.random()<.35)addDecoy()},1600)}
-function updateHud(){document.getElementById('levelNum').textContent=level;document.getElementById('scoreNum').textContent=score;document.getElementById('livesNum').textContent=lives;document.getElementById('goalNum').textContent=goal;document.getElementById('quizStarsNum').textContent=quizStars;document.getElementById('missionText').textContent='Donation Mission: sort ' + goal + ' helpful items to complete this level.'}
-function renderBins(){const row=document.getElementById('binRow');row.innerHTML='';bins.forEach((b,i)=>{const d=document.createElement('div');d.className='bin';d.dataset.bin=i;d.innerHTML=`<div class="emoji">${b.emoji}</div><div>${b.name}</div><small>Drop here</small>`;d.onclick=()=>dropOnBin(i);row.appendChild(d)})}
-function spawnItems(){const used=new Set(); while(activeItems.length<4){const item=itemPool[Math.floor(Math.random()*itemPool.length)]; if(used.has(item.label)) continue; used.add(item.label); activeItems.push({...item,id:crypto.randomUUID()})}}
-function addDecoy(){const decoys=[{type:'wrong',label:'Plastic cup',emoji:'🥤'},{type:'wrong',label:'Broken toy',emoji:'🪀'},{type:'wrong',label:'Old shoes',emoji:'👟'}]; const item=decoys[Math.floor(Math.random()*decoys.length)]; activeItems.push({...item,id:crypto.randomUUID(),decoy:true}); renderTray()}
-function renderTray(){const tray=document.getElementById('tray');tray.innerHTML='';activeItems.forEach((it,idx)=>{const div=document.createElement('div');div.className='item'+(idx===selectedItemIndex?' selected':'');div.innerHTML=`<div class="emoji">${it.emoji}</div><div class="txt">${it.label}</div>`;div.onclick=()=>{selectedItemIndex=idx;renderTray()};tray.appendChild(div)})}
-function selectNextItem(){if(!gameActive||activeItems.length===0)return;selectedItemIndex=(selectedItemIndex+1)%activeItems.length;renderTray();play('good')}
-function dropSelected(){if(!gameActive||activeItems.length===0)return;dropOnBin(selectedBinIndex)}
-function dropOnBin(binIndex){const item=activeItems[selectedItemIndex]; if(!item)return; const ok=bins[binIndex].accepts===item.type; if(ok){score++;correctInRow++;play('good');activeItems.splice(selectedItemIndex,1); if(selectedItemIndex>=activeItems.length) selectedItemIndex=0; if(activeItems.length<4) addBalancedItem(); if(correctInRow%3===0){paused=true;showQuestion();updateHud();return} if(score>=goal){updateHud();clearLevel();return}} else {lives--;correctInRow=0;play('bad'); if(lives<=0){updateHud();return endGame(false)}} updateHud(); renderTray()}
-function addBalancedItem(){const helpful=['clothes','books','toys','food']; const missing=helpful.filter(t=>!activeItems.some(i=>i.type===t)); const type=missing.length?missing[Math.floor(Math.random()*missing.length)]:helpful[Math.floor(Math.random()*helpful.length)]; const pool=itemPool.filter(i=>i.type===type); const item=pool[Math.floor(Math.random()*pool.length)]; activeItems.push({...item,id:crypto.randomUUID()}); renderTray()}
-function clearLevel(){if(level>=6)return endGame(true); level++; correctInRow=0; setupLevel()}
-function pauseResume(){if(!gameActive)return;paused=!paused;document.getElementById('pauseBtn').textContent=paused?'Resume':'Pause'}
-function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);const g=ctx.createLinearGradient(0,0,0,canvas.height);g.addColorStop(0,'#dff2ff');g.addColorStop(1,'#fff8e8');ctx.fillStyle=g;ctx.fillRect(0,0,canvas.width,canvas.height);for(let i=0;i<8;i++){ctx.fillStyle='rgba(255,255,255,.8)';ctx.beginPath();ctx.arc(80+i*75,50+Math.sin(i)*8,18,0,Math.PI*2);ctx.arc(96+i*75,50+Math.sin(i)*8,24,0,Math.PI*2);ctx.arc(115+i*75,52+Math.sin(i)*8,16,0,Math.PI*2);ctx.fill()}ctx.fillStyle='#2f8f83';ctx.fillRect(140,250,360,120);ctx.fillStyle='#246b63';ctx.fillRect(430,280,90,90);ctx.fillStyle='#1d4f49';ctx.beginPath();ctx.arc(220,385,34,0,Math.PI*2);ctx.arc(420,385,34,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.fillRect(170,270,80,45);ctx.fillRect(260,270,80,45);ctx.fillRect(350,270,80,45);ctx.fillStyle='#f2b705';ctx.font='700 20px Arial';ctx.textAlign='center';ctx.fillText('DONATION',320,340);ctx.fillText('MISSION',320,365)}
-function gameLoop(){if(!gameActive)return; if(!paused) draw(); loopId=requestAnimationFrame(gameLoop)}
-function showQuestion(){const idxs=questions.map((_,i)=>i).filter(i=>!usedQuestions.includes(i));const idx=idxs.length?idxs[Math.floor(Math.random()*idxs.length)]:Math.floor(Math.random()*questions.length);if(!usedQuestions.includes(idx))usedQuestions.push(idx);const q=questions[idx];document.getElementById('questionText').textContent=q.q;const box=document.getElementById('optionBox');box.innerHTML='';document.getElementById('questionFeedback').textContent='';document.getElementById('questionFeedback').className='feedback';q.options.slice().sort(()=>Math.random()-.5).forEach(opt=>{const b=document.createElement('button');b.className='option';b.textContent=opt;b.onclick=()=>answerQuestion(opt,q);box.appendChild(b)});overlay.classList.add('active');overlay.setAttribute('aria-hidden','false')}
-function answerQuestion(selected,q){const fb=document.getElementById('questionFeedback');if(selected===q.answer){quizStars++;fb.textContent='Correct! '+q.tip;fb.className='feedback good';play('good');updateHud();setTimeout(()=>{overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');paused=false;document.getElementById('pauseBtn').textContent='Pause'},1000)}else{fb.textContent='Try again. Think about helping others.';fb.className='feedback bad';play('bad')}}
-function endGame(won){gameActive=false;stopLoops();show('endScreen');document.getElementById('finalScore').textContent=score;document.getElementById('finalQuizStars').textContent=quizStars;if(won||quizStars>=3){document.getElementById('finalTitle').textContent='Donation champion!';document.getElementById('finalStars').textContent='🌟🌟🌟';document.getElementById('finalMessage').textContent='You showed generosity by sorting helpful donations and answering kindly.';play('win')}else{document.getElementById('finalTitle').textContent='Keep helping';document.getElementById('finalStars').textContent='🌟🌟';document.getElementById('finalMessage').textContent='Try again and look for the best donation choices.'}}
+
+
+const itemsData=[
+
+{
+name:"Old Shirt",
+emoji:"👕",
+type:"clothes"
+},
+
+{
+name:"Story Book",
+emoji:"📚",
+type:"books"
+},
+
+{
+name:"Toy Car",
+emoji:"🚗",
+type:"toys"
+},
+
+{
+name:"Rice Packet",
+emoji:"🍚",
+type:"food"
+},
+
+{
+name:"Warm Jacket",
+emoji:"🧥",
+type:"clothes"
+},
+
+{
+name:"Notebook",
+emoji:"📓",
+type:"books"
+},
+
+{
+name:"Puzzle",
+emoji:"🧩",
+type:"toys"
+},
+
+{
+name:"Fruit Box",
+emoji:"🍎",
+type:"food"
+},
+
+{
+name:"School Bag",
+emoji:"🎒",
+type:"books"
+},
+
+{
+name:"Soft Ball",
+emoji:"⚽",
+type:"toys"
+}
+
+];
+
+
+
+const questions=[
+
+{
+q:"What does generosity mean?",
+options:[
+"Helping and giving to others",
+"Keeping everything for yourself",
+"Never sharing"
+],
+answer:"Helping and giving to others"
+},
+
+
+{
+q:"Which action shows kindness?",
+options:[
+"Sharing useful things",
+"Hiding everything",
+"Refusing to help"
+],
+answer:"Sharing useful things"
+},
+
+
+{
+q:"Why do people donate items?",
+options:[
+"To help people who need them",
+"To waste items",
+"To throw things away"
+],
+answer:"To help people who need them"
+},
+
+
+{
+q:"A good donation should be:",
+options:[
+"Useful and in good condition",
+"Broken and unusable",
+"Something nobody needs"
+],
+answer:"Useful and in good condition"
+},
+
+
+{
+q:"Generosity can be shown by:",
+options:[
+"Helping others",
+"Ignoring people",
+"Being selfish"
+],
+answer:"Helping others"
+}
+
+];
+
+
+
+let currentItems=[];
+let selected=0;
+let selectedBin="";
+let score=0;
+let lives=3;
+let stars=0;
+let level=1;
+let goal=8;
+let paused=false;
+let correctCount=0;
+let sound=true;
+
+
+
+function startGame(){
+
+score=0;
+lives=3;
+stars=0;
+level=1;
+correctCount=0;
+goal=8;
+
+document.getElementById("score").innerHTML=0;
+document.getElementById("lives").innerHTML=3;
+document.getElementById("stars").innerHTML=0;
+
+show("gameScreen");
+
+createItems();
+
+drawCanvas();
+
+}
+
+
+
+function createItems(){
+
+currentItems=[];
+
+
+let shuffled=[...itemsData]
+.sort(()=>Math.random()-0.5);
+
+
+currentItems=shuffled.slice(0,5);
+
+
+selected=0;
+
+
+renderItems();
+
+}
+
+
+
+function renderItems(){
+
+let box=document.getElementById("items");
+
+box.innerHTML="";
+
+
+currentItems.forEach((item,index)=>{
+
+
+let div=document.createElement("div");
+
+
+div.className="item-card";
+
+
+if(index===selected){
+div.classList.add("selected");
+}
+
+
+div.innerHTML=
+`
+<div style="font-size:35px">
+${item.emoji}
+</div>
+
+<div>
+${item.name}
+</div>
+`;
+
+
+div.onclick=function(){
+
+selected=index;
+
+renderItems();
+
+};
+
+
+box.appendChild(div);
+
+
+
+});
+
+
+}
+
+
+
+function chooseBin(type){
+
+
+if(currentItems.length===0)
+return;
+
+
+let item=currentItems[selected];
+
+
+if(item.type===type){
+
+
+score++;
+
+correctCount++;
+
+playSound("correct");
+
+
+message("Great! Correct donation choice.","good");
+
+
+currentItems.splice(selected,1);
+
+
+if(selected>=currentItems.length)
+selected=0;
+
+
+if(correctCount%3===0){
+
+showQuestion();
+
+}
+
+
+if(score>=goal){
+
+finishGame();
+
+}
+else{
+
+if(currentItems.length<5)
+addNewItem();
+
+}
+
+
+
+}
+
+
+else{
+
+
+lives--;
+
+playSound("wrong");
+
+
+message("Try again! Think about where the item belongs.","bad");
+
+
+if(lives<=0){
+
+finishGame();
+
+}
+
+
+}
+
+
+updateHUD();
+
+renderItems();
+
+
+}
+
+
+
+function addNewItem(){
+
+let item=
+itemsData[Math.floor(Math.random()*itemsData.length)];
+
+
+currentItems.push(item);
+
+
+}
+
+
+
+
+function updateHUD(){
+
+document.getElementById("score").innerHTML=score;
+
+document.getElementById("lives").innerHTML=lives;
+
+document.getElementById("stars").innerHTML=stars;
+
+}
+
+
+
+function selectNext(){
+
+if(currentItems.length){
+
+selected++;
+
+if(selected>=currentItems.length)
+selected=0;
+
+renderItems();
+
+}
+
+}
+
+
+
+function selectPrevious(){
+
+if(currentItems.length){
+
+selected--;
+
+if(selected<0)
+selected=currentItems.length-1;
+
+renderItems();
+
+}
+
+}
+
+
+
+function pauseGame(){
+
+paused=!paused;
+
+document.getElementById("pauseBtn").innerHTML=
+paused?"Resume":"Pause";
+
+}
+
+
+
+function message(text,cls){
+
+let m=document.getElementById("message");
+
+m.innerHTML=text;
+
+m.className="tip "+cls;
+
+}
+
+
+
+function show(id){
+
+document.querySelectorAll(".screen")
+.forEach(s=>s.classList.remove("active"));
+
+document.getElementById(id)
+.classList.add("active");
+
+}
+
+
+function drawCanvas(){
+
+const canvas=document.getElementById("gameCanvas");
+const ctx=canvas.getContext("2d");
+
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+
+
+let gradient=ctx.createLinearGradient(
+0,0,0,canvas.height
+);
+
+gradient.addColorStop(0,"#dff4ff");
+gradient.addColorStop(1,"#fff5dc");
+
+
+ctx.fillStyle=gradient;
+ctx.fillRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+
+
+/* clouds */
+
+ctx.fillStyle="rgba(255,255,255,.8)";
+
+
+for(let i=0;i<5;i++){
+
+ctx.beginPath();
+
+ctx.arc(
+80+i*110,
+70,
+25,
+0,
+Math.PI*2
+);
+
+ctx.arc(
+105+i*110,
+70,
+35,
+0,
+Math.PI*2
+);
+
+ctx.fill();
+
+}
+
+
+
+/* donation truck */
+
+ctx.fillStyle="#2f8f83";
+
+ctx.fillRect(
+170,
+210,
+260,
+100
+);
+
+
+ctx.fillStyle="#246b63";
+
+ctx.fillRect(
+390,
+245,
+80,
+65
+);
+
+
+
+ctx.fillStyle="#fff";
+
+ctx.fillRect(
+210,
+230,
+60,
+35
+);
+
+ctx.fillRect(
+285,
+230,
+60,
+35
+);
+
+
+ctx.fillStyle="#f2b705";
+
+ctx.font="bold 22px Arial";
+
+ctx.textAlign="center";
+
+ctx.fillText(
+"DONATION",
+300,
+290
+);
+
+
+
+/* wheels */
+
+ctx.fillStyle="#20303b";
+
+ctx.beginPath();
+
+ctx.arc(
+230,
+330,
+30,
+0,
+Math.PI*2
+);
+
+ctx.arc(
+400,
+330,
+30,
+0,
+Math.PI*2
+);
+
+ctx.fill();
+
+
+
+/* selected item */
+
+if(currentItems[selected]){
+
+
+ctx.font="70px Arial";
+
+ctx.fillText(
+currentItems[selected].emoji,
+300,
+150
+);
+
+
+}
+
+
+}
+
+
+
+
+function gameLoop(){
+
+if(!paused){
+
+drawCanvas();
+
+}
+
+
+requestAnimationFrame(gameLoop);
+
+}
+
+
+
+requestAnimationFrame(gameLoop);
+
+
+
+
+
+
+/* QUESTION SYSTEM */
+
+
+function showQuestion(){
+
+
+let q=
+questions[Math.floor(
+Math.random()*questions.length
+)];
+
+
+let overlay=
+document.getElementById(
+"questionOverlay"
+);
+
+
+document.getElementById(
+"questionText"
+).innerHTML=q.q;
+
+
+let options=
+document.getElementById(
+"options"
+);
+
+
+options.innerHTML="";
+
+
+q.options
+.sort(()=>Math.random()-0.5)
+.forEach(option=>{
+
+
+let btn=document.createElement("button");
+
+
+btn.className="option";
+
+
+btn.innerHTML=option;
+
+
+btn.onclick=function(){
+
+checkAnswer(
+option,
+q.answer
+);
+
+
+};
+
+
+
+options.appendChild(btn);
+
+
+
+});
+
+
+
+overlay.classList.add("active");
+
+
+}
+
+
+
+function checkAnswer(selectedAnswer,correct){
+
+
+let feedback=
+document.getElementById(
+"feedback"
+);
+
+
+if(selectedAnswer===correct){
+
+
+stars++;
+
+feedback.innerHTML=
+"Correct! ⭐";
+
+
+feedback.className="good";
+
+
+playSound("correct");
+
+
+setTimeout(()=>{
+
+
+document
+.getElementById("questionOverlay")
+.classList.remove("active");
+
+
+},1000);
+
+
+
+updateHUD();
+
+
+}
+
+else{
+
+
+feedback.innerHTML=
+"Try again. Think about generosity.";
+
+
+feedback.className="bad";
+
+
+playSound("wrong");
+
+
+}
+
+
+}
+
+
+
+
+/* SOUND */
+
+
+let audioContext;
+
+
+function playSound(type){
+
+
+if(!sound)
+return;
+
+
+
+if(!audioContext){
+
+audioContext=
+new AudioContext();
+
+}
+
+
+let oscillator=
+audioContext.createOscillator();
+
+
+let gain=
+audioContext.createGain();
+
+
+
+oscillator.connect(gain);
+
+gain.connect(
+audioContext.destination
+);
+
+
+
+if(type==="correct"){
+
+oscillator.frequency.value=700;
+
+}
+
+else if(type==="wrong"){
+
+oscillator.frequency.value=250;
+
+}
+
+else{
+
+oscillator.frequency.value=500;
+
+}
+
+
+
+gain.gain.value=.08;
+
+
+oscillator.start();
+
+
+gain.gain.exponentialRampToValueAtTime(
+0.001,
+audioContext.currentTime+0.3
+);
+
+
+oscillator.stop(
+audioContext.currentTime+0.3
+);
+
+
+}
+
+
+
+function toggleSound(){
+
+sound=!sound;
+
+
+document.getElementById(
+"soundBtn"
+).innerHTML=
+sound?
+"Sound: On":
+"Sound: Off";
+
+
+}
+
+
+
+
+/* END SCREEN */
+
+
+function finishGame(){
+
+
+show("endScreen");
+
+
+document.getElementById(
+"finalScore"
+).innerHTML=score;
+
+
+
+if(score>=8 || stars>=3){
+
+
+document.getElementById(
+"finalStars"
+).innerHTML=
+"🌟🌟🌟";
+
+
+}
+
+else{
+
+
+document.getElementById(
+"finalStars"
+).innerHTML=
+"🌟🌟";
+
+
+}
+
+
+}
+
+
+
+
+
+/* SPLASH */
+
+
+window.onload=function(){
+
+
+setTimeout(()=>{
+
+
+show("startScreen");
+
+
+},5000);
+
+
+
+};
+
+
+
+
+function showStart(){
+
+show("startScreen");
+
+}
+
+
+
 </script>
+
+
 </body>
+
 </html>
